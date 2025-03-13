@@ -57,7 +57,9 @@ const Login: React.FC = () => {
         </div>
 
         {/* Login Button */}
-        <button className="login-button">Masuk</button>
+        <Link to="/homepage" className="login-button">
+        Masuk
+        </Link>
 
         {/* Register Link */}
         <p className="register-text">
