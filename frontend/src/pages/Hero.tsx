@@ -13,7 +13,7 @@ const Hero: React.FC = () => {
         <h1 className="navbar-title">SetetesHarapan</h1>
       </div>
 
-      <Link to="/login" className="login-button">
+      <Link to="/login" className="login-button2">
         Login
       </Link>
 
