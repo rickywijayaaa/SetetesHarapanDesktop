@@ -1061,3 +1061,128 @@
 .use-button-kd:hover {
   background-color: #C0392B;
 }
+
+
+
+/* POP UP MODAL */
+
+/* Modal Overlay */
+.modal-overlay-kd {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5); /* Dark background overlay */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  font-family: "Inter", sans-serif;
+}
+
+/* Modal Container */
+.modal-container-kd {
+  background: white;
+  width: 400px;
+  border-radius: 10px;
+  overflow: hidden;
+  text-align: center;
+}
+
+/* Modal Header */
+.modal-header-kd {
+  background: #8E1616;
+  color: white;
+  padding: 15px;
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header-kd h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.close-button-kd {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Modal Body */
+.modal-body-kd {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Input Fields */
+.modal-body-kd input,
+.modal-body-kd textarea {
+  width: 90%; /* Reduce width */
+  max-width: 350px; /* Prevents from being too wide */
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: "Inter", sans-serif;
+  background: #f8f8f8;
+  transition: 0.3s;
+}
+
+/* Send Button */
+.send-button-kd {
+  width: 100%;
+  padding: 12px;
+  background-color: #8E1616;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.send-button-kd:hover {
+  background-color: #B3260E;
+}
+
+
+/* Filters Container */
+.filters-container-kd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Space between search and filters */
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+/* Search Input - Left Aligned */
+.search-input-kd {
+  width: 290px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/* Filters Wrapper (Golongan, Rhesus, Jenis) - Right Aligned */
+.filters-right-kd {
+  display: flex;
+  gap: 10px;
+}
+
+/* Select Filters */
+.filters-right-kd select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
