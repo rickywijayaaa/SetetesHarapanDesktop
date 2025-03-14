@@ -783,3 +783,281 @@
   font-size: 32px;
   font-weight: bold;
 }
+
+
+
+
+
+/* EDIT DARAHHHHHH*/
+
+/* General Layout */
+.edit-darah-container-ed {
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(90deg, #8E1716 0%, #280706 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+  overflow: scroll;
+}
+
+/* Navbar */
+.navbar-ed {
+  width: 90%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background: transparent;
+  color: white;
+}
+
+.navbar-left-ed {
+  display: flex;
+  align-items: center;
+}
+
+.logo-ed {
+  width: 40px;
+  margin-right: 10px;
+}
+
+.app-title-ed {
+  font-size: 20px;
+  font-weight: bold;
+  
+}
+
+/* Kementrian Kesehatan Text */
+/* Right Section (Text + Logout Button) */
+.navbar-right-ed {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Push items to the right */
+  flex-grow: 1; /* Allow elements to expand */
+}
+
+/* Move "Kementrian Kesehatan Indonesia" Closer to Logout */
+.navbar-text-ed {
+  font-size: 16px;
+  white-space: nowrap; /* Prevents text wrapping */
+  margin-right: 15px; /* Moves text closer to Logout button */
+}
+
+
+.logout-button-ed {
+  background: linear-gradient(180deg, #8E1616 0%, #B3260E 40%, #EA3D03 100%);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Card Container */
+.card-ed {
+  width: 80%;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  margin-top: 20px;
+}
+
+/* Tabs */
+.tabs-ed {
+  display: flex;
+  border-bottom: 2px solid #8E1616;
+}
+
+.tab-ed {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.tab-ed.active-ed {
+  background: #8E1616;
+  color: white;
+  border-radius: 8px 8px 0 0;
+}
+
+/* Form */
+.blood-form-ed {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.section-title-ed {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+/* Input Groups */
+.input-group-ed {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+/* Make Inputs & Selects the Same Width */
+.input-group-ed input,
+.input-group-ed select {
+  flex: 1; /* Both elements take equal space */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  min-width: 0; /* Prevents elements from shrinking */
+}
+
+
+/* Submit Button */
+.submit-button-ed {
+  width: 100%;
+  padding: 12px;
+  background-color: #8E1616;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.submit-button-ed:hover {
+  background-color: #B3260E;
+}
+
+
+/* Kurang Darah */
+
+/* General Layout */
+.kurang-darah-container-kd {
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(90deg, #8E1716 0%, #280706 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+  overflow: scroll;
+}
+
+/* Navbar */
+.navbar-kd {
+  width: 90%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  color: white;
+}
+
+.navbar-left-kd {
+  display: flex;
+  align-items: center;
+}
+
+.logo-kd {
+  width: 40px;
+  margin-right: 10px;
+}
+
+.app-title-kd {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.navbar-text-kd {
+  font-size: 16px;
+}
+
+.logout-button-kd {
+  background: linear-gradient(180deg, #8E1616 0%, #B3260E 40%, #EA3D03 100%);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Card Container */
+.card-kd {
+  width: 85%;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  margin-top: 20px;
+}
+
+/* Tabs */
+.tabs-kd {
+  display: flex;
+  border-bottom: 2px solid #8E1616;
+}
+
+.tab-kd {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  color: black;
+}
+
+.tab-kd.active-kd {
+  background: #8E1616;
+  color: white;
+  border-radius: 8px 8px 0 0;
+}
+
+/* Filters */
+.filters-kd {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.filters-kd select {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* Table */
+.blood-table-kd {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.blood-table-kd th, .blood-table-kd td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.use-button-kd {
+  background-color: #E74C3C;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.use-button-kd:hover {
+  background-color: #C0392B;
+}

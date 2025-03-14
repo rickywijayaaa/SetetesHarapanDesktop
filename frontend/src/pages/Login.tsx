@@ -57,7 +57,7 @@ const Login: React.FC = () => {
         </div>
 
         {/* Login Button */}
-        <Link to="/homepage" className="login-button">
+        <Link to="/edit" className="login-button">
         Masuk
         </Link>
 

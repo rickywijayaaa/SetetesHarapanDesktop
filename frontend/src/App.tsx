@@ -4,6 +4,8 @@ import Login from "./pages/Login.tsx";
 import Register from "./pages/Register.tsx"; 
 import Homepage from "./pages/Homepage.tsx";
 import Verification from "./pages/Verification.tsx";
+import EditDarah from "./pages/EditDarah.tsx";
+import KurangDarah from "./pages/KurangDarah.tsx"
 
 function App() {
   return (
@@ -12,7 +14,9 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} /> 
       <Route path="/homepage" element={<Homepage />} />
-      <Route path="/verification" element={<Verification />} />{/* Updated Route */}
+      <Route path="/verification" element={<Verification />} />
+      <Route path="/edit" element={<EditDarah />} />
+      <Route path="/kurangdarah" element={<KurangDarah />} />{/* Updated Route */}
       
     </Routes>
   );
