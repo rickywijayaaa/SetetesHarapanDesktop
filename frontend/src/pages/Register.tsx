@@ -30,7 +30,7 @@ const Register: React.FC = () => {
 
       {/* Right Side: Form */}
       <div className="register-form-container">
-        <div className="logo-container">
+        <div className="logo-container2">
           <img src={logo} alt="Setetes Harapan" className="register-logo" />
           <h1 className="register-title-main">SetetesHarapan</h1>
         </div>

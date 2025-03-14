@@ -414,7 +414,7 @@
   align-items: center; /* Centers content properly */
   justify-content: center;
   overflow: hidden; /* Prevents unwanted scrolling */
-  padding-top: 50px; /* Removed excessive top padding */
+  padding-top: 0px; /* Removed excessive top padding */
 }
 
 /* Left Side - Background */
@@ -448,9 +448,8 @@
   overflow-y: auto; /* Allows scrolling if form is too long */
 }
 
-/* Logo and Title - Fixed Visibility */
 /* Logo and Title - Move to the Right */
-.logo-container {
+.logo-container2 {
   display: flex;
   align-items: center;
   width: 100%;
@@ -604,7 +603,6 @@
 
 
 
-
 /* VERIFICATIONNNn */
 
 
@@ -633,13 +631,13 @@
 }
 
 /* Logo and Title */
-.logo-container {
+.logo-container3 {
   display: flex;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 10px; /* Reduced space below logo */
-  margin-top: -20px; /* Moves logo slightly higher */
-}
+   align-items: center;
+   width: 100%;
+   margin-bottom: 10px; /* Reduced space below logo */
+   margin-top: -20px; /* Moves logo slightly higher */
+ }
 
 .verification-logo {
   width: 50px;

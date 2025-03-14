@@ -11,7 +11,7 @@ const Verification: React.FC = () => {
     <div className="verification-container">
       {/* Left Side: Form */}
       <div className="verification-form-container">
-        <div className="logo-container">
+        <div className="logo-container3">
           <img src={logo} alt="Setetes Harapan" className="verification-logo" />
           <h1 className="verification-title-main">SetetesHarapan</h1>
         </div>
