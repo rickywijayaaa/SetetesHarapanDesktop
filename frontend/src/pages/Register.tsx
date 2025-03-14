@@ -118,8 +118,12 @@ const Register: React.FC = () => {
           </div>
         </div>
 
+
         {/* Register Button */}
-        <button className="register-button">Buat Akun</button>
+        <Link to="/verification" className="register-button">
+          Buat Akun
+        </Link>
+
 
         {/* Already Have Account */}
         <p className="login-text">
