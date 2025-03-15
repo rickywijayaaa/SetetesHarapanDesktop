@@ -1,9 +1,39 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import "../App.css";
+import { createClient } from "@supabase/supabase-js";
+
+// Inisialisasi Supabase client
+const supabaseUrl = "https://opoxtyinqfbsqxlgrewy.supabase.co";
+const supabaseKey =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9wb3h0eWlucWZic3F4bGdyZXd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE2NzcwMjEsImV4cCI6MjA1NzI1MzAyMX0.7gF1CBzw8vgrLxtINKkd1JTv8rTuu_iZF6xk5dXGxi4";
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 const Homepage: React.FC = () => {
+  const navigate = useNavigate();
+
+  // Fungsi untuk melakukan logout
+  const handleLogout = async () => {
+    try {
+      // Sign out dari Supabase Auth
+      const { error } = await supabase.auth.signOut();
+
+      if (error) {
+        console.error("Error logging out:", error.message);
+        return;
+      }
+
+      // Hapus data user dari localStorage jika ada
+      localStorage.removeItem("tempUserData");
+
+      // Redirect ke halaman hero/landing page
+      navigate("/");
+    } catch (error) {
+      console.error("Unexpected error during logout:", error);
+    }
+  };
+
   return (
     <div className="homepage-container">
       {/* Navbar */}
@@ -13,14 +43,20 @@ const Homepage: React.FC = () => {
           <span className="app-title-hp">SetetesHarapan</span>
         </div>
         <span className="navbar-text-hp">Kementerian Kesehatan Indonesia</span>
-        <button className="logout-button-hp">Logout</button>
+        <button className="logout-button-hp" onClick={handleLogout}>
+          Logout
+        </button>
       </div>
 
       {/* Dashboard Container */}
       <div className="dashboard-container">
         {/* Filters */}
         <div className="filters-hp">
-          <input type="text" className="search-input-hp" placeholder="Cari Data..." />
+          <input
+            type="text"
+            className="search-input-hp"
+            placeholder="Cari Data..."
+          />
           <button className="filter-button-hp">Golongan</button>
           <button className="filter-button-hp">Jenis</button>
         </div>
