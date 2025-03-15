@@ -6,6 +6,7 @@ import Homepage from "./pages/Homepage.tsx";
 import Verification from "./pages/Verification.tsx";
 import EditDarah from "./pages/EditDarah.tsx";
 import KurangDarah from "./pages/KurangDarah.tsx"
+import BlastingInfo from "./pages/Blastinginfo.tsx";
 
 function App() {
   return (
@@ -16,7 +17,8 @@ function App() {
       <Route path="/homepage" element={<Homepage />} />
       <Route path="/verification" element={<Verification />} />
       <Route path="/edit" element={<EditDarah />} />
-      <Route path="/kurangdarah" element={<KurangDarah />} />{/* Updated Route */}
+      <Route path="/kurangdarah" element={<KurangDarah />} />
+      <Route path="/blastinginfo" element={<BlastingInfo />} /> {/* Updated Route */}
       
     </Routes>
   );

@@ -1369,3 +1369,146 @@
   border-radius: 6px;
   font-size: 14px;
 }
+
+
+
+/* Main Container */
+.blasting-info-container {
+  width: 100vw;
+  min-height: 100vh;
+  background-color: #f8f8f8;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 30px;
+}
+
+/* Card Layout */
+.blasting-card {
+  width: 90%;
+  max-width: 1100px;
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Input Section Layout */
+.blasting-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* Labels */
+.blasting-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+/* Inputs and Selects */
+.blasting-input,
+.blasting-select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+}
+
+/* Full Width Textarea */
+.blasting-textarea {
+  width: 100%;
+  height: 120px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+  resize: none;
+  grid-column: span 2;
+}
+
+/* Navbar */
+.navbar-blasting {
+  display: flex;
+  align-items: center;
+  padding: 15px 30px;
+  background: linear-gradient(90deg, #8E1716, #280706);
+  color: white;
+  border-radius: 20px 20px 0 0;
+}
+
+.navbar-left-blasting {
+  display: flex;
+  align-items: center;
+}
+
+.logo-blasting {
+  width: 40px;
+  margin-right: 10px;
+}
+
+.app-title-blasting {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* Form Container */
+.form-container-blasting {
+  background: #fff;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+/* Form Groups */
+.form-group-blasting {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.form-group-blasting label {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.form-group-blasting select,
+.form-group-blasting textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/* Full Width */
+.full-width {
+  width: 100%;
+}
+
+/* Submit Button */
+.submit-button-blasting {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(90deg, #8E1716, #B3260E);
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 20px;
+  box-shadow: 0 5px 10px rgba(255, 0, 0, 0.3);
+  transition: 0.3s ease-in-out;
+}
+
+.submit-button-blasting:hover {
+  background: linear-gradient(90deg, #B3260E, #EA3D03);
+}
