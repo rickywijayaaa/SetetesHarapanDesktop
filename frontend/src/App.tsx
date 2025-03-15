@@ -6,7 +6,7 @@ import Homepage from "./pages/Homepage.tsx";
 import Verification from "./pages/Verification.tsx";
 import EditDarah from "./pages/EditDarah.tsx";
 import KurangDarah from "./pages/KurangDarah.tsx"
-import BlastingInfo from "./pages/Blastinginfo.tsx";
+import BlastingInfo from "./pages/BlastingInfo.tsx"
 
 function App() {
   return (
