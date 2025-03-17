@@ -23,10 +23,6 @@ class UserSchema(BaseModel):
     rhesus: Optional[str] = None
     riwayat_result: Optional[bool] = None
 
-    class Config:
-        from_attributes = True  # Untuk mendukung ORM mode di Pydantic v2
-
-
 class UserResponse(BaseModel):
     idUser: int
     name: str
