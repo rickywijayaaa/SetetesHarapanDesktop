@@ -1,28 +1,17 @@
-from pydantic import BaseModel, EmailStr, field_validator, ValidationError
+from pydantic import BaseModel, EmailStr
 from typing import Optional
-from datetime import date
-from enum import Enum
+from datetime import date, datetime
 
-# ENUM untuk Role
-class UserRole(str, Enum):
-    kemenkes = "Kemenkes"
-    pmi = "PMI"
-    rumah_sakit = "Rumah sakit"
-    masyarakat = "Masyarakat"
-
-# Schema untuk User
+# User Schema
 class UserSchema(BaseModel):
-    idUser: int  # Tidak optional karena harus diisi
     name: str
     email: EmailStr
     password: str
-    phone_number: str
-    address: str
-    city: str
-    province: str
-    role: UserRole  # Hanya bisa 'Kemenkes', 'PMI', 'Rumah sakit', atau 'Masyarakat'
-
-    # **Field khusus untuk "Masyarakat"**
+    phone_number: Optional[str] = None
+    address: Optional[str] = None
+    city: Optional[str] = None
+    province: Optional[str] = None
+    role: str
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     nik: Optional[str] = None
@@ -34,13 +23,96 @@ class UserSchema(BaseModel):
     rhesus: Optional[str] = None
     riwayat_result: Optional[bool] = None
 
-    # **Validasi untuk memastikan bahwa field wajib diisi jika role adalah "Masyarakat"**
-    @field_validator("first_name", "last_name", "nik", "birth_date", "jenis_kelamin", "golongan_darah", "rhesus", "riwayat_result", mode="before")
-    @classmethod
-    def validate_masyarakat_fields(cls, v, values, field):
-        if values.get("role") == UserRole.masyarakat and v is None:
-            raise ValueError(f"{field.name} harus diisi untuk role 'Masyarakat'")
-        return v
+    class Config:
+        from_attributes = True  # Untuk mendukung ORM mode di Pydantic v2
+
+
+class UserResponse(BaseModel):
+    idUser: int
+    name: str
+    email: EmailStr
+    role: str
+    total_points: int
 
     class Config:
-        from_attributes = True  # Untuk mendukung Pydantic V2
+        orm_mode = True
+
+
+# OTP Schema
+class OtpSchema(BaseModel):
+    idUser: int
+    otpCode: str
+    expires_at: datetime
+
+
+# Questionnaire Schema
+class QuestionnaireSchema(BaseModel):
+    idPengguna: int
+    results: bool
+
+
+# Darah Schema
+class DarahSchema(BaseModel):
+    first_name: str
+    last_name: str
+    nik: str
+    phone_number: str
+    golongan_darah: str
+    rhesus: str
+    jenis_darah: str
+    jumlah_darah: int
+    idKantongDarah: str
+    petugas: str
+    tanggal_donor: date
+    waktu_donor: str
+    province_donor: str
+    city_donor: str
+
+
+# Notification Schema
+class NotificationSchema(BaseModel):
+    idUser: int
+    golongan_darah: str
+    rhesus: str
+    deadline: datetime
+    message: str
+
+
+# Pesan Schema
+class PesanSchema(BaseModel):
+    idUser: int
+    idDarah: int
+    pesan: str
+    penerima: int
+
+
+# Voucher Schema
+class VoucherSchema(BaseModel):
+    points: int
+    description: str
+    expired_date: date
+    nominal: float
+    image_url: Optional[str] = None
+    is_active: Optional[bool] = True
+
+
+# Kegiatan Donor Schema
+class KegiatanDonorSchema(BaseModel):
+    tempat: str
+    tanggal: date
+    waktu_mulai: str
+    waktu_berakhir: str
+    description: str
+    image_url: Optional[str] = None
+    created_by: int
+    max_participants: int
+    current_participants: Optional[int] = 0
+
+
+# Donor Darurat Schema
+class DonorDaruratSchema(BaseModel):
+    idUser: int
+    tanggal_donor: date
+    waktu_donor: str
+    status: str
+    notes: Optional[str] = None
