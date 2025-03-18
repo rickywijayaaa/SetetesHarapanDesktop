@@ -14,3 +14,5 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
 const supabase: SupabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 export const getDb = (): SupabaseClient => supabase;
+
+export {supabase};
