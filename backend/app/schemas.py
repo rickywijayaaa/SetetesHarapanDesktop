@@ -1,53 +1,83 @@
-from pydantic import BaseModel, EmailStr
-from typing import Optional
-from datetime import date, datetime
+# Schemas.py : request & response API menggunakan Pydantic untuk validate data
 
-# User Schema
-class UserSchema(BaseModel):
+from pydantic import BaseModel, EmailStr, field_validator # Validation data yang diterima dan dikembalikan sesuai dengan tipe yang diharapkan
+from typing import Optional
+from datetime import datetime, time
+from enum import Enum
+
+class UserRole(str, Enum):
+    kemenkes = "Kemenkes"
+    pmi = "PMI"
+    rumah_sakit = "Rumah sakit"
+    masyarakat = "Masyarakat"
+
+class UserRegister(BaseModel):
     name: str
     email: EmailStr
-    password: str
-    phone_number: Optional[str] = None
-    address: Optional[str] = None
-    city: Optional[str] = None
-    province: Optional[str] = None
-    role: str
+    phone_number: str
+    address: str
+    city: str
+    province: str
+    role: UserRole
+    password: str  
+
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     nik: Optional[str] = None
-    birth_date: Optional[date] = None
-    points_transaction: Optional[int] = 0
-    total_points: Optional[int] = 0
+    birth_date: Optional[datetime] = None
     jenis_kelamin: Optional[str] = None
     golongan_darah: Optional[str] = None
     rhesus: Optional[str] = None
     riwayat_result: Optional[bool] = None
 
-class UserResponse(BaseModel):
-    idUser: int
-    name: str
-    email: EmailStr
-    role: str
-    total_points: int
+    @field_validator("first_name", "last_name", "nik", "birth_date", "jenis_kelamin", "golongan_darah", "rhesus", "riwayat_result", mode="before")
+    @classmethod
+    def validate_masyarakat_fields(cls, v, info):
+        if info.data.get("role") == UserRole.masyarakat and v is None:
+            raise ValueError(f"{info.field_name} wajib diisi untuk role Masyarakat.")
+        return v
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
+class UserResponse(BaseModel):
+    idUser: str
+    name: str
+    email: EmailStr
+    phone_number: str
+    address: str
+    city: str
+    province: str
+    role: UserRole
 
-# OTP Schema
 class OtpSchema(BaseModel):
     idUser: int
     otpCode: str
-    expires_at: datetime
 
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
 
-# Questionnaire Schema
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
 class QuestionnaireSchema(BaseModel):
     idPengguna: int
+    results: bool 
+
+class HealthRecordRequest(BaseModel):
+    idpengguna: int
+    jawaban1: str
+    jawaban2: str
+    jawaban3: str
+
+class HealthRecordResponse(BaseModel):
+    idquestionnaire: int
+    idpengguna: int
     results: bool
+    created_at: datetime
 
-
-# Darah Schema
 class DarahSchema(BaseModel):
     first_name: str
     last_name: str
@@ -59,13 +89,19 @@ class DarahSchema(BaseModel):
     jumlah_darah: int
     idKantongDarah: str
     petugas: str
-    tanggal_donor: date
+    tanggal_donor: datetime
     waktu_donor: str
     province_donor: str
     city_donor: str
 
+class DarahRumahSakitSchema(BaseModel):
+    idRumahSakit: int
+    idDarah: int
 
-# Notification Schema
+class DarahPMISchema(BaseModel):
+    idPMI: int
+    idDarah: int
+
 class NotificationSchema(BaseModel):
     idUser: int
     golongan_darah: str
@@ -73,42 +109,111 @@ class NotificationSchema(BaseModel):
     deadline: datetime
     message: str
 
-
-# Pesan Schema
 class PesanSchema(BaseModel):
     idUser: int
     idDarah: int
     pesan: str
     penerima: int
 
-
-# Voucher Schema
 class VoucherSchema(BaseModel):
     points: int
     description: str
-    expired_date: date
+    expired_date: datetime
     nominal: float
-    image_url: Optional[str] = None
-    is_active: Optional[bool] = True
 
-
-# Kegiatan Donor Schema
 class KegiatanDonorSchema(BaseModel):
     tempat: str
-    tanggal: date
+    tanggal: datetime
     waktu_mulai: str
     waktu_berakhir: str
     description: str
-    image_url: Optional[str] = None
-    created_by: int
-    max_participants: int
-    current_participants: Optional[int] = 0
 
-
-# Donor Darurat Schema
 class DonorDaruratSchema(BaseModel):
     idUser: int
-    tanggal_donor: date
+    tanggal_donor: datetime
     waktu_donor: str
-    status: str
-    notes: Optional[str] = None
+
+class NewsRequest(BaseModel):
+    description: str
+
+class NewsResponse(BaseModel):
+    idberita: int
+    description: str
+
+class DonorEventRequest(BaseModel):
+    tempat: str
+    tanggal: datetime
+    waktu_mulai: time
+    waktu_berakhir: time
+    description: str
+    image_url: str
+    created_by: int
+
+class DonorEventResponse(DonorEventRequest):
+    idkegiatan: int
+
+class EligibilityCheckRequest(BaseModel):
+    idpengguna: int
+    jawaban1: str
+    jawaban2: str
+    jawaban3: str
+
+class EligibilityCheckResponse(BaseModel):
+    idpengguna: int
+    results: bool
+    created_at: datetime
+
+class NotificationCreate(BaseModel):
+    iduser: int
+    golongan_darah: str
+    rhesus: str
+    deadline: datetime
+    message: str
+
+class NotificationResponse(BaseModel):
+    idnotification: int
+    iduser: int
+    golongan_darah: str
+    rhesus: str
+    deadline: datetime
+    message: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class NotificationUpdate(BaseModel):
+    is_read: bool
+    read_at: Optional[datetime] = None
+
+class UserProfileRequest(BaseModel):
+    name: str
+    email: EmailStr
+    password: Optional[str] = None 
+    phone_number: str
+    address: str
+    city: str
+    province: str
+    role: str  
+
+class UserProfileResponse(BaseModel):
+    iduser: int
+    name: str
+    email: EmailStr
+    phone_number: str
+    address: Optional[str] = None
+    city: Optional[str] = None
+    province: Optional[str] = None
+    role: Optional[str] = None
+
+class VoucherCreate(BaseModel):
+    points: int
+    description: str
+    expired_date: datetime
+    nominal: float
+    image_url: str
+    is_active: bool
+
+class VoucherResponse(VoucherCreate):
+    idvoucher: int

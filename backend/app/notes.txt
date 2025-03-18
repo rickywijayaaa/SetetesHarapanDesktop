@@ -1,0 +1,4 @@
+Models.py vs Schemas.py
+
+1. Gunakan models.py untuk database (SQLAlchemy) dan schemas.py untuk validasi (Pydantic)
+2. SQLAlchemy adalah ORM yang memudahkan interaksi dengan database
