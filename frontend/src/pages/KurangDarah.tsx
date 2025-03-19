@@ -1,28 +1,49 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
+
 
 const KurangDarah: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [donors, setDonors] = useState<any[]>([]);
 
-  // Sample Blood Data
-  const bloodData = [
-    { id: "#AHGA68", date: "23/09/2022", donor: "Micky Valentino", type: "A", rhesus: "-", kind: "AHF", volume: "500" },
-    { id: "#AHGA69", date: "23/09/2022", donor: "Naomi Pricilla", type: "B", rhesus: "+", kind: "BC", volume: "250" },
-    { id: "#AHGA70", date: "23/09/2022", donor: "Nasywaa Anggun", type: "O", rhesus: "-", kind: "FFP", volume: "750" },
-    { id: "#AHGA71", date: "23/09/2022", donor: "Ricky Wijaya", type: "AB", rhesus: "+", kind: "FFP Aferesis", volume: "1000" },
-    { id: "#AHGA72", date: "23/09/2022", donor: "Kimmy", type: "B", rhesus: "-", kind: "PRC Leukodepleted", volume: "250" },
-    { id: "#AHGA73", date: "23/09/2022", donor: "Kenzo", type: "A", rhesus: "+", kind: "FFP", volume: "500" },
-    { id: "#AHGA74", date: "23/09/2022", donor: "Huru", type: "B", rhesus: "+", kind: "PRP", volume: "400" },
-    { id: "#AHGA75", date: "23/09/2022", donor: "Hara", type: "AB", rhesus: "+", kind: "SAGM", volume: "400" },
-    { id: "#AHGA76", date: "23/09/2022", donor: "Botbot", type: "O", rhesus: "-", kind: "TC", volume: "250" },
-  ];
+  // Fetch donor data from the Supabase API
+  useEffect(() => {
+    fetch("http://localhost:8000/donor/")
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Fetched donor data:", data);  // Log response to verify structure
+        if (Array.isArray(data)) {
+          setDonors(data);
+        } else {
+          console.error("Fetched data is not an array:", data);
+        }
+      })
+      .catch((error) => console.error("Error fetching donor data:", error));
+  }, []);
 
   // Filter Data Based on Search Query
-  const filteredBloodData = bloodData.filter((blood) =>
-    blood.donor.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredBloodData = donors.filter((blood) =>
+    blood.first_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Handle DELETE
+  const handleDelete = (iddarah: string) => {
+    fetch(`http://localhost:8000/donor/${iddarah}/`, {
+      method: "DELETE",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.message) {
+          alert(data.message);
+          setDonors(donors.filter((donor) => donor.iddarah !== iddarah)); // Remove from local state
+        }
+      })
+      .catch((error) => {
+        console.error("Error deleting donor data:", error);
+      });
+  };
 
   return (
     <div className="kurang-darah-container-kd">
@@ -60,26 +81,26 @@ const KurangDarah: React.FC = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
 
-        {/* Filters - Right Aligned */}
-        <div className="filters-right-kd">
+          {/* Filters - Right Aligned */}
+          <div className="filters-right-kd">
             <select>
-            <option value="">Pilih Golongan</option>
-            <option value="O">O</option>
-            <option value="A">A</option>
-            <option value="AB">AB</option>
-            <option value="B">B</option>
+              <option value="">Pilih Golongan</option>
+              <option value="O">O</option>
+              <option value="A">A</option>
+              <option value="AB">AB</option>
+              <option value="B">B</option>
             </select>
 
             <select>
-            <option value="">Pilih Rhesus</option>
-            <option value="+">+</option>
-            <option value="-">-</option>
+              <option value="">Pilih Rhesus</option>
+              <option value="+">+</option>
+              <option value="-">-</option>
             </select>
 
             <select>
-            <option>Pilih Jenis</option>
+              <option>Pilih Jenis</option>
             </select>
-        </div>
+          </div>
         </div>
 
         {/* Table */}
@@ -97,17 +118,17 @@ const KurangDarah: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredBloodData.map((blood, index) => (
-              <tr key={index}>
-                <td><a href="#">{blood.id}</a></td>
-                <td>{blood.date}</td>
-                <td>{blood.donor}</td>
-                <td>{blood.type}</td>
+            {filteredBloodData.map((blood) => (
+              <tr key={blood.iddarah}>
+                <td><a href="#">{blood.iddarah}</a></td>
+                <td>{blood.tanggal_donor}</td>
+                <td>{blood.first_name} {blood.last_name}</td>
+                <td>{blood.golongan_darah}</td>
                 <td>{blood.rhesus}</td>
-                <td>{blood.kind}</td>
-                <td>{blood.volume}</td>
+                <td>{blood.jenis_darah}</td>
+                <td>{blood.jumlah_darah}</td>
                 <td>
-                  <button className="use-button-kd" onClick={() => setShowModal(true)}>Pakai</button>
+                  <button className="use-button-kd" onClick={() => handleDelete(blood.iddarah)}>Pakai</button>
                 </td>
               </tr>
             ))}
@@ -128,7 +149,7 @@ const KurangDarah: React.FC = () => {
               <input type="text" placeholder="Nama Penerima" />
               <textarea placeholder="Tuliskan Pesan"></textarea>
             </div>
-            <button className="send-button-kd">Kirim</button>
+            <button className="send-button-kd" onClick={() => setShowModal(false)}>Kirim</button>
           </div>
         </div>
       )}

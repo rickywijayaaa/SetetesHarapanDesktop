@@ -27,7 +27,7 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-app.include_router(users.router, prefix="/users", tags=["Users"])
+
 
 @app.get("/")
 async def root():
@@ -67,3 +67,32 @@ async def add_blood_donation(data: DarahSchema):
 
     except Exception as e:
         return {"error": str(e)}
+
+@app.delete("/donor/{iddarah}/")
+async def delete_blood_donation(iddarah: str):
+    try:
+        # Delete the record from the "donor" table using the iddarah
+        response = supabase.table("donor").delete().match({"iddarah": iddarah}).execute()
+
+        # Check if the record exists and was deleted
+        if response.data:
+            return {"message": f"Blood donation record with ID {iddarah} deleted successfully."}
+        else:
+            raise HTTPException(status_code=404, detail="Donor not found")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+@app.get("/donor/")
+async def get_donors():
+    try:
+        # Query data from Supabase
+        response = supabase.table("donor").select("*").execute()
+
+        # Return the response data
+        if response.data:
+            return response.data  # Should be a list of donor records
+        else:
+            raise HTTPException(status_code=404, detail="No donors found")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
