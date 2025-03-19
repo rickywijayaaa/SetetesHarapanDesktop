@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routes import users, auth, health, news, donor_events, eligibility_check, notifications, profile, points, vouchers
+from app.routes import users
 from app.schemas import DarahSchema
 import os
 from fastapi.middleware.cors import CORSMiddleware
@@ -27,6 +27,7 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
+app.include_router(users.router, prefix="/users", tags=["Users"])
 
 @app.get("/")
 async def root():
@@ -66,4 +67,3 @@ async def add_blood_donation(data: DarahSchema):
 
     except Exception as e:
         return {"error": str(e)}
-
