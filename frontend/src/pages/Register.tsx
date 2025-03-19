@@ -38,15 +38,23 @@ const Register: React.FC = () => {
         <h2 className="register-title">Daftar</h2>
         <p className="register-subtitle">Daftarkan dengan data yang valid</p>
 
-        {/* Institution Input */}
+        {/* Lembaga Input */}
         <div className="input-group">
           <label>Lembaga</label>
-          <input type="text" placeholder="Rumah Sakit / PMI / Kemenkes" className="input-field" />
+          <select
+            name="lembaga"
+            className="input-field"
+          >
+            <option value="">Pilih Lembaga</option>
+            <option value="Rumah Sakit">Rumah Sakit</option>
+            <option value="PMI">PMI</option>
+            <option value="Kemenkes">Kemenkes</option>
+          </select>
         </div>
 
         {/* Hospital Name Input */}
         <div className="input-group">
-          <label>Nama Rumah Sakit</label>
+          <label>Nama Rumah Sakit / Nama UTD</label>
           <input type="text" placeholder="Nama Rumah Sakit" className="input-field" />
         </div>
 

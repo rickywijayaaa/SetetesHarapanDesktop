@@ -1,11 +1,13 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+import os
+from dotenv import load_dotenv
+from supabase import create_client, Client
 from app.routes import users
 from app.schemas import DarahSchema
-import os
-from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
 from datetime import date
-from supabase import create_client, Client
+from fastapi import FastAPI
+from app.routes.users import router as users_router  # Import the users router
 
 app = FastAPI()
 
@@ -26,6 +28,7 @@ app.add_middleware(
     allow_methods=["*"],  # Allows all HTTP methods (GET, POST, etc.)
     allow_headers=["*"],  # Allows all headers
 )
+
 
 
 
@@ -96,3 +99,6 @@ async def get_donors():
             raise HTTPException(status_code=404, detail="No donors found")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+# Include the users router with a prefix (optional)
+app.include_router(users_router, prefix="/users", tags=["users"])
