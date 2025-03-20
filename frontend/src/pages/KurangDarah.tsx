@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
 
-
 const KurangDarah: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -50,10 +49,13 @@ const KurangDarah: React.FC = () => {
       {/* Navbar */}
       <div className="navbar-kd">
         <div className="navbar-left-kd">
-          <Link to="/">
+          <Link to="/homepage">
             <img src={logo} alt="Setetes Harapan" className="logo-kd" />
           </Link>
-          <span className="app-title-kd">SetetesHarapan</span>
+          <Link to="/homepage" className="app-title-kd" style={{ textDecoration: 'none', color: 'inherit' }}>
+          SetetesHarapan
+          </Link>
+
         </div>
         <span className="navbar-text-kd">Rumah Sakit Borromeus</span>
         <button className="logout-button-kd">Logout</button>
@@ -63,7 +65,7 @@ const KurangDarah: React.FC = () => {
       <div className="card-kd">
         {/* Tabs */}
         <div className="tabs-kd">
-          <Link to="/edit" className="tab-kd">Penambahan</Link>
+          <Link to="/edit" className="tab-kd" style={{ textDecoration: 'none', color: 'inherit' }}>Penambahan</Link>
           <button className="tab-kd active-kd">Pengurangan</button>
         </div>
 

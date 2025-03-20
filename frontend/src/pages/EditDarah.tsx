@@ -55,10 +55,12 @@ const EditDarah: React.FC = () => {
       {/* Navbar */}
       <div className="navbar-ed">
         <div className="navbar-left-ed">
-          <Link to="/">
+          <Link to="/homepage">
             <img src={logo} alt="Setetes Harapan" className="logo-ed" />
           </Link>
-          <span className="app-title-ed">SetetesHarapan</span>
+          <Link to="/homepage" className="app-title-ed" style={{ textDecoration: 'none', color: 'inherit' }}>
+          SetetesHarapan
+          </Link>
         </div>
         <span className="navbar-text-ed">Kementrian Kesehatan Indonesia</span>
         <button className="logout-button-ed">Logout</button>
@@ -77,6 +79,7 @@ const EditDarah: React.FC = () => {
           <Link
             to="/KurangDarah"
             className={activeTab === "pengurangan" ? "tab-ed active-ed" : "tab-ed"}
+            style={{ textDecoration: 'none', color: 'inherit' }}
           >
             Pengurangan
           </Link>
