@@ -8,7 +8,7 @@ from enum import Enum
 class UserRole(str, Enum):
     kemenkes = "Kemenkes"
     pmi = "PMI"
-    rumah_sakit = "Rumah sakit"
+    rumah_sakit = "Rumah Sakit"
     masyarakat = "Masyarakat"
 
 class UserRegister(BaseModel):
@@ -41,7 +41,7 @@ class UserRegister(BaseModel):
         from_attributes = True
 
 class UserResponse(BaseModel):
-    idUser: str
+    iduser: str
     name: str
     email: EmailStr
     phone_number: str
