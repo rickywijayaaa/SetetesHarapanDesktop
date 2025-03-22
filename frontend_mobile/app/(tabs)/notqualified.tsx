@@ -6,11 +6,11 @@ export default function Qualified() {
   return (
     <LinearGradient colors={["#8E1616", "#FFFFFF"]} style={styles.container}>
       <View style={styles.content}>
-        <Image source={require("../../assets/images/qualified.png")} style={styles.checkmark} />
+        <Image source={require("../../assets/images/unqualified.png")} style={styles.checkmark} />
 
         {/* Pesan Kualifikasi */}
-        <Text style={styles.title}>Selamat!</Text>
-        <Text style={styles.subtitle}>Kamu memenuhi syarat untuk menjadi pendonor darah.</Text>
+        <Text style={styles.title}>Maaf!</Text>
+        <Text style={styles.subtitle}>Saat ini kamu belum memenuhi syarat untuk menjadi pendonor darah.</Text>
       </View>
     </LinearGradient>
   );

@@ -76,7 +76,7 @@ export default function Login() {
           </View>
 
       {/* Login Button */}
-      <TouchableOpacity style={styles.button} onPress={() => router.push("/pesan")}>
+      <TouchableOpacity style={styles.button} onPress={() => router.push("/kegiatan_donor")}>
         <Text style={styles.buttonText}>Masuk</Text>
       </TouchableOpacity>
 
@@ -104,7 +104,7 @@ export default function Login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#8",
   },
   keyboardAvoidView: {
     flex: 1,
