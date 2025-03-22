@@ -1,45 +1,34 @@
-// import React from 'react';
-// import FontAwesome from '@expo/vector-icons/FontAwesome';
-// import { Link, Tabs } from 'expo-router';
-// import { Pressable } from 'react-native';
+// (tabs)/_layout.tsx
+import React from "react";
+import { View, StyleSheet } from "react-native";
+import { Stack, usePathname } from "expo-router";
+import Navbar from "../../components/Navbar";
 
-// import Colors from '@/constants/Colors';
-// import { useColorScheme } from '@/components/useColorScheme';
-// import { useClientOnlyValue } from '@/components/useClientOnlyValue';
+export default function TabsLayout() {
+  const pathname = usePathname();
 
-// // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-// function TabBarIcon(props: {
-//   name: React.ComponentProps<typeof FontAwesome>['name'];
-//   color: string;
-// }) {
-//   return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
-// }
+  // Array of paths where navbar should be shown
+  const navbarPaths = [
+    "/home",
+    "/pencarian_stok",
+    "/kegiatan_donor",
+    "/pesan",
+    "/profile",
+  ];
 
-// export default function TabLayout() {
-//   const colorScheme = useColorScheme();
+  // Check if the current path is one where navbar should be shown
+  const shouldShowNavbar = navbarPaths.some((path) => pathname === path);
 
-//   return (
-//     <Tabs
-//       screenOptions={{
-//         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-//         // Disable the static render of the header on web
-//         // to prevent a hydration error in React Navigation v6.
-//         headerShown: useClientOnlyValue(false, true),
-//       }}>
-//       <Tabs.Screen
-//         name="index"
-//         options={{
-//           title: 'Landing',
-//           tabBarButton: () => null,
-//         }}
-//       />
-//       <Tabs.Screen
-//         name="login"
-//         options={{
-//           title: 'Login',
-//           tabBarButton: () => null,
-//         }}
-//       />
-//     </Tabs>
-//   );
-// }
+  return (
+    <View style={styles.container}>
+      <Stack screenOptions={{ headerShown: false }} />
+      {shouldShowNavbar && <Navbar />}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
