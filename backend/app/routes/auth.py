@@ -9,6 +9,8 @@ router = APIRouter()
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+
+
 SESSION_EXPIRE_MINUTES = 60  
 
 def verify_password(plain_password, hashed_password):
@@ -22,6 +24,11 @@ def login_user(user: LoginRequest, response: Response):
         raise HTTPException(status_code=400, detail="Email tidak terdaftar")
 
     user_data = response_data.data[0]
+    # 🔍 Debug logs
+    print("📥 Input Password:", user.password)
+    print("🔐 Stored Hashed Password:", user_data["password"])
+    print("✅ Password Match:", verify_password(user.password, user_data["password"]))
+
     if not verify_password(user.password, user_data["password"]):
         raise HTTPException(status_code=401, detail="Password salah")
 

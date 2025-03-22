@@ -1,39 +1,59 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import logo from "../assets/logo.png";
 import googleIcon from "../assets/google.svg";
 import checkboxIcon from "../assets/checkbox.svg";
 import bgImage from "../assets/loginbg.jpg";
 import { createClient } from "@supabase/supabase-js";
 
-// Initialize Supabase client with VITE environment variables
+// Initialize Supabase client
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL as string,
   import.meta.env.VITE_SUPABASE_KEY as string
 );
 
 const Login: React.FC = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
-  // Handle Google login
+  // Login via FastAPI
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/users/login",
+        { email, password },
+        { withCredentials: true } // required for cookie/session
+      );
+
+      alert("Login berhasil!");
+      navigate("/homepage"); // ✅ redirect to homepage
+    } catch (err: any) {
+      alert(err.response?.data?.detail || "Login gagal, cek kembali kredensial Anda.");
+    }
+  };
+
+  // Login via Google OAuth using Supabase
   const handleGoogleLogin = async () => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: window.location.origin + "/homepage", // After login redirect
+          redirectTo: window.location.origin + "/homepage",
         },
       });
-
       if (error) throw error;
-    } catch (error: any) {
-      console.error("Error logging in with Google:", error.message);
+    } catch (err: any) {
+      console.error("Google login error:", err.message);
+      alert("Login Google gagal.");
     }
   };
 
   return (
     <div className="login-container">
-      {/* Left Side: Form */}
+      {/* Left Side: Login Form */}
       <div className="login-form-container">
         <div className="logo-container">
           <img src={logo} alt="Setetes Harapan" className="login-logo" />
@@ -43,13 +63,17 @@ const Login: React.FC = () => {
         <h2 className="login-title">Masuk</h2>
         <p className="login-subtitle">Masuk dengan akun yang sudah terdaftar</p>
 
-        {/* Email Input */}
         <div className="input-group">
           <label>Email</label>
-          <input type="email" placeholder="john.doe@gmail.com" className="input-field" />
+          <input
+            type="email"
+            placeholder="john.doe@gmail.com"
+            className="input-field"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
         </div>
 
-        {/* Password Input */}
         <div className="input-group">
           <label>Kata Sandi</label>
           <div className="password-wrapper">
@@ -57,6 +81,8 @@ const Login: React.FC = () => {
               type={showPassword ? "text" : "password"}
               placeholder="**********"
               className="input-field"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <button
               type="button"
@@ -68,7 +94,6 @@ const Login: React.FC = () => {
           </div>
         </div>
 
-        {/* Remember Me & Forgot Password */}
         <div className="login-options">
           <div className="remember-me">
             <img src={checkboxIcon} alt="Checkbox" className="checkbox-icon" />
@@ -79,18 +104,19 @@ const Login: React.FC = () => {
           </Link>
         </div>
 
-        {/* Login Button */}
-        <button className="login-button">Masuk</button>
+        <button className="login-button" onClick={handleLogin}>
+          Masuk
+        </button>
 
-        {/* Register Link */}
         <p className="register-text">
-          Belum memiliki akun? <Link to="/register" className="register-link">Daftarkan</Link>
+          Belum memiliki akun?{" "}
+          <Link to="/register" className="register-link">
+            Daftarkan
+          </Link>
         </p>
 
-        {/* Separator */}
         <div className="separator">atau masuk dengan</div>
 
-        {/* Google Sign-In Button */}
         <button className="google-button" onClick={handleGoogleLogin}>
           <img src={googleIcon} alt="Google" className="google-icon" />
           Lanjutkan dengan Google
