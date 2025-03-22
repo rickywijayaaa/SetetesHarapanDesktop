@@ -95,13 +95,6 @@ export default function PesanScreen() {
           </View>
         )}
       />
-      <View style={styles.bottomNav}>
-        <Ionicons name="home-outline" size={32} color="gray" />
-        <Ionicons name="search-outline" size={32} color="gray" />
-        <Ionicons name="heart-outline" size={32} color="gray" />
-        <Ionicons name="chatbubbles-outline" size={32} color="red" />
-        <Ionicons name="person-outline" size={32} color="gray" />
-      </View>
     </View>
   );
 }
