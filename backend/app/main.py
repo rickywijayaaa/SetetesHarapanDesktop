@@ -8,6 +8,7 @@ from app.schemas import DarahSchema
 from datetime import date
 from fastapi import FastAPI
 from app.routes.users import router as users_router  # Import the users router
+from app.routes.auth import router as auth_router  # Import the users router
 
 app = FastAPI()
 
@@ -102,3 +103,6 @@ async def get_donors():
 
 # Include the users router with a prefix (optional)
 app.include_router(users_router, prefix="/users", tags=["users"])
+
+# Include the users router with a prefix (optional)
+app.include_router(auth_router, prefix="/users", tags=["auth"])

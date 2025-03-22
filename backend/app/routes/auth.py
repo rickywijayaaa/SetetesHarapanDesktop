@@ -16,7 +16,7 @@ def verify_password(plain_password, hashed_password):
 
 @router.post("/login")
 def login_user(user: LoginRequest, response: Response):
-    response_data = supabase.table("users").select("idUser, email, password").eq("email", user.email).execute()
+    response_data = supabase.table("users").select("iduser, email, password").eq("email", user.email).execute()
     
     if not response_data.data:
         raise HTTPException(status_code=400, detail="Email tidak terdaftar")
@@ -30,7 +30,7 @@ def login_user(user: LoginRequest, response: Response):
 
     session_data = {
         "session_id": session_id,
-        "user_id": user_data["idUser"],
+        "user_id": user_data["iduser"],
         "expires_at": expire_time.isoformat()
     }
     supabase.table("sessions").insert(session_data).execute()

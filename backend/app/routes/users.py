@@ -52,3 +52,24 @@ def register_user(user: UserRegister):
         province=new_user["province"],
         role=new_user["role"]
     )
+
+
+from fastapi import Request
+
+@router.get("/me")
+def get_current_user(request: Request):
+    session_id = request.cookies.get("session_id")
+    if not session_id:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    session = supabase.table("sessions").select("user_id").eq("session_id", session_id).execute()
+    if not session.data:
+        raise HTTPException(status_code=401, detail="Invalid session")
+
+    user_id = session.data[0]["user_id"]
+    user = supabase.table("users").select("name, role").eq("iduser", user_id).execute()
+
+    if not user.data:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return user.data[0]

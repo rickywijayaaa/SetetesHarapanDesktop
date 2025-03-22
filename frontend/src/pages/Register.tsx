@@ -72,27 +72,28 @@ const Register: React.FC = () => {
       return;
     }
 
-    try {
-      await axios.post("http://127.0.0.1:8000/users/register", {
-        ...form,
-        city: selectedCity || "-",
-        province: selectedProvince || "-",
-        role: form.role || "Rumah Sakit",
-        first_name: "-",
-        last_name: "-",
-        nik: "-",
-        birth_date: null,
-        jenis_kelamin: "-",
-        golongan_darah: "-",
-        rhesus: "-",
-        riwayat_result: false,
-        total_points: 0
-      });
+    const payload = {
+      ...form,
+      city: selectedCity || "-",
+      province: selectedProvince || "-",
+      role: form.role || "Rumah Sakit",
+      first_name: "-",
+      last_name: "-",
+      nik: "-",
+      birth_date: null,
+      jenis_kelamin: "-",
+      golongan_darah: "-",
+      rhesus: "-",
+      riwayat_result: false,
+      total_points: 0
+    };
 
+    try {
+      const res = await axios.post("http://127.0.0.1:8000/users/register", payload);
       alert("Registrasi berhasil!");
       navigate("/verification");
     } catch (err: any) {
-      alert("Registrasi gagal: " + (err.response?.data?.detail || "Terjadi kesalahan"));
+      console.error("Debug Error Response:", err.response?.data);
     }
   };
 
