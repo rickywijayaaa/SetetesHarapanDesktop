@@ -122,7 +122,57 @@ const EditDarah: React.FC = () => {
 
           <div className="input-group-ed">
             <select name="jenis_darah" value={formData.jenis_darah} onChange={handleInputChange}>
-              <option>Jenis Darah</option><option>FFP</option><option>PRC</option><option>WB</option>
+              <option value="">Jenis Darah</option>
+              <option value="AHF">AHF</option>
+              <option value="BC">BC</option>
+              <option value="FFP">FFP</option>
+              <option value="FFP 450">FFP 450</option>
+              <option value="FFP Aferesis">FFP Aferesis</option>
+              <option value="FFP Fraksionasi">FFP Fraksionasi</option>
+              <option value="FFP Konvalesen">FFP Konvalesen</option>
+              <option value="FFP PKC">FFP PKC</option>
+              <option value="FP">FP</option>
+              <option value="FP72">FP72</option>
+              <option value="Lekosit Eferesis">Lekosit Eferesis</option>
+              <option value="Lekosit Apheresis">Lekosit Apheresis</option>
+              <option value="Leucodepleted">Leucodepleted</option>
+              <option value="Leucoreduce">Leucoreduce</option>
+              <option value="LP">LP</option>
+              <option value="LP Aferesis">LP Aferesis</option>
+              <option value="LP Apheresis">LP Apheresis</option>
+              <option value="LP PKC">LP PKC</option>
+              <option value="PCL">PCL</option>
+              <option value="PCR">PCR</option>
+              <option value="PF">PF</option>
+              <option value="PK">PK</option>
+              <option value="Plasma Konvalesen">Plasma Konvalesen</option>
+              <option value="PRC">PRC</option>
+              <option value="PRC - LC">PRC - LC</option>
+              <option value="PRC 450">PRC 450</option>
+              <option value="PRC Eferesis">PRC Eferesis</option>
+              <option value="PRC BCR">PRC BCR</option>
+              <option value="PRC CPD">PRC CPD</option>
+              <option value="PRC Leucodepleted">PRC Leucodepleted</option>
+              <option value="PRC Leucodepletet">PRC Leucodepletet</option>
+              <option value="PRC, Leucoreduce">PRC, Leucoreduce</option>
+              <option value="PRC SAGM">PRC SAGM</option>
+              <option value="PRC-BCR">PRC-BCR</option>
+              <option value="PRC-NAT">PRC-NAT</option>
+              <option value="PRP">PRP</option>
+              <option value="SAGM">SAGM</option>
+              <option value="TC">TC</option>
+              <option value="TC Aferesis">TC Aferesis</option>
+              <option value="TC Apheresi">TC Apheresi</option>
+              <option value="TC Apheresis">TC Apheresis</option>
+              <option value="TC APR">TC APR</option>
+              <option value="TC Tromboferesis">TC Tromboferesis</option>
+              <option value="TC-APH">TC-APH</option>
+              <option value="TCP">TCP</option>
+              <option value="WB">WB</option>
+              <option value="WB Fresh">WB Fresh</option>
+              <option value="WB Leucodepletet">WB Leucodepletet</option>
+              <option value="WE">WE</option>
+              <option value="WE Leucodepleted">WE Leucodepleted</option>
             </select>
             <input type="text" placeholder="Jumlah Darah yang Diambil (mL)" name="jumlah_darah" value={formData.jumlah_darah} onChange={handleInputChange} />
           </div>
