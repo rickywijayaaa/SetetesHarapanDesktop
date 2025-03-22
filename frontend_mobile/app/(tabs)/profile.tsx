@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -10,25 +10,44 @@ import {
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import API from "../../constants/api";
 
 export default function Profile() {
   const router = useRouter();
 
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone_number: "",
+    address: "",
+    city: "",
+    province: "",
+    role: "user",
+  });
+
+  const handleUpdateProfile = async () => {
+    try {
+      const iduser = 1; // Ganti sesuai user login
+      const response = await API.put(`/user/profile/${iduser}`, form);
+      alert("Profil berhasil diperbarui!");
+    } catch (error) {
+      console.error(error);
+      alert("Gagal memperbarui profil");
+    }
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: "#8E1616" }}>
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
-        {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()}>
             <FontAwesome name="arrow-left" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Profil</Text>
-          <View style={{ width: 24 }} /> {/* dummy space untuk keseimbangan */}
+          <View style={{ width: 24 }} />
         </View>
 
-        {/* White Container */}
         <View style={styles.card}>
-          {/* Profile Image */}
           <View style={styles.profilePicWrapper}>
             <Image
               source={require("../../assets/images/avatar1.png")}
@@ -39,31 +58,70 @@ export default function Profile() {
           <Text style={styles.name}>John Doe</Text>
           <Text style={styles.email}>john.doe@gmail.com</Text>
 
-          {/* Form */}
           <View style={styles.form}>
-            {[
-              { label: "Nama Awal", placeholder: "John" },
-              { label: "Nama Akhir", placeholder: "Doe" },
-              { label: "Email", placeholder: "john.doe@gmail.com" },
-              { label: "NIK", placeholder: "1234567890123456" },
-              { label: "Tanggal Lahir", placeholder: "01/01/2001" },
-              { label: "Nomor Telepon", placeholder: "081234567890" },
-              { label: "Kota/Kabupaten", placeholder: "Kota Bandung" },
-              { label: "Provinsi", placeholder: "Jawa Barat" },
-            ].map((field, index) => (
-              <View key={index} style={styles.inputGroup}>
-                <Text style={styles.label}>{field.label}</Text>
-                <TextInput
-                  placeholder={field.placeholder}
-                  style={styles.input}
-                  placeholderTextColor="#aaa"
-                />
-              </View>
-            ))}
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Nama</Text>
+              <TextInput
+                placeholder="John Doe"
+                style={styles.input}
+                placeholderTextColor="#aaa"
+                value={form.name}
+                onChangeText={(text) => setForm({ ...form, name: text })}
+              />
+            </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Email</Text>
+              <TextInput
+                placeholder="john.doe@gmail.com"
+                style={styles.input}
+                placeholderTextColor="#aaa"
+                value={form.email}
+                onChangeText={(text) => setForm({ ...form, email: text })}
+              />
+            </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Nomor Telepon</Text>
+              <TextInput
+                placeholder="081234567890"
+                style={styles.input}
+                placeholderTextColor="#aaa"
+                value={form.phone_number}
+                onChangeText={(text) => setForm({ ...form, phone_number: text })}
+              />
+            </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Alamat</Text>
+              <TextInput
+                placeholder="Jl. Merdeka No. 123"
+                style={styles.input}
+                placeholderTextColor="#aaa"
+                value={form.address}
+                onChangeText={(text) => setForm({ ...form, address: text })}
+              />
+            </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Kota/Kabupaten</Text>
+              <TextInput
+                placeholder="Kota Bandung"
+                style={styles.input}
+                placeholderTextColor="#aaa"
+                value={form.city}
+                onChangeText={(text) => setForm({ ...form, city: text })}
+              />
+            </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Provinsi</Text>
+              <TextInput
+                placeholder="Jawa Barat"
+                style={styles.input}
+                placeholderTextColor="#aaa"
+                value={form.province}
+                onChangeText={(text) => setForm({ ...form, province: text })}
+              />
+            </View>
           </View>
 
-          {/* Buttons */}
-          <TouchableOpacity style={styles.updateButton}>
+          <TouchableOpacity style={styles.updateButton} onPress={handleUpdateProfile}>
             <Text style={styles.updateButtonText}>Ubah Profil</Text>
           </TouchableOpacity>
 
@@ -178,5 +236,3 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-
-export default Profile;

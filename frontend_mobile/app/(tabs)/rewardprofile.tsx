@@ -4,17 +4,32 @@ import { FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRef, useState } from "react";
 import { router } from "expo-router";
+import { useRouter } from "expo-router";
 
 const { width } = Dimensions.get("window");
-const itemWidth = width * 0.7;
+
+
+const carouselItems = [
+    { id: "1", image: require("../../assets/images/voucher.png") },
+    { id: "2", image: require("../../assets/images/voucher.png") },
+    { id: "3", image: require("../../assets/images/voucher.png") },
+  ];
 
 export default function Reward2() {
+    const [activeIndex, setActiveIndex] = useState(0);
+    const router = useRouter();
   const dropImages = [
     require("../../assets/images/drop1.png"),
     require("../../assets/images/drop2.png"),
     require("../../assets/images/drop3.png"),
     require("../../assets/images/drop.png")
   ];
+
+  const handleScroll = (event) => {
+    const scrollPosition = event.nativeEvent.contentOffset.x;
+    const index = Math.round(scrollPosition / width);
+    setActiveIndex(index);
+  };
 
   const xpValues = [100, 500, 1000, 1500];
 
@@ -148,45 +163,25 @@ export default function Reward2() {
           </TouchableOpacity>
 
           {/* Vouchers Carousel */}
-          <View style={{ marginTop: 20, position: "relative", width: "100%", alignItems: "center" }}>
-            {/* Left Arrow */}
-            <TouchableOpacity
-              style={styles.arrowLeft}
-              onPress={() => scrollRef.current?.scrollTo({ x: scrollPosition - itemWidth, animated: true })}
-            >
-              <View style={styles.arrowButton}>
-                <FontAwesome name="chevron-left" size={18} color="#fff" />
-              </View>
-            </TouchableOpacity>
-
-            {/* Scrollable Vouchers */}
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              ref={scrollRef}
-              onScroll={(e) => setScrollPosition(e.nativeEvent.contentOffset.x)}
-              scrollEventThrottle={16}
-            >
-              {[1, 2, 3].map((v, i) => (
-                <Image
-                  key={i}
-                  source={require("../../assets/images/voucher.png")}
-                  style={styles.voucherCard}
-                  resizeMode="cover"
-                />
-              ))}
-            </ScrollView>
-
-            {/* Right Arrow */}
-            <TouchableOpacity
-              style={styles.arrowRight}
-              onPress={() => scrollRef.current?.scrollTo({ x: scrollPosition + itemWidth, animated: true })}
-            >
-              <View style={styles.arrowButton}>
-                <FontAwesome name="chevron-right" size={18} color="#fff" />
-              </View>
-            </TouchableOpacity>
-          </View>
+            <View style={styles.carouselWrapper}>
+                <ScrollView 
+                horizontal 
+                pagingEnabled 
+                showsHorizontalScrollIndicator={false} 
+                style={styles.carousel}
+                onScroll={handleScroll}
+                scrollEventThrottle={16}
+                >
+                {carouselItems.map((item) => (
+                    <Image key={item.id} source={item.image} style={styles.carouselImage} />
+                ))}
+                </ScrollView>
+                <View style={styles.indicatorContainer}>
+                {carouselItems.map((_, index) => (
+                    <View key={index} style={[styles.indicator, activeIndex === index && styles.activeIndicator]} />
+                ))}
+                </View>
+            </View>
         </View>
       </ScrollView>
     </ImageBackground>
@@ -379,11 +374,36 @@ const styles = StyleSheet.create({
     top: "40%",
     zIndex: 5,
   },
-  voucherCard: {
-    marginTop: 15,
-    width: width * 0.55,  
-    height: 100,
-    borderRadius: 15,
-    marginRight: 15,
+  carouselWrapper: {
+    alignItems: "center", 
+  },
+  carousel: {
+    marginVertical: 10,
+    marginBottom: 30,
+  },
+  carouselImage: {
+    width: width * 0.75, 
+    height: 180,         
+    borderRadius: 12,
+    resizeMode: "contain",
+    marginHorizontal: width * 0.05, // agar berada di tengah
   },  
+  indicatorContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    position: "absolute",
+    bottom: 5, 
+    left: 0,
+    right: 0,
+  },
+  indicator: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "gray",
+    marginHorizontal: 5,
+  },
+  activeIndicator: {
+    backgroundColor: "#8E1616",
+  },
 });
