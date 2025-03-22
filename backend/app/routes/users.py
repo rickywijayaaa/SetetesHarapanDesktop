@@ -13,7 +13,6 @@ def hash_password(password: str) -> str:
 
 @router.post("/register", response_model=UserResponse)
 def register_user(user: UserRegister):
-    # Check if email is already used
     response = supabase.table("users").select("email").eq("email", user.email).execute()
     if response.data:
         raise HTTPException(status_code=400, detail="Email sudah terdaftar")
@@ -28,7 +27,7 @@ def register_user(user: UserRegister):
         "address": user.address,
         "city": user.city,
         "province": user.province,
-        "role": user.role.value,
+        "role": user.role,
         "first_name": user.first_name,
         "last_name": user.last_name,
         "nik": user.nik,
@@ -37,26 +36,19 @@ def register_user(user: UserRegister):
         "golongan_darah": user.golongan_darah,
         "rhesus": user.rhesus,
         "riwayat_result": user.riwayat_result,
-        "total_points": 0  # ✅ default point
+        "total_points": 0
     }
 
-    # Insert user without specifying iduser
-    try:
-        response = supabase.table("users").insert(new_user).execute()
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Gagal menyimpan user: {str(e)}")
+    response = supabase.table("users").insert(new_user).execute()
+    if hasattr(response, 'error') and response.error:
+        raise HTTPException(status_code=500, detail="Gagal menyimpan user")
 
-
-
-    inserted_user = response.data[0]  # Get auto-generated user
     return UserResponse(
-        iduser=inserted_user["iduser"],
-        name=inserted_user["name"],
-        email=inserted_user["email"],
-        phone_number=inserted_user["phone_number"],
-        address=inserted_user["address"],
-        city=inserted_user["city"],
-        province=inserted_user["province"],
-        role=inserted_user["role"]
+        name=new_user["name"],
+        email=new_user["email"],
+        phone_number=new_user["phone_number"],
+        address=new_user["address"],
+        city=new_user["city"],
+        province=new_user["province"],
+        role=new_user["role"]
     )
-

@@ -1,352 +1,347 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  SafeAreaView,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import logo from "../assets/logo.png";
+import googleIcon from "../assets/google.svg";
+import checkboxIcon from "../assets/checkbox.svg";
+import bgImage2 from "../assets/registerbg.jpg";
 
-export default function Register() {
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+const provinceCityMap: { [key: string]: string[] } = {
+  Aceh: ["Banda Aceh", "Sabang", "Langsa", "Lhokseumawe", "Subulussalam"],
+  "Sumatera Utara": [
+    "Medan",
+    "Binjai",
+    "Tebing Tinggi",
+    "Pematangsiantar",
+    "Padang Sidempuan",
+  ],
+  "Sumatera Barat": [
+    "Padang",
+    "Bukittinggi",
+    "Payakumbuh",
+    "Sawahlunto",
+    "Solok",
+  ],
+  Riau: ["Pekanbaru", "Dumai"],
+  "Kepulauan Riau": ["Tanjung Pinang", "Batam"],
+  Jambi: ["Jambi", "Sungai Penuh"],
+  Bengkulu: ["Bengkulu"],
+  "Sumatera Selatan": ["Palembang", "Lubuklinggau", "Pagar Alam", "Prabumulih"],
+  "Kepulauan Bangka Belitung": ["Pangkal Pinang"],
+  Lampung: ["Bandar Lampung", "Metro"],
+  Banten: ["Serang", "Cilegon", "Tangerang", "Tangerang Selatan"],
+  "DKI Jakarta": [
+    "Jakarta Pusat",
+    "Jakarta Utara",
+    "Jakarta Timur",
+    "Jakarta Barat",
+    "Jakarta Selatan",
+  ],
+  "Jawa Barat": ["Bandung", "Bekasi", "Bogor", "Depok", "Cimahi", "Sukabumi"],
+  "Jawa Tengah": [
+    "Semarang",
+    "Surakarta",
+    "Magelang",
+    "Tegal",
+    "Pekalongan",
+    "Salatiga",
+  ],
+  "DI Yogyakarta": [
+    "Yogyakarta",
+    "Sleman",
+    "Bantul",
+    "Gunung Kidul",
+    "Kulon Progo",
+  ],
+  "Jawa Timur": [
+    "Surabaya",
+    "Malang",
+    "Kediri",
+    "Mojokerto",
+    "Pasuruan",
+    "Probolinggo",
+    "Blitar",
+  ],
+  Bali: ["Denpasar"],
+  "Nusa Tenggara Barat": ["Mataram", "Bima"],
+  "Nusa Tenggara Timur": ["Kupang"],
+  "Kalimantan Barat": ["Pontianak", "Singkawang"],
+  "Kalimantan Tengah": ["Palangka Raya"],
+  "Kalimantan Selatan": ["Banjarmasin", "Banjarbaru"],
+  "Kalimantan Timur": ["Balikpapan", "Samarinda", "Bontang"],
+  "Kalimantan Utara": ["Tarakan"],
+  "Sulawesi Utara": ["Manado", "Bitung", "Tomohon", "Kotamobagu"],
+  "Sulawesi Tengah": ["Palu"],
+  "Sulawesi Selatan": ["Makassar", "Parepare", "Palopo"],
+  "Sulawesi Tenggara": ["Kendari", "Bau-Bau"],
+  Gorontalo: ["Gorontalo"],
+  "Sulawesi Barat": ["Mamuju"],
+  Maluku: ["Ambon", "Tual"],
+  "Maluku Utara": ["Ternate", "Tidore Kepulauan"],
+  Papua: ["Jayapura"],
+  "Papua Barat": ["Manokwari", "Sorong"],
+};
+
+const Register: React.FC = () => {
+  const navigate = useNavigate();
+
+  const [form, setForm] = useState({
+    name: "",
     email: "",
-    nik: "",
-    birthdate: "",
-    phoneNumber: "",
-    city: "",
-    province: "",
-  })
+    phone_number: "",
+    address: "",
+    role: "",
+    password: "",
+  });
 
+  const [selectedProvince, setSelectedProvince] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [confirmInfo, setConfirmInfo] = useState(false);
-  
 
-  const handleChange = (field: string, value: string) => {
-    setFormData({
-      ...formData,
-      [field]: value,
-    });
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const router = useRouter();
+  const handleRegister = async () => {
+    if (form.password !== confirmPassword) {
+      alert("Konfirmasi password tidak cocok!");
+      return;
+    }
+
+    const payload = {
+      ...form,
+      city: selectedCity || "-",
+      province: selectedProvince || "-",
+      role: form.role || "Rumah Sakit",
+      first_name: "-",
+      last_name: "-",
+      nik: "-",
+      birth_date: null,
+      jenis_kelamin: "-",
+      golongan_darah: "-",
+      rhesus: "-",
+      riwayat_result: false,
+      total_points: 0,
+    };
+
+    try {
+      const res = await axios.post(
+        "http://127.0.0.1:8000/users/register",
+        payload
+      );
+      alert("Registrasi berhasil!");
+      navigate("/verification");
+    } catch (err: any) {
+      console.error("Debug Error Response:", err.response?.data);
+      alert(
+        "Registrasi gagal: " +
+          (err.response?.data?.detail || "Terjadi kesalahan")
+      );
+    }
+  };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.keyboardAvoidView}
+    <div className="register-container">
+      <div
+        className="register-bg"
+        style={{
+          backgroundImage: `url(${bgImage2})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          width: "50%",
+          height: "170vh",
+          position: "relative",
+        }}
       >
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <Text style={styles.title}>Daftar</Text>
-          <Text style={styles.subtitle}>
-            Bergabunglah dengan SetetesHarapan
-          </Text>
+        <div className="bg-overlay"></div>
+      </div>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Nama Awal</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="John"
-              value={formData.firstName}
-              onChangeText={(text) => handleChange("firstName", text)}
-            />
-          </View>
+      <div className="register-form-container">
+        <div className="logo-container2">
+          <img src={logo} alt="Setetes Harapan" className="register-logo" />
+          <h1 className="register-title-main">SetetesHarapan</h1>
+        </div>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Nama Akhir</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Doe"
-              value={formData.lastName}
-              onChangeText={(text) => handleChange("lastName", text)}
-            />
-          </View>
+        <h2 className="register-title">Daftar</h2>
+        <p className="register-subtitle">Daftarkan dengan data yang valid</p>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Email</Text>
-            <TextInput
-              style={styles.input}
+        <div className="input-group">
+          <label>Lembaga</label>
+          <select
+            name="role"
+            className="input-field"
+            value={form.role}
+            onChange={handleChange}
+          >
+            <option value="">Pilih Lembaga</option>
+            <option value="Rumah Sakit">Rumah Sakit</option>
+            <option value="PMI">PMI</option>
+            <option value="Kemenkes">Kemenkes</option>
+          </select>
+        </div>
+
+        <div className="input-group">
+          <label>Nama Rumah Sakit / Nama UTD</label>
+          <input
+            type="text"
+            name="name"
+            placeholder="Nama Rumah Sakit"
+            className="input-field"
+            value={form.name}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="input-row">
+          <div className="input-group">
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"
               placeholder="john.doe@gmail.com"
-              value={formData.email}
-              onChangeText={(text) => handleChange("email", text)}
+              className="input-field"
+              value={form.email}
+              onChange={handleChange}
             />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>NIK</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="3602041211870001"
-              value={formData.nik}
-              onChangeText={(text) => handleChange("nik", text)}
+          </div>
+          <div className="input-group">
+            <label>Nomor Telepon</label>
+            <input
+              type="text"
+              name="phone_number"
+              placeholder="+62-812-12345678"
+              className="input-field"
+              value={form.phone_number}
+              onChange={handleChange}
             />
-          </View>
+          </div>
+        </div>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Tanggal Lahir</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="23/08/2003"
-              value={formData.birthdate}
-              onChangeText={(text) => handleChange("birthDate", text)}
+        <div className="input-group">
+          <label>Alamat</label>
+          <input
+            type="text"
+            name="address"
+            placeholder="Alamat Lengkap"
+            className="input-field"
+            value={form.address}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="input-group">
+          <label>Provinsi</label>
+          <select
+            className="input-field"
+            value={selectedProvince}
+            onChange={(e) => {
+              setSelectedProvince(e.target.value);
+              setSelectedCity("");
+            }}
+          >
+            <option value="">Pilih Provinsi</option>
+            {Object.keys(provinceCityMap).map((prov) => (
+              <option key={prov} value={prov}>
+                {prov}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="input-group">
+          <label>Kota/Kabupaten</label>
+          <select
+            className="input-field"
+            value={selectedCity}
+            onChange={(e) => setSelectedCity(e.target.value)}
+            disabled={!selectedProvince}
+          >
+            <option value="">Pilih Kota/Kabupaten</option>
+            {provinceCityMap[selectedProvince]?.map((city) => (
+              <option key={city} value={city}>
+                {city}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="input-group">
+          <label>Password</label>
+          <div className="password-wrapper">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="**********"
+              className="input-field"
+              value={form.password}
+              onChange={handleChange}
             />
-          </View>   
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Nomor Telepon</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="081122334455"
-              value={formData.phoneNumber}
-              onChangeText={(text) => handleChange("phoneNumber", text)}
-            />
-          </View>   
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Kota/Kabupaten</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Kota Bandung"
-              value={formData.city}
-              onChangeText={(text) => handleChange("city", text)}
-            />
-          </View>  
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Provinsi</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Jawa Barat"
-              value={formData.province}
-              onChangeText={(text) => handleChange("province", text)}
-            />
-          </View>       
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Password</Text>
-            <View style={styles.passwordContainer}>
-              <TextInput
-                style={styles.passwordInput}
-                placeholder="••••••••••••••••••••••"
-                secureTextEntry={!showPassword}
-                value={formData.password}
-                onChangeText={(text) => handleChange("password", text)}
-              />
-              <TouchableOpacity
-                style={styles.eyeIcon}
-                onPress={() => setShowPassword(!showPassword)}
-              >
-                <Ionicons
-                  name={showPassword ? "eye" : "eye-off"}
-                  size={24}
-                  color="#888"
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Confirm Password</Text>
-            <View style={styles.passwordContainer}>
-              <TextInput
-                style={styles.passwordInput}
-                placeholder="••••••••••••••••••••••"
-                secureTextEntry={!showConfirmPassword}
-                value={formData.password}
-                onChangeText={(text) => handleChange("password", text)}
-              />
-              <TouchableOpacity
-                style={styles.eyeIcon}
-                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-              >
-                <Ionicons
-                  name={showConfirmPassword ? "eye" : "eye-off"}
-                  size={24}
-                  color="#888"
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-
-        <View style={styles.confirmContainer}>
-            <TouchableOpacity
-            style={styles.checkbox}
-            onPress={() => setConfirmInfo((prev) => !prev)}
+            <button
+              type="button"
+              className="toggle-password"
+              onClick={() => setShowPassword(!showPassword)}
             >
-            {confirmInfo && <View style={styles.checkboxInner} />}
-            </TouchableOpacity>
-            <Text style={styles.termsText}>
-            Saya menyatakan bahwa semua informasi yang saya berikan adalah benar
-            </Text>
-        </View>
+              {showPassword ? "🙈" : "👁"}
+            </button>
+          </div>
+        </div>
 
-      <TouchableOpacity style={styles.button} onPress={() => router.push("/riwayat_kesehatan")}>
-        <Text style={styles.buttonText}>Daftar</Text>
-      </TouchableOpacity>
+        <div className="input-group">
+          <label>Confirm Password</label>
+          <div className="password-wrapper">
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              placeholder="**********"
+              className="input-field"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+            <button
+              type="button"
+              className="toggle-password"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            >
+              {showConfirmPassword ? "🙈" : "👁"}
+            </button>
+          </div>
+        </div>
 
-      <View style={styles.loginLinkContainer}>
-        <Text style={styles.loginText}>Sudah punya akun? </Text>
-        <TouchableOpacity onPress={() => router.push("/login")}> 
-          <Text style={styles.loginLink}>Masuk</Text>
-        </TouchableOpacity>
-      </View>
+        <div className="register-options">
+          <div className="agree-terms">
+            <img src={checkboxIcon} alt="Checkbox" className="checkbox-icon" />
+            <span>
+              Saya setuju dengan <span className="terms">Persyaratan</span> dan{" "}
+              <span className="policy">Kebijakan Privasi</span>
+            </span>
+          </div>
+        </div>
 
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+        <button className="register-button" onClick={handleRegister}>
+          Buat Akun
+        </button>
+
+        <p className="login-text">
+          Sudah memiliki akun?{" "}
+          <Link to="/login" className="login-link">
+            Masuk
+          </Link>
+        </p>
+
+        <div className="separator">Atau daftar dengan</div>
+
+        <button className="google-button">
+          <img src={googleIcon} alt="Google" className="google-icon" />
+          Lanjutkan dengan Google
+        </button>
+      </div>
+    </div>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  keyboardAvoidView: {
-    flex: 1,
-  },
-  scrollContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 40,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#8E1616",
-    textAlign: "center",
-    marginBottom: 5,
-    marginTop: 20,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#333",
-    textAlign: "center",
-    marginBottom: 50,
-    marginTop: 20
-  },
-  inputGroup: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 5,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    padding: 12,
-    fontSize: 16,
-  },
-  passwordContainer: {
-    flexDirection: "row",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    alignItems: "center",
-  },
-  passwordInput: {
-    flex: 1,
-    padding: 12,
-    fontSize: 16,
-  },
-  eyeIcon: {
-    padding: 10,
-  },
-  button: {
-    backgroundColor: "#8E1616",
-    padding: 15,
-    borderRadius: 5,
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  loginLinkContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loginText: {
-    fontSize: 14,
-    color: "#333",
-    marginTop: 10,
-  },
-  loginLink: {
-    fontSize: 14,
-    color: "#8E1616",
-    fontWeight: "500",
-    marginTop: 10,
-  },
-  loginButton: {
-    backgroundColor: "#8E1616",
-    width: "100%",
-    paddingVertical: 5,
-    marginBottom: 10,
-    borderRadius: 10,
-  },
-  orText: {
-    marginVertical: 10,
-    fontSize: 14,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginTop: 30,
-  },
-  googleButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#8E1616",
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    width: "100%",
-    justifyContent: "center",
-    marginTop: 30,
-  },
-  googleText: {
-    marginLeft: 10,
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  confirmContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 20,
-    marginTop: 10,
-    marginBottom: 30,
-  },
-  checkbox: {
-    width: 24,
-    height: 24,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    marginRight: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  checkboxInner: {
-    width: 16,
-    height: 16,
-    backgroundColor: "#8E1616",
-  },
-  termsText: {
-    flex: 1,
-    fontSize: 14,
-    color: "#333",
-    textAlign: "justify",
-  },
-});
+export default Register;
