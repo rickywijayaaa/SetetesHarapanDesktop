@@ -17,7 +17,7 @@ export default function Login() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-  })
+  });
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -38,9 +38,7 @@ export default function Login() {
       >
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <Text style={styles.title}>Masuk</Text>
-          <Text style={styles.subtitle}>
-            Selamat Datang di SetetesHarapan
-          </Text>
+          <Text style={styles.subtitle}>Selamat Datang di SetetesHarapan</Text>
 
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Email</Text>
@@ -76,25 +74,27 @@ export default function Login() {
           </View>
 
       {/* Login Button */}
-      <TouchableOpacity style={styles.button} onPress={() => router.push("/kegiatan_donor")}>
+      <TouchableOpacity style={styles.button} onPress={() => router.push("/home")}>
         <Text style={styles.buttonText}>Masuk</Text>
       </TouchableOpacity>
 
-      <View style={styles.loginLinkContainer}>
-        <Text style={styles.loginText}>Belum punya akun? </Text>
-        <TouchableOpacity onPress={() => router.push("/register")}> 
-          <Text style={styles.loginLink}>Daftar</Text>
-        </TouchableOpacity>
-      </View>
+          <View style={styles.loginLinkContainer}>
+            <Text style={styles.loginText}>Belum punya akun? </Text>
+            <TouchableOpacity
+              onPress={() => router.push("/ketersediaan_donor")}
+            >
+              <Text style={styles.loginLink}>Daftar</Text>
+            </TouchableOpacity>
+          </View>
 
-      {/* Separator */}
-      <Text style={styles.orText}>Atau</Text>
+          {/* Separator */}
+          <Text style={styles.orText}>Atau</Text>
 
-      {/* Google Login Button */}
-      <TouchableOpacity style={styles.googleButton}>
-        <Ionicons name="logo-google" size={20} color="black" />
-        <Text style={styles.googleText}>Login dengan Google</Text>
-      </TouchableOpacity>
+          {/* Google Login Button */}
+          <TouchableOpacity style={styles.googleButton}>
+            <Ionicons name="logo-google" size={20} color="black" />
+            <Text style={styles.googleText}>Login dengan Google</Text>
+          </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     color: "#333",
     textAlign: "center",
     marginBottom: 50,
-    marginTop: 20
+    marginTop: 20,
   },
   inputGroup: {
     marginBottom: 20,
