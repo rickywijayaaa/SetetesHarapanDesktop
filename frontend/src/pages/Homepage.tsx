@@ -81,7 +81,7 @@ const Homepage: React.FC = () => {
       params.append("_t", new Date().getTime().toString());
 
       // Make API request
-      const response = await axios.get(`${API_BASE_URL}/dashboard`, { params });
+      const response = await axios.get(`${API_BASE_URL}/api/dashboard`, { params });
       setDashboardData(response.data);
       setLastUpdated(new Date());
     } catch (err) {
