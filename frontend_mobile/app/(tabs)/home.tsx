@@ -256,6 +256,7 @@ const styles = StyleSheet.create({
   },
   eventsContainer: {
     paddingBottom: 80,
+    marginTop: -20
   },
   card: {
     backgroundColor: "#fff",
