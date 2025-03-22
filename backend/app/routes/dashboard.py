@@ -7,7 +7,7 @@ from datetime import datetime
 
 router = APIRouter()
 
-@router.get("")
+@router.get("/dashboard")
 async def get_dashboard(
     golongan: Optional[str] = Query(None, description="Filter berdasarkan golongan darah (A, B, AB, O)"),
     jenis: Optional[str] = Query(None, description="Filter berdasarkan jenis darah (Whole Blood, Platelet, Plasma, etc)"),
@@ -17,7 +17,7 @@ async def get_dashboard(
 ):
     try:
         # Dapatkan role dan informasi pengguna
-        user_role = "pmi"
+        user_role = "kemenkes"
         first_name = "Micky"
         last_name = "Valentino"
         full_name = f"{first_name} {last_name}".strip()
