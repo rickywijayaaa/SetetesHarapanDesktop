@@ -25,9 +25,9 @@ def login_user(user: LoginRequest, response: Response):
 
     user_data = response_data.data[0]
     # 🔍 Debug logs
-    print("📥 Input Password:", user.password)
-    print("🔐 Stored Hashed Password:", user_data["password"])
-    print("✅ Password Match:", verify_password(user.password, user_data["password"]))
+    print("Input Password:", user.password)
+    print("Stored Hashed Password:", user_data["password"])
+    print("Password Match:", verify_password(user.password, user_data["password"]))
 
     if not verify_password(user.password, user_data["password"]):
         raise HTTPException(status_code=401, detail="Password salah")
