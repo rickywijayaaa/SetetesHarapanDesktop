@@ -217,6 +217,7 @@ const styles = StyleSheet.create({
   dropWrapper: {
     alignItems: "center",
     marginVertical: 20,
+    marginTop: 70
   },
   dropIconLarge: {
     width: 80,
