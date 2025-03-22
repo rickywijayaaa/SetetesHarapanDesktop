@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router'; // Import useRouter untuk navigasi
 import { useFonts } from 'expo-font';
 
 const messages = [
@@ -50,6 +50,8 @@ const messages = [
 
 export default function PesanScreen() {
   const [selectedTab, setSelectedTab] = useState('All');
+  const router = useRouter(); // Inisialisasi router
+
   const [fontsLoaded] = useFonts({
     PoppinsBold: require('../../assets/fonts/Poppins-Bold.ttf'),
     PoppinsRegular: require('../../assets/fonts/Poppins-Regular.ttf'),
@@ -74,25 +76,21 @@ export default function PesanScreen() {
         data={messages}
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
-          <View style={styles.messageContainer}>
+          <TouchableOpacity
+            onPress={() => {
+              if (item.id === '1') {
+                router.push('/pushnotif'); // Navigasi ke pushnotif.tsx
+              }
+            }}
+            style={styles.messageContainer}
+          >
             <Image source={item.avatar} style={styles.avatar} />
             <View style={styles.messageContent}>
               <Text style={styles.sender}>{item.name}</Text>
               <Text style={styles.message}>{item.message}</Text>
-              {item.file && (
-                <View style={styles.fileContainer}>
-                  <MaterialIcons name="insert-drive-file" size={18} color="gray" />
-                  <Text style={styles.fileName}>{item.file}</Text>
-                </View>
-              )}
-              {item.favorite && (
-                <TouchableOpacity style={styles.favoriteButton}>
-                  <Text style={styles.favoriteText}>+ Add to favorites</Text>
-                </TouchableOpacity>
-              )}
               <Text style={styles.time}>{item.time}</Text>
             </View>
-          </View>
+          </TouchableOpacity>
         )}
       />
     </View>
@@ -104,7 +102,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     paddingHorizontal: 20,
-    paddingTop: 50,
+    paddingTop: 70,
   },
   header: {
     fontSize: 28,
@@ -157,11 +155,6 @@ const styles = StyleSheet.create({
     fontFamily: 'PoppinsRegular',
     color: 'gray',
   },
-  bottomNav: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 12,
-    borderTopWidth: 1,
-    borderColor: '#eee',
-  },
 });
+
+export default PesanScreen;

@@ -16,6 +16,10 @@ export default function KetersediaanDonor() {
   const [tanggal, setTanggal] = useState("");
   const [waktu, setWaktu] = useState("");
 
+  const handleSubmit = () => {
+    router.push("/home"); // Navigasi ke halaman home
+  };
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -32,10 +36,6 @@ export default function KetersediaanDonor() {
         <Text style={styles.inputLabel}>Tanggal Kedatangan</Text>
         <TouchableOpacity style={styles.inputField}>
           <View style={styles.inputContent}>
-            {/* <Image
-              source={require("../../assets/images/calendar-icon.png")}
-              style={styles.inputIcon}
-            /> */}
             <Text style={styles.inputPlaceholder}>Pilih Tanggal</Text>
           </View>
         </TouchableOpacity>
@@ -44,18 +44,15 @@ export default function KetersediaanDonor() {
         <Text style={styles.inputLabel}>Waktu Kedatangan</Text>
         <TouchableOpacity style={styles.inputField}>
           <View style={styles.inputContent}>
-            {/* <Image
-              source={require("../../assets/images/clock-icon.png")}
-              style={styles.inputIcon}
-            /> */}
             <Text style={styles.inputPlaceholder}>Pilih Waktu</Text>
           </View>
         </TouchableOpacity>
 
         {/* Submit Button */}
-        <TouchableOpacity style={styles.submitButton}>
+        <TouchableOpacity style={styles.submitButton} onPress={() => router.push("/home")}>
           <Text style={styles.submitButtonText}>Kirim</Text>
         </TouchableOpacity>
+
       </View>
 
       {/* Bottom Illustrations */}
@@ -75,22 +72,23 @@ const styles = StyleSheet.create({
     backgroundColor: "#8E1616",
     paddingHorizontal: 20,
     paddingTop: 35,
-    alignItems: "center", // Center content horizontally
+    alignItems: "center",
   },
   headerTitle: {
-    fontSize: 32,
+    fontSize: 26,
     fontWeight: "bold",
     color: "#fff",
-    marginTop: 20,
-    textAlign: "center", // Center text
+    marginTop: 60,
+    textAlign: "center",
+    marginBottom: 20,
   },
   subheader: {
-    fontSize: 16,
+    fontSize: 14,
     color: "#fff",
     marginTop: 10,
-    marginBottom: 30,
+    marginBottom: 40,
     lineHeight: 24,
-    textAlign: "center", // Center text
+    textAlign: "center",
     paddingHorizontal: 20,
   },
   formContainer: {
@@ -99,7 +97,7 @@ const styles = StyleSheet.create({
     padding: 20,
     width: "100%",
     marginTop: 10,
-    alignItems: "flex-start", // Align form items to the left inside the container
+    alignItems: "flex-start",
   },
   inputLabel: {
     fontSize: 16,
@@ -107,7 +105,7 @@ const styles = StyleSheet.create({
     color: "#000",
     marginTop: 10,
     marginBottom: 10,
-    alignSelf: "flex-start", // Align label to the left
+    alignSelf: "flex-start",
   },
   inputField: {
     borderWidth: 1,
@@ -121,12 +119,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  inputIcon: {
-    width: 20,
-    height: 20,
-    marginRight: 10,
-    tintColor: "#999",
-  },
   inputPlaceholder: {
     color: "#999",
     fontSize: 16,
@@ -137,26 +129,26 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     marginTop: 10,
-    width: "100%", // Make button full width
+    width: "100%",
   },
   submitButtonText: {
     color: "#fff",
     fontWeight: "bold",
     fontSize: 16,
-    textAlign: "center", // Center text
+    textAlign: "center",
   },
   illustrationsContainer: {
     flex: 1,
     flexDirection: "row",
-    justifyContent: "flex-end", // Align to the right
+    justifyContent: "flex-end",
     alignItems: "flex-end",
     width: "100%",
   },
   vaccineImage: {
-    width: 350, // Increased size
-    height: 350, // Increased size
+    width: 350,
+    height: 350,
     resizeMode: "contain",
     marginBottom: -10,
-    marginRight:-50,
+    marginRight: -50,
   },
 });

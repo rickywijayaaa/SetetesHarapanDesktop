@@ -11,7 +11,7 @@ const events = [
     date: "20 September 2025",
     time: "08:00 - 12:00",
     image: require("../../assets/images/donor_poster.png"),
-    page: "/informasidonor1",
+    page: "/informasidonor",
   },
   {
     id: "2",
@@ -20,7 +20,7 @@ const events = [
     date: "25 September 2025",
     time: "09:00 - 13:00",
     image: require("../../assets/images/donor_poster.png"),
-    page: "/informasidonor1",
+    page: "/informasidonor",
   },
   {
     id: "3",
@@ -29,7 +29,7 @@ const events = [
     date: "30 September 2025",
     time: "10:00 - 14:00",
     image: require("../../assets/images/donor_poster.png"),
-    page: "/informasidonor1",
+    page: "/informasidonor",
   },
     {
     id: "4",
@@ -38,7 +38,7 @@ const events = [
     date: "5 Oktober 2025",
     time: "11:00 - 15:00",
     image: require("../../assets/images/donor_poster.png"),
-    page: "/informasidonor1",
+    page: "/informasidonor",
   },
   {
     id: "5",
@@ -47,7 +47,7 @@ const events = [
     date: "15 September 2025",
     time: "07:30 - 10:30",
     image: require("../../assets/images/donor_poster.png"),
-    page: "/informasidonor1"
+    page: "/informasidonor"
     },
 ];
 
@@ -102,16 +102,17 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: "#FFFFFF",
-    padding: 50,
+    padding: 60,
     borderBottomLeftRadius: 100,
     borderBottomRightRadius: 100,
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 10,
   },
   headerTitle: {
     color: "#8E1616",
-    fontSize: 24,
+    fontSize: 23,
     fontWeight: "bold",
+    marginTop: 20
   },
   searchContainer: {
     flexDirection: "row",

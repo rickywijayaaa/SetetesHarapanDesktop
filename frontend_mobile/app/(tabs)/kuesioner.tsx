@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ImageBackground } from "react-native";
 import { TextInput } from "react-native";
 import { useRouter } from "expo-router";
+import { FontAwesome } from "@expo/vector-icons";
+
 
 export default function RiwayatKesehatan() {
   const router = useRouter();
@@ -39,8 +41,14 @@ export default function RiwayatKesehatan() {
         style={styles.headerBackground}
         resizeMode="cover"
       >
-        <Text style={styles.headerTitle}>Riwayat Kesehatan</Text>
-        <Text style={styles.headerSubtitle}>Isi riwayat kesehatan sesuai kondisimu!</Text>
+        <TouchableOpacity 
+          style={styles.backButton} 
+          onPress={() => router.back()}
+        >
+          <FontAwesome name="arrow-left" size={24} color="#fff" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Kuesioner Donor Darah</Text>
+        <Text style={styles.headerSubtitle}>Cek kesehatanmu sebelum donor!</Text>
       </ImageBackground>
 
         {/* Pertanyaan */}
@@ -60,6 +68,7 @@ export default function RiwayatKesehatan() {
         { key: "q13", question: "Apakah Anda pernah melakukan tindik atau tato?"},
         { key: "q14", subtitle: "Dalam 16 minggu terakhir", question: "Apakah Anda telah mendonorkan 2 kantong sel darah merah melalui proses aferesis?"},
         ].map(({ key, subtitle, question }) => (
+          
         <View key={key} style={styles.questionContainer}>
             {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
             <Text style={styles.question}>{question}</Text>
@@ -117,7 +126,7 @@ export default function RiwayatKesehatan() {
         </View>
 
 
-      <TouchableOpacity style={styles.button} onPress={() => router.push("/home")}>
+      <TouchableOpacity style={styles.button} onPress={() => router.push("/qualified")}>
         <Text style={styles.buttonText}>Simpan</Text>
       </TouchableOpacity>
 
@@ -140,11 +149,17 @@ scrollContainer: {
     fontWeight: "bold",
     color: "white",
     marginBottom: 20,
+    marginTop: 20,
   },
   headerSubtitle: {
     fontSize: 14,
     color: "white",
     textAlign: "center",
+  },
+  backButton: {
+    padding: 5,
+    width: 40,
+    marginRight: 300,
   },
   inputGroup: {
     padding: 20,
