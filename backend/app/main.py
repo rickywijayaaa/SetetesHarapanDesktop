@@ -47,7 +47,6 @@ async def add_blood_donation(data: DarahSchema):
         # If it's already in the right format, this step can be skipped
         waktu_donor_str = data.waktu_donor  # Assuming it's already in HH:MM:SS format
 
-        # Insert data into Supabase "donor" table
         response = supabase.table("donor").insert({
             "first_name": data.first_name,
             "last_name": data.last_name,
@@ -57,13 +56,14 @@ async def add_blood_donation(data: DarahSchema):
             "rhesus": data.rhesus,
             "jenis_darah": data.jenis_darah,
             "jumlah_darah": data.jumlah_darah,
-            "idkantongdarah": data.idkantongdarah,  # Correct column name
+            "iddarah": data.iddarah,  # ← updated key
             "petugas": data.petugas,
-            "tanggal_donor": tanggal_donor_str,  # Use formatted string for tanggal_donor
-            "waktu_donor": waktu_donor_str,  # Assuming waktu_donor is already in HH:MM:SS format
+            "tanggal_donor": tanggal_donor_str,
+            "waktu_donor": waktu_donor_str,
             "province_donor": data.province_donor,
             "city_donor": data.city_donor
         }).execute()
+
 
         # If the insertion is successful, return a success message with the response
         return {"message": "Blood donation record added successfully!", "data": response.data}

@@ -87,7 +87,7 @@ class DarahSchema(BaseModel):
     rhesus: str
     jenis_darah: str
     jumlah_darah: int
-    idkantongdarah: str
+    iddarah: str
     petugas: str
     tanggal_donor: datetime
     waktu_donor: str

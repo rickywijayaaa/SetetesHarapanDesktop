@@ -3,10 +3,47 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import logo from "../assets/logo.png";
 
+const provinceCityMap: { [key: string]: string[] } = {
+  "Aceh": ["Banda Aceh", "Sabang", "Langsa", "Lhokseumawe", "Subulussalam"],
+  "Sumatera Utara": ["Medan", "Binjai", "Tebing Tinggi", "Pematangsiantar", "Padang Sidempuan"],
+  "Sumatera Barat": ["Padang", "Bukittinggi", "Payakumbuh", "Sawahlunto", "Solok"],
+  "Riau": ["Pekanbaru", "Dumai"],
+  "Kepulauan Riau": ["Tanjung Pinang", "Batam"],
+  "Jambi": ["Jambi", "Sungai Penuh"],
+  "Bengkulu": ["Bengkulu"],
+  "Sumatera Selatan": ["Palembang", "Lubuklinggau", "Pagar Alam", "Prabumulih"],
+  "Kepulauan Bangka Belitung": ["Pangkal Pinang"],
+  "Lampung": ["Bandar Lampung", "Metro"],
+  "Banten": ["Serang", "Cilegon", "Tangerang", "Tangerang Selatan"],
+  "DKI Jakarta": ["Jakarta Pusat", "Jakarta Utara", "Jakarta Timur", "Jakarta Barat", "Jakarta Selatan"],
+  "Jawa Barat": ["Bandung", "Bekasi", "Bogor", "Depok", "Cimahi", "Sukabumi"],
+  "Jawa Tengah": ["Semarang", "Surakarta", "Magelang", "Tegal", "Pekalongan", "Salatiga"],
+  "DI Yogyakarta": ["Yogyakarta", "Sleman", "Bantul", "Gunung Kidul", "Kulon Progo"],
+  "Jawa Timur": ["Surabaya", "Malang", "Kediri", "Mojokerto", "Pasuruan", "Probolinggo", "Blitar"],
+  "Bali": ["Denpasar"],
+  "Nusa Tenggara Barat": ["Mataram", "Bima"],
+  "Nusa Tenggara Timur": ["Kupang"],
+  "Kalimantan Barat": ["Pontianak", "Singkawang"],
+  "Kalimantan Tengah": ["Palangka Raya"],
+  "Kalimantan Selatan": ["Banjarmasin", "Banjarbaru"],
+  "Kalimantan Timur": ["Balikpapan", "Samarinda", "Bontang"],
+  "Kalimantan Utara": ["Tarakan"],
+  "Sulawesi Utara": ["Manado", "Bitung", "Tomohon", "Kotamobagu"],
+  "Sulawesi Tengah": ["Palu"],
+  "Sulawesi Selatan": ["Makassar", "Parepare", "Palopo"],
+  "Sulawesi Tenggara": ["Kendari", "Bau-Bau"],
+  "Gorontalo": ["Gorontalo"],
+  "Sulawesi Barat": ["Mamuju"],
+  "Maluku": ["Ambon", "Tual"],
+  "Maluku Utara": ["Ternate", "Tidore Kepulauan"],
+  "Papua": ["Jayapura"],
+  "Papua Barat": ["Manokwari", "Sorong"]
+};
+
+const provinces = Object.keys(provinceCityMap);
+
 const EditDarah: React.FC = () => {
   const [activeTab, setActiveTab] = useState("penambahan");
-  
-  // Form state to manage the input values
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -16,207 +53,99 @@ const EditDarah: React.FC = () => {
     rhesus: "",
     jenis_darah: "",
     jumlah_darah: "",
-    idkantongdarah: "",
+    iddarah: "",
     petugas: "",
-    tanggal_donor: "", // Will be a string in the format YYYY-MM-DD
-    waktu_donor: "", // Will be a string in the format HH:MM:SS
+    tanggal_donor: "",
+    waktu_donor: "",
     province_donor: "",
     city_donor: "",
   });
 
-  // Handle input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
-      // Send POST request to the backend
-      const response = await axios.post("http://127.0.0.1:8000/donor/", formData);
-
-      // You can handle the response here
+      const res = await axios.post("http://127.0.0.1:8000/donor/", formData);
       alert("Data berhasil ditambahkan!");
-      console.log(response.data);
-    } catch (error) {
-      console.error("There was an error submitting the form!", error);
-      alert("Gagal menambahkan darah, coba lagi.");
+    } catch (err) {
+      console.error(err);
+      alert("Gagal menambahkan darah.");
     }
   };
 
   return (
     <div className="edit-darah-container-ed">
-      {/* Navbar */}
       <div className="navbar-ed">
         <div className="navbar-left-ed">
-          <Link to="/homepage">
+          <Link to="/homepage" style={{ textDecoration: 'none', color: 'inherit' }}>
             <img src={logo} alt="Setetes Harapan" className="logo-ed" />
           </Link>
-          <Link to="/homepage" className="app-title-ed" style={{ textDecoration: 'none', color: 'inherit' }}>
-          SetetesHarapan
-          </Link>
+          <Link to="/homepage" className="app-title-ed" style={{ textDecoration: 'none', color: 'inherit' }}>SetetesHarapan</Link>
         </div>
         <span className="navbar-text-ed">Kementrian Kesehatan Indonesia</span>
         <button className="logout-button-ed">Logout</button>
       </div>
 
-      {/* Card Container */}
       <div className="card-ed">
-        {/* Tabs */}
         <div className="tabs-ed">
-          <button
-            className={activeTab === "penambahan" ? "tab-ed active-ed" : "tab-ed"}
-            onClick={() => setActiveTab("penambahan")}
-          >
-            Penambahan
-          </button>
-          <Link
-            to="/KurangDarah"
-            className={activeTab === "pengurangan" ? "tab-ed active-ed" : "tab-ed"}
-            style={{ textDecoration: 'none', color: 'inherit' }}
-          >
-            Pengurangan
-          </Link>
+          <button className={activeTab === "penambahan" ? "tab-ed active-ed" : "tab-ed"} onClick={() => setActiveTab("penambahan")}>Penambahan</button>
+          <Link to="/KurangDarah" className={activeTab === "pengurangan" ? "tab-ed active-ed" : "tab-ed"} style={{ textDecoration: 'none', color: 'inherit' }}>Pengurangan</Link>
         </div>
 
-        {/* Form */}
         <form className="blood-form-ed" onSubmit={handleSubmit}>
           <h2 className="section-title-ed">Identitas Diri</h2>
 
           <div className="input-group-ed">
-            <input
-              type="text"
-              placeholder="Nama Awal"
-              name="first_name"
-              value={formData.first_name}
-              onChange={handleInputChange}
-            />
-            <input
-              type="text"
-              placeholder="Nama Akhir"
-              name="last_name"
-              value={formData.last_name}
-              onChange={handleInputChange}
-            />
+            <input type="text" placeholder="Nama Awal" name="first_name" value={formData.first_name} onChange={handleInputChange} />
+            <input type="text" placeholder="Nama Akhir" name="last_name" value={formData.last_name} onChange={handleInputChange} />
           </div>
 
           <div className="input-group-ed">
-            <input
-              type="text"
-              placeholder="NIK"
-              name="nik"
-              value={formData.nik}
-              onChange={handleInputChange}
-            />
-            <input
-              type="text"
-              placeholder="Nomor Telepon"
-              name="phone_number"
-              value={formData.phone_number}
-              onChange={handleInputChange}
-            />
+            <input type="text" placeholder="NIK" name="nik" value={formData.nik} onChange={handleInputChange} />
+            <input type="text" placeholder="Nomor Telepon" name="phone_number" value={formData.phone_number} onChange={handleInputChange} />
           </div>
 
           <h2 className="section-title-ed">Identitas Darah</h2>
 
           <div className="input-group-ed">
-            <select
-              name="golongan_darah"
-              value={formData.golongan_darah}
-              onChange={handleInputChange}
-            >
-              <option>Golongan Darah</option>
-              <option>A</option>
-              <option>B</option>
-              <option>AB</option>
-              <option>O</option>
+            <select name="golongan_darah" value={formData.golongan_darah} onChange={handleInputChange}>
+              <option>Golongan Darah</option><option>A</option><option>B</option><option>AB</option><option>O</option>
             </select>
-            <select
-              name="rhesus"
-              value={formData.rhesus}
-              onChange={handleInputChange}
-            >
-              <option>Rhesus</option>
-              <option>Positif</option>
-              <option>Negatif</option>
+            <select name="rhesus" value={formData.rhesus} onChange={handleInputChange}>
+              <option>Rhesus</option><option>Positif</option><option>Negatif</option>
             </select>
           </div>
 
           <div className="input-group-ed">
-            <select
-              name="jenis_darah"
-              value={formData.jenis_darah}
-              onChange={handleInputChange}
-            >
-              <option>Jenis Darah</option>
-              <option>FFP</option>
-              <option>PRC</option>
-              <option>WB</option>
+            <select name="jenis_darah" value={formData.jenis_darah} onChange={handleInputChange}>
+              <option>Jenis Darah</option><option>FFP</option><option>PRC</option><option>WB</option>
             </select>
-            <input
-              type="text"
-              placeholder="Jumlah Darah yang Diambil (mL)"
-              name="jumlah_darah"
-              value={formData.jumlah_darah}
-              onChange={handleInputChange}
-            />
+            <input type="text" placeholder="Jumlah Darah yang Diambil (mL)" name="jumlah_darah" value={formData.jumlah_darah} onChange={handleInputChange} />
           </div>
 
           <div className="input-group-ed">
-            <input
-              type="text"
-              placeholder="Nomor Kantong Darah"
-              name="idkantongdarah"
-              value={formData.idkantongdarah}
-              onChange={handleInputChange}
-            />
-            <input
-              type="text"
-              placeholder="Petugas yang Menangani"
-              name="petugas"
-              value={formData.petugas}
-              onChange={handleInputChange}
-            />
+            <input type="text" placeholder="Nomor ID Darah" name="iddarah" value={formData.iddarah} onChange={handleInputChange} />
+            <input type="text" placeholder="Petugas yang Menangani" name="petugas" value={formData.petugas} onChange={handleInputChange} />
           </div>
 
           <div className="input-group-ed">
-            {/* Date input for tanggal_donor */}
-            <input
-              type="date"
-              name="tanggal_donor"
-              value={formData.tanggal_donor}
-              onChange={handleInputChange}
-            />
-            {/* Time input for waktu_donor */}
-            <input
-              type="time"
-              name="waktu_donor"
-              value={formData.waktu_donor}
-              onChange={handleInputChange}
-            />
+            <input type="date" name="tanggal_donor" value={formData.tanggal_donor} onChange={handleInputChange} />
+            <input type="time" name="waktu_donor" value={formData.waktu_donor} onChange={handleInputChange} />
           </div>
 
           <div className="input-group-ed">
-            <input
-              type="text"
-              placeholder="Provinsi"
-              name="province_donor"
-              value={formData.province_donor}
-              onChange={handleInputChange}
-            />
-            <input
-              type="text"
-              placeholder="Kota Donor"
-              name="city_donor"
-              value={formData.city_donor}
-              onChange={handleInputChange}
-            />
+            <select name="province_donor" value={formData.province_donor} onChange={handleInputChange}>
+              <option value="">Pilih Provinsi</option>
+              {provinces.map((prov) => <option key={prov} value={prov}>{prov}</option>)}
+            </select>
+            <select name="city_donor" value={formData.city_donor} onChange={handleInputChange} disabled={!formData.province_donor}>
+              <option value="">Pilih Kota/Kabupaten</option>
+              {provinceCityMap[formData.province_donor]?.map((city) => <option key={city} value={city}>{city}</option>)}
+            </select>
           </div>
 
           <button type="submit" className="submit-button-ed">Tambah Darah</button>
