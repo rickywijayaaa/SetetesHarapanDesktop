@@ -41,14 +41,14 @@ export default function Profile() {
           
           <View style={styles.form}>
             {[
-              { label: "Nama Awal", placeholder: "‘John’" },
-              { label: "Nama Akhir", placeholder: "‘Doe’" },
-              { label: "Email", placeholder: "‘john.doe@gmail.com’" },
-              { label: "NIK", placeholder: "‘1234567890123456’" },
-              { label: "Tanggal Lahir", placeholder: "‘01/01/2001’" },
-              { label: "Nomor Telepon", placeholder: "‘081234567890’" },
-              { label: "Kota/Kabupaten", placeholder: "‘Kota Bandung’" },
-              { label: "Provinsi", placeholder: "‘Jawa Barat’" },
+              { label: "Nama Awal", placeholder: "John" },
+              { label: "Nama Akhir", placeholder: "Doe" },
+              { label: "Email", placeholder: "john.doe@gmail.com" },
+              { label: "NIK", placeholder: "1234567890123456" },
+              { label: "Tanggal Lahir", placeholder: "01/01/2001" },
+              { label: "Nomor Telepon", placeholder: "081234567890" },
+              { label: "Kota/Kabupaten", placeholder: "Kota Bandung" },
+              { label: "Provinsi", placeholder: "Jawa Barat" },
             ].map((field, index) => (
               <View key={index} style={styles.inputGroup}>
                 <Text style={styles.label}>{field.label}</Text>

@@ -133,6 +133,7 @@ const styles = StyleSheet.create({
     paddingBottom: 8, // Add padding for iOS home bar
     borderTopWidth: 1,
     borderColor: "#F0F0F0",
+    paddingTop: 10
   },
   navbarContent: {
     flexDirection: "row",
@@ -154,7 +155,7 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.1,
     shadowRadius: 4.65,
-    elevation: 7,
+    elevation: 5,
   },
   tabItem: {
     alignItems: "center",

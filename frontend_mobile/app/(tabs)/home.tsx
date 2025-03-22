@@ -163,6 +163,7 @@ const styles = StyleSheet.create({
     width: 230,
     height: 50,
     resizeMode: "contain",
+    marginTop: 30,
   },
   carouselWrapper: {
     alignItems: "center", 
