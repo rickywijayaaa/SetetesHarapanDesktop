@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import logo from "../assets/logo.png";
 import googleIcon from "../assets/google.svg";
 import checkboxIcon from "../assets/checkbox.svg";
@@ -43,32 +44,72 @@ const provinceCityMap: { [key: string]: string[] } = {
 };
 
 const Register: React.FC = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const navigate = useNavigate();
+
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone_number: "",
+    address: "",
+    role: "",
+    password: ""
+  });
+
   const [selectedProvince, setSelectedProvince] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const provinces = Object.keys(provinceCityMap);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleRegister = async () => {
+    if (form.password !== confirmPassword) {
+      alert("Konfirmasi password tidak cocok!");
+      return;
+    }
+
+    try {
+      await axios.post("http://127.0.0.1:8000/users/register", {
+        ...form,
+        city: selectedCity || "-",
+        province: selectedProvince || "-",
+        role: form.role || "Rumah Sakit",
+        first_name: "-",
+        last_name: "-",
+        nik: "-",
+        birth_date: null,
+        jenis_kelamin: "-",
+        golongan_darah: "-",
+        rhesus: "-",
+        riwayat_result: false,
+        total_points: 0
+      });
+
+      alert("Registrasi berhasil!");
+      navigate("/verification");
+    } catch (err: any) {
+      alert("Registrasi gagal: " + (err.response?.data?.detail || "Terjadi kesalahan"));
+    }
+  };
 
   return (
     <div className="register-container">
-      {/* Left Side: Background Image */}
-      <div
-        className="register-bg"
-        style={{
-          backgroundImage: `url(${bgImage2})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          width: "50%",
-          height: "170vh",
-          position: "relative",
-        }}
-      >
+      <div className="register-bg" style={{
+        backgroundImage: `url(${bgImage2})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        width: "50%",
+        height: "170vh",
+        position: "relative",
+      }}>
         <div className="bg-overlay"></div>
       </div>
 
-      {/* Right Side: Form */}
       <div className="register-form-container">
         <div className="logo-container2">
           <img src={logo} alt="Setetes Harapan" className="register-logo" />
@@ -80,7 +121,7 @@ const Register: React.FC = () => {
 
         <div className="input-group">
           <label>Lembaga</label>
-          <select name="lembaga" className="input-field">
+          <select name="role" className="input-field" value={form.role} onChange={handleChange}>
             <option value="">Pilih Lembaga</option>
             <option value="Rumah Sakit">Rumah Sakit</option>
             <option value="PMI">PMI</option>
@@ -90,55 +131,43 @@ const Register: React.FC = () => {
 
         <div className="input-group">
           <label>Nama Rumah Sakit / Nama UTD</label>
-          <input type="text" placeholder="Nama Rumah Sakit" className="input-field" />
+          <input type="text" name="name" placeholder="Nama Rumah Sakit" className="input-field" value={form.name} onChange={handleChange} />
         </div>
 
         <div className="input-row">
           <div className="input-group">
             <label>Email</label>
-            <input type="email" placeholder="john.doe@gmail.com" className="input-field" />
+            <input type="email" name="email" placeholder="john.doe@gmail.com" className="input-field" value={form.email} onChange={handleChange} />
           </div>
-
           <div className="input-group">
             <label>Nomor Telepon</label>
-            <input type="text" placeholder="+62-812-12345678" className="input-field" />
+            <input type="text" name="phone_number" placeholder="+62-812-12345678" className="input-field" value={form.phone_number} onChange={handleChange} />
           </div>
         </div>
 
         <div className="input-group">
           <label>Alamat</label>
-          <input type="text" placeholder="Jln. Perumahan Permata Permai No.7, Bandung" className="input-field" />
+          <input type="text" name="address" placeholder="Alamat Lengkap" className="input-field" value={form.address} onChange={handleChange} />
         </div>
 
         <div className="input-group">
           <label>Provinsi</label>
-          <select
-            name="province"
-            className="input-field"
-            value={selectedProvince}
-            onChange={(e) => {
-              setSelectedProvince(e.target.value);
-              setSelectedCity("");
-            }}
-          >
+          <select className="input-field" value={selectedProvince} onChange={(e) => {
+            setSelectedProvince(e.target.value);
+            setSelectedCity("");
+          }}>
             <option value="">Pilih Provinsi</option>
-            {provinces.map((provinsi) => (
-              <option key={provinsi} value={provinsi}>{provinsi}</option>
+            {Object.keys(provinceCityMap).map((prov) => (
+              <option key={prov} value={prov}>{prov}</option>
             ))}
           </select>
         </div>
 
         <div className="input-group">
           <label>Kota/Kabupaten</label>
-          <select
-            name="city"
-            className="input-field"
-            value={selectedCity}
-            onChange={(e) => setSelectedCity(e.target.value)}
-            disabled={!selectedProvince}
-          >
+          <select className="input-field" value={selectedCity} onChange={(e) => setSelectedCity(e.target.value)} disabled={!selectedProvince}>
             <option value="">Pilih Kota/Kabupaten</option>
-            {selectedProvince && provinceCityMap[selectedProvince]?.map((city) => (
+            {provinceCityMap[selectedProvince]?.map((city) => (
               <option key={city} value={city}>{city}</option>
             ))}
           </select>
@@ -147,36 +176,16 @@ const Register: React.FC = () => {
         <div className="input-group">
           <label>Password</label>
           <div className="password-wrapper">
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="**********"
-              className="input-field"
-            />
-            <button
-              type="button"
-              className="toggle-password"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? "🙈" : "👁"}
-            </button>
+            <input type={showPassword ? "text" : "password"} name="password" placeholder="**********" className="input-field" value={form.password} onChange={handleChange} />
+            <button type="button" className="toggle-password" onClick={() => setShowPassword(!showPassword)}>{showPassword ? "🙈" : "👁"}</button>
           </div>
         </div>
 
         <div className="input-group">
           <label>Confirm Password</label>
           <div className="password-wrapper">
-            <input
-              type={showConfirmPassword ? "text" : "password"}
-              placeholder="**********"
-              className="input-field"
-            />
-            <button
-              type="button"
-              className="toggle-password"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            >
-              {showConfirmPassword ? "🙈" : "👁"}
-            </button>
+            <input type={showConfirmPassword ? "text" : "password"} placeholder="**********" className="input-field" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+            <button type="button" className="toggle-password" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>{showConfirmPassword ? "🙈" : "👁"}</button>
           </div>
         </div>
 
@@ -184,15 +193,13 @@ const Register: React.FC = () => {
           <div className="agree-terms">
             <img src={checkboxIcon} alt="Checkbox" className="checkbox-icon" />
             <span>
-              Saya setuju dengan <span className="terms">Persyaratan</span> dan {" "}
+              Saya setuju dengan <span className="terms">Persyaratan</span> dan{" "}
               <span className="policy">Kebijakan Privasi</span>
             </span>
           </div>
         </div>
 
-        <Link to="/verification" className="register-button">
-          Buat Akun
-        </Link>
+        <button className="register-button" onClick={handleRegister}>Buat Akun</button>
 
         <p className="login-text">
           Sudah memiliki akun? <Link to="/login" className="login-link">Masuk</Link>
