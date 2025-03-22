@@ -2,9 +2,8 @@ import React from "react";
 import { View, Text, Image, ScrollView, StyleSheet, Dimensions, ImageBackground, TouchableOpacity } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { FlatList } from "react-native";
 import { useRef, useState } from "react";
-
+import { router } from "expo-router";
 
 const { width } = Dimensions.get("window");
 const itemWidth = width * 0.7;
@@ -22,6 +21,15 @@ export default function Reward2() {
   const scrollRef = useRef<ScrollView | null>(null);
 
   const [scrollPosition, setScrollPosition] = useState(0);
+  
+  // Router push handlers
+  const handleAvatarPress = () => {
+    router.push("/profile");
+  };
+  
+  const handleNextAchievementPress = () => {
+    router.push("/reward");
+  };
 
   return (
     <ImageBackground
@@ -32,11 +40,13 @@ export default function Reward2() {
       <ScrollView contentContainerStyle={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-          <FontAwesome name="arrow-left" size={24} color="#fff" />
-          <Image
-          source={require("../../assets/images/avatar1.png")}
-          style={[styles.profile, { borderWidth: 3, borderColor: "#fff" }]}
-        />
+          <FontAwesome name="arrow-left" size={24} color="#8E1616" />
+          <TouchableOpacity onPress={handleAvatarPress}>
+            <Image
+              source={require("../../assets/images/avatar1.png")}
+              style={[styles.profile, { borderWidth: 3, borderColor: "#fff" }]}
+            />
+          </TouchableOpacity>
         </View>
 
         {/* Drop Icon Center */}
@@ -46,7 +56,6 @@ export default function Reward2() {
             style={[styles.dropIconLarge, { marginTop: 0 }]} 
             resizeMode="contain" 
           />
-
         </View>
 
         {/* White Card */}
@@ -80,7 +89,6 @@ export default function Reward2() {
               <Text style={styles.infoValue}>#56</Text>
             </View>
           </View>
-
 
           {/* Progress Steps */}
           <View style={{ position: "relative", width: "100%", alignItems: "center", marginBottom: 15 }}>
@@ -117,27 +125,27 @@ export default function Reward2() {
           </View>
 
           {/* Next Achievement Progress */}
-          <LinearGradient
-            colors={["#E0C0C0", "#FFFFFF"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.nextAchievementCard}
-          >
-            <Image
-              source={require("../../assets/images/drop3.png")}
-              style={{ width: 30, height: 50, marginRight: 10 }}
-              resizeMode="contain"
-            />
-            <View style={{ flex: 1 }}>
-              <Text style={styles.nextText}>410 XP untuk ke pencapaianmu selanjutnya</Text>
-              <View style={styles.progressBarWrapper}>
-                <View style={styles.progressBarFill} />
+          <TouchableOpacity onPress={handleNextAchievementPress}>
+            <LinearGradient
+              colors={["#E0C0C0", "#FFFFFF"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.nextAchievementCard}
+            >
+              <Image
+                source={require("../../assets/images/drop3.png")}
+                style={{ width: 30, height: 50, marginRight: 10 }}
+                resizeMode="contain"
+              />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.nextText}>410 XP untuk ke pencapaianmu selanjutnya</Text>
+                <View style={styles.progressBarWrapper}>
+                  <View style={styles.progressBarFill} />
+                </View>
               </View>
-            </View>
-            <TouchableOpacity>
               <FontAwesome name="chevron-right" size={18} color="#8E1616" />
-            </TouchableOpacity>
-          </LinearGradient>
+            </LinearGradient>
+          </TouchableOpacity>
 
           {/* Vouchers Carousel */}
           <View style={{ marginTop: 20, position: "relative", width: "100%", alignItems: "center" }}>
@@ -377,5 +385,4 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginRight: 15,
   },  
-  
 });

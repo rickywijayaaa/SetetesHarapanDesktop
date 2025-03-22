@@ -1,35 +1,46 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView } from "react-native";
 import { useRouter } from "expo-router";
+import { FontAwesome } from "@expo/vector-icons";
 
 export default function DetailDonorEvent() {
   const router = useRouter();
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.contentContainer}>
-        <Text style={styles.eventTitle}>Donor Bersama HMIF ITB</Text>
-        <Image source={require("../../assets/images/donor_poster.png")} style={styles.poster} />
-        <Text style={styles.eventDetail}><Text style={styles.bold}>Tempat:</Text> CC Timur ITB</Text>
-        <Text style={styles.eventDetail}><Text style={styles.bold}>Tanggal:</Text> 15 September 2025</Text>
-        <Text style={styles.eventDetail}><Text style={styles.bold}>Waktu:</Text> 07:30 - 10:30</Text>
-        <Text style={styles.description}>
-          Mari berpartisipasi dalam aksi kemanusiaan dengan mendonorkan darah! Kegiatan ini diadakan sebagai bentuk kepedulian terhadap sesama, di mana setiap tetes darah yang Anda sumbangkan dapat menyelamatkan nyawa.
-        </Text>
-        <Text style={styles.description}>
-          Jangan lewatkan kesempatan untuk berbagi dan membantu mereka yang membutuhkan. Pastikan Anda dalam kondisi sehat dan memenuhi syarat untuk donor darah. Ayo datang dan jadilah bagian dari kebaikan ini!
-        </Text>
-        <Text style={styles.description}>Syarat Donor Darah:</Text>
-        <Text style={styles.requirements}>- Usia 17-60 tahun</Text>
-        <Text style={styles.requirements}>- Berat badan minimal 45kg</Text>
-        <Text style={styles.requirements}>- Sehat jasmani dan rohani</Text>
-        <Text style={styles.requirements}>- Tekanan darah normal</Text>
-        <Text style={styles.requirements}>- Tidak sedang sakit</Text>
-        <TouchableOpacity style={styles.button} onPress={() => router.push("/kuesioner")}>
-        <Text style={styles.buttonText}>Daftar Donor Darah</Text>
-      </TouchableOpacity>
+    <ScrollView>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity 
+          style={styles.backButton} 
+          onPress={() => router.back()}
+        >
+          <FontAwesome name="arrow-left" size={24} color="#fff" />
+        </TouchableOpacity>
       </View>
-    </ScrollView>
+        <View style={styles.contentContainer}>
+          <Text style={styles.eventTitle}>Donor Bersama HMIF ITB</Text>
+          <Image source={require("../../assets/images/donor_poster.png")} style={styles.poster} />
+          <Text style={styles.eventDetail}><Text style={styles.bold}>Tempat:</Text> CC Timur ITB</Text>
+          <Text style={styles.eventDetail}><Text style={styles.bold}>Tanggal:</Text> 15 September 2025</Text>
+          <Text style={styles.eventDetail}><Text style={styles.bold}>Waktu:</Text> 07:30 - 10:30</Text>
+          <Text style={styles.description}>
+            Mari berpartisipasi dalam aksi kemanusiaan dengan mendonorkan darah! Kegiatan ini diadakan sebagai bentuk kepedulian terhadap sesama, di mana setiap tetes darah yang Anda sumbangkan dapat menyelamatkan nyawa.
+          </Text>
+          <Text style={styles.description}>
+            Jangan lewatkan kesempatan untuk berbagi dan membantu mereka yang membutuhkan. Pastikan Anda dalam kondisi sehat dan memenuhi syarat untuk donor darah. Ayo datang dan jadilah bagian dari kebaikan ini!
+          </Text>
+          <Text style={styles.description}>Syarat Donor Darah:</Text>
+          <Text style={styles.requirements}>- Usia 17-60 tahun</Text>
+          <Text style={styles.requirements}>- Berat badan minimal 45kg</Text>
+          <Text style={styles.requirements}>- Sehat jasmani dan rohani</Text>
+          <Text style={styles.requirements}>- Tekanan darah normal</Text>
+          <Text style={styles.requirements}>- Tidak sedang sakit</Text>
+          <TouchableOpacity style={styles.button} onPress={() => router.push("/kuesioner")}>
+            <Text style={styles.buttonText}>Daftar Donor Darah</Text>
+          </TouchableOpacity>
+        </View>
+        </SafeAreaView>
+      </ScrollView>
   );
 }
 
@@ -37,6 +48,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#8E1616",
+  },
+  header: {
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+  },
+  backButton: {
+    padding: 5,
+    width: 40,
   },
   contentContainer: {
     backgroundColor: "white",

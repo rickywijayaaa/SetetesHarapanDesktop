@@ -13,7 +13,7 @@ export default function TabsLayout() {
     "/pencarian_stok",
     "/kegiatan_donor",
     "/pesan",
-    "/profile",
+    "/rewardprofile",
   ];
 
   // Check if the current path is one where navbar should be shown

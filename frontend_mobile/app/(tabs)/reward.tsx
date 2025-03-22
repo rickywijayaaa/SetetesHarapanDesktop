@@ -22,7 +22,7 @@ export default function Leaderboard() {
   const router = useRouter();
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#8E1616", paddingTop: 40 }}>
+    <View style={{ flex: 1, backgroundColor: "#8E1616", paddingTop: 60 }}>
       {/* Header */}
       <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 20 }}>
         <TouchableOpacity onPress={() => router.back()}>

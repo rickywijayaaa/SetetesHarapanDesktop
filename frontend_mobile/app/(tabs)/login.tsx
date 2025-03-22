@@ -81,7 +81,7 @@ export default function Login() {
           <View style={styles.loginLinkContainer}>
             <Text style={styles.loginText}>Belum punya akun? </Text>
             <TouchableOpacity
-              onPress={() => router.push("/home")}
+              onPress={() => router.push("/register")}
             >
               <Text style={styles.loginLink}>Daftar</Text>
             </TouchableOpacity>

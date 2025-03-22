@@ -34,7 +34,7 @@ const routes = [
     label: "Inbox",
   },
   {
-    path: "/profile",
+    path: "/rewardprofile",
     icon: "person-outline",
     activeIcon: "person",
     label: "Profile",

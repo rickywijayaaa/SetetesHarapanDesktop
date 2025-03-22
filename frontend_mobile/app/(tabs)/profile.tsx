@@ -9,20 +9,22 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 export default function Profile() {
+  const router = useRouter();
+
   return (
     <View style={{ flex: 1, backgroundColor: "#8E1616" }}>
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => router.back()}>
             <FontAwesome name="arrow-left" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Profil</Text>
           <View style={{ width: 24 }} /> {/* dummy space untuk keseimbangan */}
         </View>
-
 
         {/* White Container */}
         <View style={styles.card}>
@@ -38,7 +40,6 @@ export default function Profile() {
           <Text style={styles.email}>john.doe@gmail.com</Text>
 
           {/* Form */}
-          
           <View style={styles.form}>
             {[
               { label: "Nama Awal", placeholder: "John" },
@@ -65,7 +66,11 @@ export default function Profile() {
           <TouchableOpacity style={styles.updateButton}>
             <Text style={styles.updateButtonText}>Ubah Profil</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.logoutButton}>
+
+          <TouchableOpacity
+            style={styles.logoutButton}
+            onPress={() => router.replace("/index")}
+          >
             <Text style={styles.logoutButtonText}>Keluar</Text>
           </TouchableOpacity>
         </View>
@@ -79,7 +84,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 20,
-    paddingTop: 50,
+    paddingTop: 60,
     justifyContent: "space-between",
   },
   headerTitle: {
@@ -173,3 +178,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+
+export default Profile;
