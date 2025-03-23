@@ -52,6 +52,10 @@ export default function Reward2() {
     router.push("/reward");
   };
 
+  const handleNextVoucherPress = () => {
+    router.push("/voucher");
+  };
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -167,46 +171,69 @@ export default function Reward2() {
           </View>
 
           <TouchableOpacity onPress={handleNextAchievementPress}>
-            <LinearGradient
-              colors={["#E0C0C0", "#FFFFFF"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.nextAchievementCard}
-            >
-              <Image
-                source={require("../../assets/images/drop3.png")}
-                style={{ width: 30, height: 50, marginRight: 10 }}
-                resizeMode="contain"
-              />
-              <View style={{ flex: 1 }}>
-                <Text style={styles.nextText}>410 XP untuk ke pencapaianmu selanjutnya</Text>
-                <View style={styles.progressBarWrapper}>
-                  <View style={styles.progressBarFill} />
-                </View>
-              </View>
-              <FontAwesome name="chevron-right" size={18} color="#8E1616" />
-            </LinearGradient>
-          </TouchableOpacity>
-
-          <View style={styles.carouselWrapper}>
-            <ScrollView
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              style={styles.carousel}
-              onScroll={handleScroll}
-              scrollEventThrottle={16}
-            >
-              {carouselItems.map((item) => (
-                <Image key={item.id} source={item.image} style={styles.carouselImage} />
-              ))}
-            </ScrollView>
-            <View style={styles.indicatorContainer}>
-              {carouselItems.map((_, index) => (
-                <View key={index} style={[styles.indicator, activeIndex === index && styles.activeIndicator]} />
-              ))}
-            </View>
+      <LinearGradient
+        colors={["#E0C0C0", "#FFFFFF"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={styles.nextAchievementCard}
+      >
+        <Image
+          source={require("../../assets/images/drop3.png")}
+          style={{ width: 30, height: 50, marginRight: 10 }}
+          resizeMode="contain"
+        />
+        <View style={{ flex: 1 }}>
+          <Text style={styles.nextText}>
+            {(() => {
+              if (points < 500) return `${500 - points} XP untuk ke pencapaianmu selanjutnya`;
+              if (points < 1000) return `${1000 - points} XP untuk ke pencapaianmu selanjutnya`;
+              if (points < 1500) return `${1500 - points} XP untuk ke pencapaianmu selanjutnya`;
+              return `0 XP untuk ke pencapaianmu selanjutnya`;
+            })()}
+          </Text>
+          <View style={styles.progressBarWrapper}>
+            <View
+              style={[
+                styles.progressBarFill,
+                {
+                  width: (() => {
+                    if (points < 500) return `${(points / 500) * 100}%`;
+                    if (points < 1000) return `${((points - 500) / 500) * 100}%`;
+                    if (points < 1500) return `${((points - 1000) / 500) * 100}%`;
+                    return `100%`;
+                  })(),
+                },
+              ]}
+            />
           </View>
+        </View>
+        <FontAwesome name="chevron-right" size={18} color="#8E1616" />
+      </LinearGradient>
+    </TouchableOpacity>
+
+          <TouchableOpacity onPress={handleNextVoucherPress}>
+          
+            <View style={styles.carouselWrapper}>
+              <ScrollView
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator={false}
+                style={styles.carousel}
+                onScroll={handleScroll}
+                scrollEventThrottle={16}
+              >
+                {carouselItems.map((item) => (
+                  <Image key={item.id} source={item.image} style={styles.carouselImage} />
+                ))}
+              </ScrollView>
+              <View style={styles.indicatorContainer}>
+                {carouselItems.map((_, index) => (
+                  <View key={index} style={[styles.indicator, activeIndex === index && styles.activeIndicator]} />
+                ))}
+              </View>
+              
+            </View>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </ImageBackground>

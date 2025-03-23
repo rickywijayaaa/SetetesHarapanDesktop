@@ -12,11 +12,12 @@ export default function Voucher() {
     <View style={{ flex: 1, backgroundColor: "#8E1616" }}>
       {/* Header */}
       <View style={styles.header}>
-          <FontAwesome name="arrow-left" size={24} color="#fff" />
-          <Image
-          source={require("../../assets/images/avatar1.png")}
-          style={[styles.profile, { borderWidth: 3, borderColor: "#fff" }]}
-        />
+        <TouchableOpacity onPress={() => router.back()}>
+                  <FontAwesome name="arrow-left" size={24} color="#fff" />
+        </TouchableOpacity>
+        <Text style={{ flex: 1, textAlign: "center", color: "#fff", fontSize: 22, fontWeight: "bold" }}>
+          Voucher
+        </Text>
       </View>
 
       {/* Content */}
@@ -80,7 +81,7 @@ export default function Voucher() {
 
 const styles = StyleSheet.create({
   header: {
-    paddingTop: 50,
+    paddingTop: 100,
     paddingHorizontal: 20,
     flexDirection: "row",
     justifyContent: "space-between",
