@@ -1,19 +1,94 @@
-import React from "react";
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Dimensions,
+  Alert,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width } = Dimensions.get("window");
 
 export default function Voucher() {
   const router = useRouter();
+  const [points, setPoints] = useState(0);
+  const [iduser, setIduser] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchUserPoints = async () => {
+      try {
+        const token = await AsyncStorage.getItem("token");
+        const res = await fetch("https://backend-setetesharapandesktop.up.railway.app/users/me", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: "include",
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          setPoints(data.total_points || 0);
+          setIduser(data.iduser || null);
+        } else {
+          console.warn("Gagal fetch user:", data);
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+      }
+    };
+
+    fetchUserPoints();
+  }, []);
+
+  const handleClaimVoucher = async () => {
+    if (points < 50) {
+      Alert.alert("Gagal", "Poin kamu tidak cukup untuk klaim voucher.");
+      return;
+    }
+
+    try {
+      const newPoints = points - 50;
+      const token = await AsyncStorage.getItem("token");
+
+      const res = await fetch(`https://backend-setetesharapandesktop.up.railway.app/user/profile/${iduser}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ total_points: newPoints }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        console.error("Gagal update:", data);
+        Alert.alert("Gagal", "Terjadi kesalahan saat klaim voucher.");
+        return;
+      }
+
+      setPoints(newPoints); // update state lokal juga
+      Alert.alert("Berhasil", "Kamu berhasil claim voucher dan total points berkurang sebanyak 50!");
+    } catch (err) {
+      console.error("Claim error:", err);
+      Alert.alert("Gagal", "Terjadi kesalahan saat klaim voucher.");
+    }
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: "#8E1616" }}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
-                  <FontAwesome name="arrow-left" size={24} color="#fff" />
+          <FontAwesome name="arrow-left" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={{ flex: 1, textAlign: "center", color: "#fff", fontSize: 22, fontWeight: "bold" }}>
           Voucher
@@ -70,7 +145,7 @@ export default function Voucher() {
           ))}
 
           {/* Button */}
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={handleClaimVoucher}>
             <Text style={styles.buttonText}>Pilih Voucher</Text>
           </TouchableOpacity>
         </ScrollView>
@@ -86,13 +161,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-  },
-  profile: {
-    width: 35,
-    height: 35,
-    borderRadius: 20,
-    borderWidth: 2,
-    borderColor: "#fff",
   },
   card: {
     flex: 1,
