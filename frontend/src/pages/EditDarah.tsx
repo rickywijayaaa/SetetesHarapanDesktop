@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import logo from "../assets/logo.png";
@@ -61,6 +61,20 @@ const EditDarah: React.FC = () => {
     city_donor: "",
   });
 
+  const [userInfo, setUserInfo] = useState<{ iduser: string; name: string; role: string } | null>(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("user_info");
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        setUserInfo(parsed);
+      } catch (err) {
+        console.error("❌ Failed to parse user_info:", err);
+      }
+    }
+  }, []);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -69,8 +83,30 @@ const EditDarah: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await axios.post("https://backend-setetesharapandesktop.up.railway.app/donor/", formData);
+      const headers: any = {};
+      if (userInfo) {
+        headers["x-user-info"] = JSON.stringify(userInfo);
+      }
+
+      const res = await axios.post("http://127.0.0.1:8000/donor/", formData, { headers });
       alert("Data berhasil ditambahkan!");
+
+      setFormData({
+        first_name: "",
+        last_name: "",
+        nik: "",
+        phone_number: "",
+        golongan_darah: "",
+        rhesus: "",
+        jenis_darah: "",
+        jumlah_darah: "",
+        iddarah: "",
+        petugas: "",
+        tanggal_donor: "",
+        waktu_donor: "",
+        province_donor: "",
+        city_donor: "",
+      });
     } catch (err) {
       console.error(err);
       alert("Gagal menambahkan darah.");
@@ -86,8 +122,24 @@ const EditDarah: React.FC = () => {
           </Link>
           <Link to="/homepage" className="app-title-ed" style={{ textDecoration: 'none', color: 'inherit' }}>SetetesHarapan</Link>
         </div>
-        <span className="navbar-text-ed">Kementrian Kesehatan Indonesia</span>
-        <button className="logout-button-ed">Logout</button>
+        <span className="navbar-text-ed">
+          {userInfo
+            ? `${userInfo.role === "kemenkes"
+              ? "Kementerian Kesehatan Indonesia"
+              : userInfo.role === "pmi"
+              ? "Palang Merah Indonesia"
+              : "Rumah Sakit"} - ${userInfo.name}`
+            : "Memuat user..."}
+        </span>
+        <button
+          className="logout-button-ed"
+          onClick={() => {
+            localStorage.removeItem("user_info");
+            window.location.href = "/";
+          }}
+        >
+          Logout
+        </button>
       </div>
 
       <div className="card-ed">
@@ -98,19 +150,16 @@ const EditDarah: React.FC = () => {
 
         <form className="blood-form-ed" onSubmit={handleSubmit}>
           <h2 className="section-title-ed">Identitas Diri</h2>
-
           <div className="input-group-ed">
             <input type="text" placeholder="Nama Awal" name="first_name" value={formData.first_name} onChange={handleInputChange} />
             <input type="text" placeholder="Nama Akhir" name="last_name" value={formData.last_name} onChange={handleInputChange} />
           </div>
-
           <div className="input-group-ed">
             <input type="text" placeholder="NIK" name="nik" value={formData.nik} onChange={handleInputChange} />
             <input type="text" placeholder="Nomor Telepon" name="phone_number" value={formData.phone_number} onChange={handleInputChange} />
           </div>
 
           <h2 className="section-title-ed">Identitas Darah</h2>
-
           <div className="input-group-ed">
             <select name="golongan_darah" value={formData.golongan_darah} onChange={handleInputChange}>
               <option>Golongan Darah</option><option>A</option><option>B</option><option>AB</option><option>O</option>
@@ -119,7 +168,6 @@ const EditDarah: React.FC = () => {
               <option>Rhesus</option><option>Positif</option><option>Negatif</option>
             </select>
           </div>
-
           <div className="input-group-ed">
             <select name="jenis_darah" value={formData.jenis_darah} onChange={handleInputChange}>
               <option value="">Jenis Darah</option>
@@ -176,17 +224,14 @@ const EditDarah: React.FC = () => {
             </select>
             <input type="text" placeholder="Jumlah Darah yang Diambil (mL)" name="jumlah_darah" value={formData.jumlah_darah} onChange={handleInputChange} />
           </div>
-
           <div className="input-group-ed">
             <input type="text" placeholder="Nomor ID Darah" name="iddarah" value={formData.iddarah} onChange={handleInputChange} />
             <input type="text" placeholder="Petugas yang Menangani" name="petugas" value={formData.petugas} onChange={handleInputChange} />
           </div>
-
           <div className="input-group-ed">
             <input type="date" name="tanggal_donor" value={formData.tanggal_donor} onChange={handleInputChange} />
             <input type="time" name="waktu_donor" value={formData.waktu_donor} onChange={handleInputChange} />
           </div>
-
           <div className="input-group-ed">
             <select name="province_donor" value={formData.province_donor} onChange={handleInputChange}>
               <option value="">Pilih Provinsi</option>
@@ -197,7 +242,6 @@ const EditDarah: React.FC = () => {
               {provinceCityMap[formData.province_donor]?.map((city) => <option key={city} value={city}>{city}</option>)}
             </select>
           </div>
-
           <button type="submit" className="submit-button-ed">Tambah Darah</button>
         </form>
       </div>

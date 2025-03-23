@@ -1,7 +1,16 @@
-import React, { useState } from "react";
-import { View, Text, Image, FlatList, StyleSheet, ScrollView, Dimensions, TouchableOpacity } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  ScrollView,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width } = Dimensions.get("window");
 
@@ -55,12 +64,13 @@ const events = [
     date: "15 September 2025",
     time: "07:30 - 10:30",
     image: require("../../assets/images/donor_poster.png"),
-    page: "/informasidonor1"
+    page: "/informasidonor1",
   },
 ];
 
 export default function Home() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [username, setUsername] = useState("...");
   const router = useRouter();
 
   const handleScroll = (event) => {
@@ -69,8 +79,36 @@ export default function Home() {
     setActiveIndex(index);
   };
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = await AsyncStorage.getItem("token");
+
+        const response = await fetch("https://backend-setetesharapandesktop.up.railway.app/users/me", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Jika pakai JWT
+          },
+          credentials: "include", // Penting jika pakai session
+        });
+
+        const data = await response.json();
+        if (response.ok && data.username) {
+          setUsername(data.username);
+        } else {
+          console.warn("Gagal mengambil user:", data);
+        }
+      } catch (error) {
+        console.error("Error fetch user:", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
   const renderEventItem = ({ item }) => (
-    <TouchableOpacity onPress={() => router.push(item.page)}> 
+    <TouchableOpacity onPress={() => router.push(item.page)}>
       <View style={styles.card}>
         <View style={styles.cardContent}>
           <View style={styles.textContainer}>
@@ -93,11 +131,12 @@ export default function Home() {
       <View style={styles.header}>
         <Image source={require("../../assets/images/logox.png")} style={styles.headerImage} />
       </View>
+
       <View style={styles.carouselWrapper}>
-        <ScrollView 
-          horizontal 
-          pagingEnabled 
-          showsHorizontalScrollIndicator={false} 
+        <ScrollView
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
           style={styles.carousel}
           onScroll={handleScroll}
           scrollEventThrottle={16}
@@ -112,7 +151,9 @@ export default function Home() {
           ))}
         </View>
       </View>
-      <Text style={styles.greeting}>Halo, Nasywaa Anggun!</Text>
+
+      <Text style={styles.greeting}>Halo, {username}!</Text>
+
       <View style={styles.statsCard}>
         <View style={styles.statItem}>
           <Image source={require("../../assets/images/star.png")} style={styles.icon} />
@@ -132,14 +173,12 @@ export default function Home() {
           <Text style={styles.statValue}>#56</Text>
         </View>
       </View>
+
       <Text style={styles.subtitle}>Kegiatan Donor Darah</Text>
-      
-      {/* Replace FlatList with map to render event items */}
+
       <View style={styles.eventsContainer}>
-        {events.map(item => (
-          <View key={item.id}>
-            {renderEventItem({ item })}
-          </View>
+        {events.map((item) => (
+          <View key={item.id}>{renderEventItem({ item })}</View>
         ))}
       </View>
     </ScrollView>

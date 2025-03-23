@@ -9,6 +9,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -20,6 +21,7 @@ export default function Login() {
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
 
   const handleChange = (field: string, value: string) => {
     setFormData({
@@ -28,7 +30,31 @@ export default function Login() {
     });
   };
 
-  const router = useRouter();
+  const handleLogin = async () => {
+    try {
+      const response = await fetch("https://backend-setetesharapandesktop.up.railway.app/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert("Login Berhasil", `Selamat datang, ${formData.email}`);
+        router.push("/home"); // hanya jika login berhasil
+      } else {
+        Alert.alert("Login Gagal", data.detail || "Email atau password salah");
+      }
+    } catch (err) {
+      Alert.alert("Error", "Gagal terhubung ke server.");
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -47,6 +73,8 @@ export default function Login() {
               placeholder="john.doe@gmail.com"
               value={formData.email}
               onChangeText={(text) => handleChange("email", text)}
+              autoCapitalize="none"
+              keyboardType="email-address"
             />
           </View>
 
@@ -73,24 +101,19 @@ export default function Login() {
             </View>
           </View>
 
-      {/* Login Button */}
-      <TouchableOpacity style={styles.button} onPress={() => router.push("/home")}>
-        <Text style={styles.buttonText}>Masuk</Text>
-      </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleLogin}>
+            <Text style={styles.buttonText}>Masuk</Text>
+          </TouchableOpacity>
 
           <View style={styles.loginLinkContainer}>
             <Text style={styles.loginText}>Belum punya akun? </Text>
-            <TouchableOpacity
-              onPress={() => router.push("/register")}
-            >
+            <TouchableOpacity onPress={() => router.push("/register")}>
               <Text style={styles.loginLink}>Daftar</Text>
             </TouchableOpacity>
           </View>
 
-          {/* Separator */}
           <Text style={styles.orText}>Atau</Text>
 
-          {/* Google Login Button */}
           <TouchableOpacity style={styles.googleButton}>
             <Ionicons name="logo-google" size={20} color="black" />
             <Text style={styles.googleText}>Login dengan Google</Text>
@@ -104,7 +127,7 @@ export default function Login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#8",
+    backgroundColor: "#fff",
   },
   keyboardAvoidView: {
     flex: 1,
