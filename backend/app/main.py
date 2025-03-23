@@ -17,7 +17,8 @@ from app.routes.news import router as news_router
 from app.routes.notifications import router as notifications_router
 from app.routes.points import router as points_router  
 from app.routes.profile import router as profile_router  
-from app.routes.vouchers import router as vouchers_router  
+from app.routes.vouchers import router as vouchers_router
+from app.routes.stok_darah import router as stok_darah_router  # Import router stok darah
 
 app = FastAPI()
 
@@ -121,3 +122,4 @@ app.include_router(notifications_router, prefix="/api", tags=["notifications"])
 app.include_router(points_router, prefix="/api", tags=["points"])
 app.include_router(profile_router, prefix="/api", tags=["profile"])
 app.include_router(vouchers_router, prefix="/api", tags=["vouchers"])
+app.include_router(stok_darah_router, prefix="/api", tags=["blood_inventory"])  # Tambahkan router stok darah
