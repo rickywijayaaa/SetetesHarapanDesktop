@@ -58,7 +58,7 @@ export default function Voucher() {
       const newPoints = points - 50;
       const token = await AsyncStorage.getItem("token");
 
-      const res = await fetch(`https://backend-setetesharapandesktop.up.railway.app/user/profile/${iduser}`, {
+      const res = await fetch(`https://backend-setetesharapandesktop.up.railway.app/api/user/points/${iduser}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -85,7 +85,6 @@ export default function Voucher() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#8E1616" }}>
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
           <FontAwesome name="arrow-left" size={24} color="#fff" />
@@ -95,14 +94,12 @@ export default function Voucher() {
         </Text>
       </View>
 
-      {/* Content */}
       <View style={styles.card}>
         <View style={styles.barIndicator} />
 
         <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 30 }}>
           <Text style={styles.title}>Voucher Potongan Harga</Text>
 
-          {/* Voucher image and info */}
           <View style={styles.voucherInfo}>
             <Image
               source={require("../../assets/images/voucher.png")}
@@ -117,7 +114,6 @@ export default function Voucher() {
             </View>
           </View>
 
-          {/* Terms */}
           <Text style={styles.sectionTitle}>Ketentuan Lain:</Text>
           {[
             "Voucher hanya dapat digunakan 1 kali per transaksi.",
@@ -132,7 +128,6 @@ export default function Voucher() {
             </View>
           ))}
 
-          {/* Rights */}
           <Text style={styles.sectionTitle}>Hak Penyelenggara:</Text>
           {[
             "Nestlé Health Science berhak mengubah atau menghentikan promo tanpa pemberitahuan sebelumnya.",
@@ -144,7 +139,6 @@ export default function Voucher() {
             </View>
           ))}
 
-          {/* Button */}
           <TouchableOpacity style={styles.button} onPress={handleClaimVoucher}>
             <Text style={styles.buttonText}>Pilih Voucher</Text>
           </TouchableOpacity>
