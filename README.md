@@ -2,7 +2,7 @@
 
 **SetetesHarapan** merupakan platform digital yang bertujuan membantu pemerataan distribusi stok darah di Indonesia dan mempermudah pencarian donor darah dalam keadaan darurat. Proyek ini menggabungkan teknologi **Machine Learning**, **Notifikasi Real-Time**, dan **Komunikasi Emosional** antara pendonor dan penerima darah.
 
-## Piano Progression Project
+## SetetesHarapan Project
 
 [H4H_Sandbox_HappyFamily_SetetesHarapan_Document](./H4H_Sandbox_HappyFamily_SetetesHarapan_Document.pdf)
 
@@ -10,7 +10,7 @@
 
 | Description              | Link                                                                 |
 |--------------------------|----------------------------------------------------------------------|
-| Access SetetesHarapan Website (Kemenkes & PMI)             | (coming soon) |
+| Access SetetesHarapan Website (Kemenkes & PMI)             | (https://setetesharapan.vercel.app/) |
 | Access SetetesHarapan Android Mobile App (Masyarakat)      | (coming soon) |
 | Access SetetesHarapan IoS Mobile App (Masyarakat)          | (coming soon) |
 | Access SetetesHarapan Website (Masyarakat)                 | (coming soon) |
@@ -18,9 +18,9 @@
 | Deployment Frontend Website     | (https://setetesharapan.vercel.app/)                                                         |
 | Deployment Backend Website & Mobile App      | (https://backend-setetesharapandesktop.up.railway.app) |
 | Deployment Mobile       | (coming soon)                                                         |
-| GitHub          | (private / coming soon)                                               |
-| UI/UX Design          | (private / coming soon)                                               |
-| Documents          | (private / coming soon)                                               |
+| GitHub          | (https://github.com/nasywaanaa/SetetesHarapan.git)                                               |
+| Prototype untuk Mobile          | (https://bit.ly/SetetesHarapanPrototypeMobile)                                               |
+| Prototype untuk Mobile          | (https://bit.ly/SetetesHarapanPrototypeDesktop)                                               |
 
 ## What's Inside?
 Platform ini terdiri dari:
