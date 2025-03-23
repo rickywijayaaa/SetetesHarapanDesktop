@@ -289,7 +289,7 @@ const Homepage: React.FC = () => {
                 <div className="blood-comparison-row">
                   {/* Chart 1 */}
                   <div className="chart-card-hp blood-chart">
-                    <h3>Golongan Darah</h3>
+                    <h3>Pertambahan Stok Darah</h3>
                     <div className="chart-placeholder-hp">
                       <Pie data={prepareBloodTypePieChartData("golongan")} />
                     </div>
@@ -297,7 +297,7 @@ const Homepage: React.FC = () => {
 
                   {/* Chart 2 */}
                   <div className="chart-card-hp blood-chart">
-                    <h3>Jenis Darah</h3>
+                    <h3>Pengurangan Stok Darah</h3>
                     <div className="chart-placeholder-hp">
                       <Pie data={prepareBloodTypePieChartData("jenis")} />
                     </div>
@@ -307,7 +307,7 @@ const Homepage: React.FC = () => {
                 <div className="blood-comparison-row">
                   {/* Chart 3 */}
                   <div className="chart-card-hp blood-chart">
-                    <h3>Rhesus Darah</h3>
+                    <h3>Perbandingan Stok Darah</h3>
                     <div className="chart-placeholder-hp">
                       <Pie 
                         data={{
@@ -330,7 +330,7 @@ const Homepage: React.FC = () => {
 
                   {/* Chart 4 */}
                   <div className="chart-card-hp blood-chart">
-                    <h3>Kadaluarsa Darah</h3>
+                    <h3>Perbandingan Kebutuhan Darah</h3>
                     <div className="chart-placeholder-hp">
                       <Pie 
                         data={{
@@ -360,19 +360,6 @@ const Homepage: React.FC = () => {
                 <h3>Distribusi Darah di Indonesia</h3>
                 <IndonesiaMap />
               </div>
-            </div>
-
-            <div style={{ padding: "1rem", backgroundColor: "#f4f4f4", borderRadius: "6px" }}>
-              <h3>User Info:</h3>
-              {userInfo ? (
-                <ul>
-                  <li><strong>ID:</strong> {userInfo.iduser}</li>
-                  <li><strong>Name:</strong> {userInfo.name}</li>
-                  <li><strong>Role:</strong> {userInfo.role}</li>
-                </ul>
-              ) : (
-                <p>Loading user info...</p>
-              )}
             </div>
           </div>
         )}
