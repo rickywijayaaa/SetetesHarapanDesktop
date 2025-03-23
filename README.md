@@ -17,9 +17,9 @@
 | Description              | Link                                                                 |
 |--------------------------|----------------------------------------------------------------------|
 | Access SetetesHarapan Website (Kemenkes & PMI)             | (https://setetesharapan.vercel.app/) |
-| Access SetetesHarapan Android Mobile App (Masyarakat)      | [(Aplikasi SetetesHarapan)](https://drive.google.com/file/d/16WzFaCPO40StXmj0RyaDuEMth2-PzlcL/view?usp=sharing) |
-| Access SetetesHarapan IoS Mobile App (Masyarakat)          | (coming soon) |
-| Demo Video     | (coming soon)                                                         |
+| Access SetetesHarapan Android Mobile App (Masyarakat)      | [(Aplikasi Android SetetesHarapan)](https://drive.google.com/file/d/16WzFaCPO40StXmj0RyaDuEMth2-PzlcL/view?usp=sharing) |
+| Access SetetesHarapan IOS Mobile App (Masyarakat)          | [(Aplikasi IOS SetetesHarapan)](https://drive.google.com/file/d/1uYxvwQIWinLv3Qd805YuByK-FCkRQPEG/view) |
+| Demo Video     | [(User Guide SetetesHarapan)](https://youtu.be/G-9vzswtsVE)                                                        |
 | Deployment Frontend Website     | (https://setetesharapan.vercel.app/)                                                         |
 | Deployment Backend Website & Mobile App      | (https://backend-setetesharapandesktop.up.railway.app) |
 | GitHub          | (https://github.com/nasywaanaa/SetetesHarapan.git)                                               |
