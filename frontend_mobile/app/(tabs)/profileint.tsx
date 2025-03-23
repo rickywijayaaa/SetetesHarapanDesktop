@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,16 +7,13 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Alert,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import API from "../../constants/api";
 
 export default function Profile() {
   const router = useRouter();
-  const [iduser, setIduser] = useState<number | null>(null);
-  const [userData, setUserData] = useState({ name: "", email: "" });
 
   const [form, setForm] = useState({
     name: "",
@@ -28,70 +25,14 @@ export default function Profile() {
     role: "user",
   });
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const token = await AsyncStorage.getItem("token");
-        const response = await fetch("https://backend-setetesharapandesktop.up.railway.app/users/me", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const data = await response.json();
-        if (response.ok) {
-          setUserData({ name: data.username || data.name, email: data.email });
-          setForm({
-            name: data.username || data.name,
-            email: data.email,
-            phone_number: data.phone_number || "",
-            address: data.address || "",
-            city: data.city || "",
-            province: data.province || "",
-            role: data.role || "user",
-          });
-          setIduser(data.iduser);
-        } else {
-          console.warn("Gagal mengambil data user:", data);
-        }
-      } catch (error) {
-        console.error("Error fetch user:", error);
-      }
-    };
-
-    fetchUser();
-  }, []);
-
   const handleUpdateProfile = async () => {
     try {
-      if (!iduser) {
-        alert("ID user tidak ditemukan.");
-        return;
-      }
-
-      const token = await AsyncStorage.getItem("token");
-      const response = await fetch(`https://backend-setetesharapandesktop.up.railway.app/api/user/profile/${iduser}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(form),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Update error:", errorData);
-        Alert.alert("Gagal", "Gagal memperbarui profil.");
-        return;
-      }
-
-      Alert.alert("Berhasil", "Profil berhasil diperbarui!");
+      const iduser = 1; // Ganti sesuai user login
+      const response = await API.put(`/user/profile/${iduser}`, form);
+      alert("Profil berhasil diperbarui!");
     } catch (error) {
-      console.error("Error saat update profil:", error);
-      Alert.alert("Error", "Terjadi kesalahan saat memperbarui profil.");
+      console.error(error);
+      alert("Gagal memperbarui profil");
     }
   };
 
@@ -114,41 +55,80 @@ export default function Profile() {
             />
           </View>
 
-          <Text style={styles.name}>{userData.name}</Text>
-          <Text style={styles.email}>{userData.email}</Text>
+          <Text style={styles.name}>John Doe</Text>
+          <Text style={styles.email}>john.doe@gmail.com</Text>
 
           <View style={styles.form}>
-            {["name", "email", "phone_number", "address", "city", "province"].map((field) => (
-              <View style={styles.inputGroup} key={field}>
-                <Text style={styles.label}>
-                  {field === "name"
-                    ? "Nama"
-                    : field === "email"
-                    ? "Email"
-                    : field === "phone_number"
-                    ? "Nomor Telepon"
-                    : field === "address"
-                    ? "Alamat"
-                    : field === "city"
-                    ? "Kota/Kabupaten"
-                    : "Provinsi"}
-                </Text>
-                <TextInput
-                  placeholder={`Masukkan ${field}`}
-                  style={styles.input}
-                  placeholderTextColor="#aaa"
-                  value={(form as any)[field]}
-                  onChangeText={(text) => setForm({ ...form, [field]: text })}
-                />
-              </View>
-            ))}
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Nama</Text>
+              <TextInput
+                placeholder="John Doe"
+                style={styles.input}
+                placeholderTextColor="#aaa"
+                value={form.name}
+                onChangeText={(text) => setForm({ ...form, name: text })}
+              />
+            </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Email</Text>
+              <TextInput
+                placeholder="john.doe@gmail.com"
+                style={styles.input}
+                placeholderTextColor="#aaa"
+                value={form.email}
+                onChangeText={(text) => setForm({ ...form, email: text })}
+              />
+            </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Nomor Telepon</Text>
+              <TextInput
+                placeholder="081234567890"
+                style={styles.input}
+                placeholderTextColor="#aaa"
+                value={form.phone_number}
+                onChangeText={(text) => setForm({ ...form, phone_number: text })}
+              />
+            </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Alamat</Text>
+              <TextInput
+                placeholder="Jl. Merdeka No. 123"
+                style={styles.input}
+                placeholderTextColor="#aaa"
+                value={form.address}
+                onChangeText={(text) => setForm({ ...form, address: text })}
+              />
+            </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Kota/Kabupaten</Text>
+              <TextInput
+                placeholder="Kota Bandung"
+                style={styles.input}
+                placeholderTextColor="#aaa"
+                value={form.city}
+                onChangeText={(text) => setForm({ ...form, city: text })}
+              />
+            </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Provinsi</Text>
+              <TextInput
+                placeholder="Jawa Barat"
+                style={styles.input}
+                placeholderTextColor="#aaa"
+                value={form.province}
+                onChangeText={(text) => setForm({ ...form, province: text })}
+              />
+            </View>
           </View>
 
           <TouchableOpacity style={styles.updateButton} onPress={handleUpdateProfile}>
             <Text style={styles.updateButtonText}>Ubah Profil</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.logoutButton} onPress={() => router.replace("/index")}>
+          <TouchableOpacity
+            style={styles.logoutButton}
+            onPress={() => router.replace("/index")}
+          >
             <Text style={styles.logoutButtonText}>Keluar</Text>
           </TouchableOpacity>
         </View>
