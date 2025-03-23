@@ -95,6 +95,27 @@ export default function Profile() {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      // Hapus token dari AsyncStorage
+      await AsyncStorage.removeItem("token");
+      
+      // Log untuk debugging
+      console.log("Token berhasil dihapus, melakukan navigasi ke halaman index");
+      
+      // Navigasi ke halaman utama
+      // Coba salah satu dari opsi berikut, tergantung struktur router Anda
+      router.replace("/");
+      // Jika opsi di atas tidak berfungsi, coba opsi berikut:
+      // router.replace("index");
+      // router.replace("/(app)");
+      // router.replace("/(auth)");
+    } catch (error) {
+      console.error("Error saat logout:", error);
+      Alert.alert("Error", "Terjadi kesalahan saat keluar dari aplikasi.");
+    }
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: "#8E1616" }}>
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
@@ -148,7 +169,7 @@ export default function Profile() {
             <Text style={styles.updateButtonText}>Ubah Profil</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.logoutButton} onPress={() => router.replace("/index")}>
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
             <Text style={styles.logoutButtonText}>Keluar</Text>
           </TouchableOpacity>
         </View>

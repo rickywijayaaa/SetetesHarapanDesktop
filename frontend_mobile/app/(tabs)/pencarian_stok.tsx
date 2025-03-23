@@ -14,40 +14,112 @@ import { useRouter } from "expo-router";
 
 const { width, height } = Dimensions.get("window");
 
-// Static data from stok_darah.py
+// List of blood product types
+const BLOOD_PRODUCT_TYPES = [
+  "AHF", "BC", "FFP", "FFP 450", "FFP Aferesis", "FFP Fraksionasi", 
+  "FFP Konvalesen", "FFP PKC", "FP", "FP72", "Lekosit Eferesis", 
+  "Lekosit Apheresis", "Leucodepleted", "Leucoreduce", "LP", 
+  "LP Aferesis", "LP Apheresis", "LP PKC", "PCL", "PCR", "PF", "PK", 
+  "Plasma Konvalesen", "PRC", "PRC - LC", "PRC 450", "PRC Eferesis", 
+  "PRC BCR", "PRC CPD", "PRC Leucodepleted", "PRC Leucodepletet", 
+  "PRC, Leucoreduce", "PRC SAGM", "PRC-BCR", "PRC-NAT", "PRP", "SAGM", 
+  "TC", "TC Aferesis", "TC Apheresi", "TC Apheresis", "TC APR", 
+  "TC Tromboferesis", "TC-APH", "TCP", "WB", "WB Fresh", 
+  "WB Leucodepletet", "WE", "WE Leucodepleted"
+];
+
+// Static data from stok_darah.py with added blood product types
 const BLOOD_INVENTORY_DATA = [
-  { city: "Jakarta", blood_type: "A+", stock: 100 },
-  { city: "Jakarta", blood_type: "A-", stock: 25 },
-  { city: "Jakarta", blood_type: "B+", stock: 80 },
-  { city: "Jakarta", blood_type: "B-", stock: 20 },
-  { city: "Jakarta", blood_type: "O+", stock: 150 },
-  { city: "Jakarta", blood_type: "O-", stock: 35 },
-  { city: "Jakarta", blood_type: "AB+", stock: 40 },
-  { city: "Jakarta", blood_type: "AB-", stock: 15 },
+  // Jakarta Blood Data
+  { city: "Jakarta", blood_type: "A+", blood_product: "PRC", stock: 35 },
+  { city: "Jakarta", blood_type: "A+", blood_product: "WB", stock: 25 },
+  { city: "Jakarta", blood_type: "A+", blood_product: "FFP", stock: 20 },
+  { city: "Jakarta", blood_type: "A+", blood_product: "TC", stock: 20 },
+  { city: "Jakarta", blood_type: "A-", blood_product: "PRC", stock: 10 },
+  { city: "Jakarta", blood_type: "A-", blood_product: "WB", stock: 8 },
+  { city: "Jakarta", blood_type: "A-", blood_product: "FFP", stock: 7 },
+  { city: "Jakarta", blood_type: "B+", blood_product: "PRC", stock: 30 },
+  { city: "Jakarta", blood_type: "B+", blood_product: "WB", stock: 25 },
+  { city: "Jakarta", blood_type: "B+", blood_product: "TC", stock: 25 },
+  { city: "Jakarta", blood_type: "B-", blood_product: "PRC", stock: 8 },
+  { city: "Jakarta", blood_type: "B-", blood_product: "WB", stock: 6 },
+  { city: "Jakarta", blood_type: "B-", blood_product: "FFP", stock: 6 },
+  { city: "Jakarta", blood_type: "O+", blood_product: "PRC", stock: 50 },
+  { city: "Jakarta", blood_type: "O+", blood_product: "WB", stock: 40 },
+  { city: "Jakarta", blood_type: "O+", blood_product: "FFP", stock: 30 },
+  { city: "Jakarta", blood_type: "O+", blood_product: "TC", stock: 30 },
+  { city: "Jakarta", blood_type: "O-", blood_product: "PRC", stock: 15 },
+  { city: "Jakarta", blood_type: "O-", blood_product: "WB", stock: 10 },
+  { city: "Jakarta", blood_type: "O-", blood_product: "FFP", stock: 10 },
+  { city: "Jakarta", blood_type: "AB+", blood_product: "PRC", stock: 15 },
+  { city: "Jakarta", blood_type: "AB+", blood_product: "WB", stock: 15 },
+  { city: "Jakarta", blood_type: "AB+", blood_product: "FFP", stock: 10 },
+  { city: "Jakarta", blood_type: "AB-", blood_product: "PRC", stock: 5 },
+  { city: "Jakarta", blood_type: "AB-", blood_product: "WB", stock: 5 },
+  { city: "Jakarta", blood_type: "AB-", blood_product: "FFP", stock: 5 },
 
-  { city: "Surabaya", blood_type: "A+", stock: 70 },
-  { city: "Surabaya", blood_type: "A-", stock: 15 },
-  { city: "Surabaya", blood_type: "B+", stock: 65 },
-  { city: "Surabaya", blood_type: "B-", stock: 18 },
-  { city: "Surabaya", blood_type: "O+", stock: 90 },
-  { city: "Surabaya", blood_type: "O-", stock: 25 },
-  { city: "Surabaya", blood_type: "AB+", stock: 30 },
-  { city: "Surabaya", blood_type: "AB-", stock: 10 },
+  // Surabaya Blood Data
+  { city: "Surabaya", blood_type: "A+", blood_product: "PRC", stock: 25 },
+  { city: "Surabaya", blood_type: "A+", blood_product: "WB", stock: 20 },
+  { city: "Surabaya", blood_type: "A+", blood_product: "FFP", stock: 15 },
+  { city: "Surabaya", blood_type: "A+", blood_product: "TC", stock: 10 },
+  { city: "Surabaya", blood_type: "A-", blood_product: "PRC", stock: 5 },
+  { city: "Surabaya", blood_type: "A-", blood_product: "WB", stock: 5 },
+  { city: "Surabaya", blood_type: "A-", blood_product: "FFP", stock: 5 },
+  { city: "Surabaya", blood_type: "B+", blood_product: "PRC", stock: 25 },
+  { city: "Surabaya", blood_type: "B+", blood_product: "WB", stock: 20 },
+  { city: "Surabaya", blood_type: "B+", blood_product: "PRC SAGM", stock: 20 },
+  { city: "Surabaya", blood_type: "B-", blood_product: "PRC", stock: 8 },
+  { city: "Surabaya", blood_type: "B-", blood_product: "WB", stock: 5 },
+  { city: "Surabaya", blood_type: "B-", blood_product: "FFP", stock: 5 },
+  { city: "Surabaya", blood_type: "O+", blood_product: "PRC", stock: 30 },
+  { city: "Surabaya", blood_type: "O+", blood_product: "WB", stock: 30 },
+  { city: "Surabaya", blood_type: "O+", blood_product: "FFP", stock: 15 },
+  { city: "Surabaya", blood_type: "O+", blood_product: "TC", stock: 15 },
+  { city: "Surabaya", blood_type: "O-", blood_product: "PRC", stock: 10 },
+  { city: "Surabaya", blood_type: "O-", blood_product: "WB", stock: 8 },
+  { city: "Surabaya", blood_type: "O-", blood_product: "FFP", stock: 7 },
+  { city: "Surabaya", blood_type: "AB+", blood_product: "PRC", stock: 12 },
+  { city: "Surabaya", blood_type: "AB+", blood_product: "WB", stock: 10 },
+  { city: "Surabaya", blood_type: "AB+", blood_product: "FFP", stock: 8 },
+  { city: "Surabaya", blood_type: "AB-", blood_product: "PRC", stock: 4 },
+  { city: "Surabaya", blood_type: "AB-", blood_product: "WB", stock: 3 },
+  { city: "Surabaya", blood_type: "AB-", blood_product: "FFP", stock: 3 },
 
-  { city: "Bandung", blood_type: "A+", stock: 60 },
-  { city: "Bandung", blood_type: "A-", stock: 12 },
-  { city: "Bandung", blood_type: "B+", stock: 55 },
-  { city: "Bandung", blood_type: "B-", stock: 15 },
-  { city: "Bandung", blood_type: "O+", stock: 80 },
-  { city: "Bandung", blood_type: "O-", stock: 20 },
-  { city: "Bandung", blood_type: "AB+", stock: 25 },
-  { city: "Bandung", blood_type: "AB-", stock: 8 },
+  // Bandung Blood Data
+  { city: "Bandung", blood_type: "A+", blood_product: "PRC", stock: 22 },
+  { city: "Bandung", blood_type: "A+", blood_product: "WB", stock: 20 },
+  { city: "Bandung", blood_type: "A+", blood_product: "FFP", stock: 12 },
+  { city: "Bandung", blood_type: "A+", blood_product: "TC", stock: 6 },
+  { city: "Bandung", blood_type: "A-", blood_product: "PRC", stock: 4 },
+  { city: "Bandung", blood_type: "A-", blood_product: "WB", stock: 4 },
+  { city: "Bandung", blood_type: "A-", blood_product: "FFP", stock: 4 },
+  { city: "Bandung", blood_type: "B+", blood_product: "PRC", stock: 20 },
+  { city: "Bandung", blood_type: "B+", blood_product: "WB", stock: 20 },
+  { city: "Bandung", blood_type: "B+", blood_product: "FFP", stock: 15 },
+  { city: "Bandung", blood_type: "B-", blood_product: "PRC", stock: 5 },
+  { city: "Bandung", blood_type: "B-", blood_product: "WB", stock: 5 },
+  { city: "Bandung", blood_type: "B-", blood_product: "FFP", stock: 5 },
+  { city: "Bandung", blood_type: "O+", blood_product: "PRC", stock: 25 },
+  { city: "Bandung", blood_type: "O+", blood_product: "WB", stock: 25 },
+  { city: "Bandung", blood_type: "O+", blood_product: "FFP", stock: 20 },
+  { city: "Bandung", blood_type: "O+", blood_product: "TC", stock: 10 },
+  { city: "Bandung", blood_type: "O-", blood_product: "PRC", stock: 8 },
+  { city: "Bandung", blood_type: "O-", blood_product: "WB", stock: 7 },
+  { city: "Bandung", blood_type: "O-", blood_product: "FFP", stock: 5 },
+  { city: "Bandung", blood_type: "AB+", blood_product: "PRC", stock: 10 },
+  { city: "Bandung", blood_type: "AB+", blood_product: "WB", stock: 8 },
+  { city: "Bandung", blood_type: "AB+", blood_product: "FFP", stock: 7 },
+  { city: "Bandung", blood_type: "AB-", blood_product: "PRC", stock: 3 },
+  { city: "Bandung", blood_type: "AB-", blood_product: "WB", stock: 3 },
+  { city: "Bandung", blood_type: "AB-", blood_product: "FFP", stock: 2 },
 ];
 
 // Interface untuk definisi tipe data
 interface BloodStock {
   city: string;
   blood_type: string;
+  blood_product: string;
   stock: number;
 }
 
@@ -65,25 +137,11 @@ export default function PencarianStok() {
   const [error, setError] = useState<string | null>(null);
   const [bloodData, setBloodData] = useState<BloodStockResponse | null>(null);
   const [cityInput, setCityInput] = useState<string>("");
-  const [selectedBloodType, setSelectedBloodType] = useState<string | null>(
-    null
-  );
+  const [selectedBloodType, setSelectedBloodType] = useState<string | null>(null);
+  const [selectedBloodProduct, setSelectedBloodProduct] = useState<string | null>(null);
   const [cities, setCities] = useState<string[]>([]);
   const [showCityDropdown, setShowCityDropdown] = useState<boolean>(false);
-  const [showTypeDropdown, setShowTypeDropdown] = useState<boolean>(false);
-
-  // Blood type options
-  const bloodTypes = [
-    "A+",
-    "A-",
-    "B+",
-    "B-",
-    "O+",
-    "O-",
-    "AB+",
-    "AB-",
-    "Semua",
-  ];
+  const [showProductDropdown, setShowProductDropdown] = useState<boolean>(false);
 
   // Ambil data awal dan daftar kota saat komponen dimuat
   useEffect(() => {
@@ -92,12 +150,12 @@ export default function PencarianStok() {
   }, []);
 
   // Fungsi untuk mengambil data stok darah dari data statis
-  const fetchBloodStock = (city?: string, bloodType?: string) => {
+  const fetchBloodStock = (city?: string, bloodType?: string, bloodProduct?: string) => {
     setLoading(true);
     setError(null);
 
     try {
-      // Filter data berdasarkan kota dan golongan darah
+      // Filter data berdasarkan kota, golongan darah, dan jenis darah
       let filteredData = [...BLOOD_INVENTORY_DATA];
 
       if (city && city.trim() !== "") {
@@ -107,6 +165,12 @@ export default function PencarianStok() {
       if (bloodType && bloodType !== "Semua") {
         filteredData = filteredData.filter(
           (item) => item.blood_type === bloodType
+        );
+      }
+
+      if (bloodProduct && bloodProduct !== "Semua") {
+        filteredData = filteredData.filter(
+          (item) => item.blood_product === bloodProduct
         );
       }
 
@@ -160,10 +224,11 @@ export default function PencarianStok() {
   const handleSearch = () => {
     fetchBloodStock(
       cityInput.trim() !== "" ? cityInput : undefined,
-      selectedBloodType !== "Semua" ? selectedBloodType : undefined
+      selectedBloodType !== "Semua" ? selectedBloodType : undefined,
+      selectedBloodProduct !== "Semua" ? selectedBloodProduct : undefined
     );
     setShowCityDropdown(false);
-    setShowTypeDropdown(false);
+    setShowProductDropdown(false);
   };
 
   // Fungsi untuk menangani pemilihan kota
@@ -172,17 +237,19 @@ export default function PencarianStok() {
     setShowCityDropdown(false);
     fetchBloodStock(
       city.trim() !== "" ? city : undefined,
-      selectedBloodType !== "Semua" ? selectedBloodType : undefined
+      selectedBloodType !== "Semua" ? selectedBloodType : undefined,
+      selectedBloodProduct !== "Semua" ? selectedBloodProduct : undefined
     );
   };
 
-  // Fungsi untuk menangani pemilihan jenis darah
-  const handleBloodTypeSelect = (type: string) => {
-    setSelectedBloodType(type);
-    setShowTypeDropdown(false);
+  // Fungsi untuk menangani pemilihan produk darah
+  const handleBloodProductSelect = (product: string) => {
+    setSelectedBloodProduct(product);
+    setShowProductDropdown(false);
     fetchBloodStock(
       cityInput.trim() !== "" ? cityInput : undefined,
-      type !== "Semua" ? type : undefined
+      selectedBloodType !== "Semua" ? selectedBloodType : undefined,
+      product !== "Semua" ? product : undefined
     );
   };
 
@@ -194,9 +261,9 @@ export default function PencarianStok() {
 
   // Function to close dropdowns when clicking outside
   const handleOutsidePress = () => {
-    if (showCityDropdown || showTypeDropdown) {
+    if (showCityDropdown || showProductDropdown) {
       setShowCityDropdown(false);
-      setShowTypeDropdown(false);
+      setShowProductDropdown(false);
     }
   };
 
@@ -204,13 +271,14 @@ export default function PencarianStok() {
   const handleReset = () => {
     setCityInput("");
     setSelectedBloodType(null);
+    setSelectedBloodProduct(null);
     fetchBloodStock();
   };
 
   return (
     <View style={styles.container}>
       {/* Invisible touchable area to close dropdowns */}
-      {(showCityDropdown || showTypeDropdown) && (
+      {(showCityDropdown || showProductDropdown) && (
         <TouchableOpacity
           style={styles.outsideOverlay}
           activeOpacity={0}
@@ -260,7 +328,10 @@ export default function PencarianStok() {
             placeholderTextColor="#888"
             value={cityInput}
             onChangeText={setCityInput}
-            onFocus={() => setShowCityDropdown(true)}
+            onFocus={() => {
+              setShowCityDropdown(true);
+              setShowProductDropdown(false);
+            }}
           />
           <TouchableOpacity
             style={styles.searchIconButton}
@@ -296,30 +367,39 @@ export default function PencarianStok() {
           )}
         </View>
 
-        {/* Type Dropdown */}
+        {/* Blood Product Dropdown */}
         <TouchableOpacity
-          style={styles.typeDropdown}
-          onPress={() => setShowTypeDropdown(!showTypeDropdown)}
+          style={styles.productDropdown}
+          onPress={() => {
+            setShowProductDropdown(!showProductDropdown);
+            setShowCityDropdown(false);
+          }}
         >
           <Text style={styles.typeDropdownText}>
-            {selectedBloodType || "Jenis"}
+            {selectedBloodProduct || "Jenis"}
           </Text>
           <Text style={styles.dropdownIcon}>▼</Text>
 
-          {/* Blood Type Dropdown */}
-          {showTypeDropdown && (
-            <View style={[styles.dropdown, styles.typeDropdownMenu]}>
+          {/* Blood Product Dropdown Menu */}
+          {showProductDropdown && (
+            <View style={[styles.dropdown, styles.productDropdownMenu]}>
               <ScrollView
                 style={{ maxHeight: 200 }}
                 keyboardShouldPersistTaps="handled"
               >
-                {bloodTypes.map((type) => (
+                <TouchableOpacity
+                  style={styles.dropdownItem}
+                  onPress={() => handleBloodProductSelect("Semua")}
+                >
+                  <Text style={styles.dropdownItemText}>Semua</Text>
+                </TouchableOpacity>
+                {BLOOD_PRODUCT_TYPES.map((product) => (
                   <TouchableOpacity
-                    key={type}
+                    key={product}
                     style={styles.dropdownItem}
-                    onPress={() => handleBloodTypeSelect(type)}
+                    onPress={() => handleBloodProductSelect(product)}
                   >
-                    <Text style={styles.dropdownItemText}>{type}</Text>
+                    <Text style={styles.dropdownItemText}>{product}</Text>
                   </TouchableOpacity>
                 ))}
               </ScrollView>
@@ -329,11 +409,12 @@ export default function PencarianStok() {
       </View>
 
       {/* Filter indicator and reset button */}
-      {(cityInput || selectedBloodType) && (
+      {(cityInput || selectedBloodType || selectedBloodProduct) && (
         <View style={styles.filterIndicatorContainer}>
           <Text style={styles.filterIndicatorText}>
             Filter: {cityInput ? cityInput : "Semua Kota"}
             {selectedBloodType ? ` • ${selectedBloodType}` : ""}
+            {selectedBloodProduct ? ` • ${selectedBloodProduct}` : ""}
           </Text>
           <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
             <Text style={styles.resetButtonText}>Reset</Text>
@@ -437,6 +518,7 @@ export default function PencarianStok() {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -545,7 +627,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "#888",
   },
-  typeDropdown: {
+  productDropdown: {
     height: 50,
     backgroundColor: "#fff",
     borderRadius: 8,
