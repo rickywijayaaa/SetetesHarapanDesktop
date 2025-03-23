@@ -1,29 +1,41 @@
-import React from "react";
-import { View, Text, Image, ScrollView, StyleSheet, Dimensions, ImageBackground, TouchableOpacity } from "react-native";
+import React, { useRef, useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Dimensions,
+  ImageBackground,
+  TouchableOpacity,
+} from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRef, useState } from "react";
-import { router } from "expo-router";
-import { useRouter } from "expo-router";
+import { router, useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width } = Dimensions.get("window");
 
-
 const carouselItems = [
-    { id: "1", image: require("../../assets/images/voucher.png") },
-    { id: "2", image: require("../../assets/images/voucher.png") },
-    { id: "3", image: require("../../assets/images/voucher.png") },
-  ];
+  { id: "1", image: require("../../assets/images/voucher.png") },
+  { id: "2", image: require("../../assets/images/voucher.png") },
+  { id: "3", image: require("../../assets/images/voucher.png") },
+];
 
 export default function Reward2() {
-    const [activeIndex, setActiveIndex] = useState(0);
-    const router = useRouter();
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [username, setUsername] = useState("...");
+  const router = useRouter();
   const dropImages = [
     require("../../assets/images/drop1.png"),
     require("../../assets/images/drop2.png"),
     require("../../assets/images/drop3.png"),
-    require("../../assets/images/drop.png")
+    require("../../assets/images/drop.png"),
   ];
+
+  const xpValues = [100, 500, 1000, 1500];
+  const scrollRef = useRef<ScrollView | null>(null);
+  const [scrollPosition, setScrollPosition] = useState(0);
 
   const handleScroll = (event) => {
     const scrollPosition = event.nativeEvent.contentOffset.x;
@@ -31,20 +43,42 @@ export default function Reward2() {
     setActiveIndex(index);
   };
 
-  const xpValues = [100, 500, 1000, 1500];
-
-  const scrollRef = useRef<ScrollView | null>(null);
-
-  const [scrollPosition, setScrollPosition] = useState(0);
-  
-  // Router push handlers
   const handleAvatarPress = () => {
     router.push("/profile");
   };
-  
+
   const handleNextAchievementPress = () => {
     router.push("/reward");
   };
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = await AsyncStorage.getItem("token");
+        const response = await fetch("https://backend-setetesharapandesktop.up.railway.app/users/me", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // jika pakai JWT
+          },
+          credentials: "include", // jika pakai session
+        });
+
+        const data = await response.json();
+        if (response.ok && data.username) {
+          setUsername(data.username);
+        } else if (response.ok && data.name) {
+          setUsername(data.name);
+        } else {
+          console.warn("Gagal mendapatkan username:", data);
+        }
+      } catch (err) {
+        console.error("Gagal fetch user:", err);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   return (
     <ImageBackground
@@ -66,21 +100,18 @@ export default function Reward2() {
 
         {/* Drop Icon Center */}
         <View style={styles.dropWrapper}>
-          <Text style={styles.greeting}>Hi, Nasywaa Anggun!</Text>
-          <Image 
-            style={[styles.dropIconLarge, { marginTop: 0 }]} 
-            resizeMode="contain" 
-          />
+          <Text style={styles.greeting}>Hi, {username}!</Text>
+          <Image style={[styles.dropIconLarge, { marginTop: 0 }]} resizeMode="contain" />
         </View>
 
         {/* White Card */}
         <View style={styles.cardWithCut}>
           {/* Drop overlap */}
           <View style={styles.dropContainer}>
-            <Image 
-              source={require("../../assets/images/drop.png")} 
-              style={{ width: 90, height: 110 }} 
-              resizeMode="contain" 
+            <Image
+              source={require("../../assets/images/drop.png")}
+              style={{ width: 90, height: 110 }}
+              resizeMode="contain"
             />
           </View>
 
@@ -107,27 +138,29 @@ export default function Reward2() {
 
           {/* Progress Steps */}
           <View style={{ position: "relative", width: "100%", alignItems: "center", marginBottom: 15 }}>
-            {/* Progress line */}
-            <View style={{
-              position: "absolute",
-              top: 22,
-              left: 0,
-              right: 0,
-              height: 6,
-              backgroundColor: "#eee",
-              borderRadius: 3,
-              zIndex: 0,
-            }}>
-              <View style={{
+            <View
+              style={{
+                position: "absolute",
+                top: 22,
+                left: 0,
+                right: 0,
                 height: 6,
-                width: "40%", // Adjust this percentage based on progress
-                backgroundColor: "#8E1616",
-                borderTopLeftRadius: 3,
-                borderBottomLeftRadius: 3,
-              }} />
+                backgroundColor: "#eee",
+                borderRadius: 3,
+                zIndex: 0,
+              }}
+            >
+              <View
+                style={{
+                  height: 6,
+                  width: "40%",
+                  backgroundColor: "#8E1616",
+                  borderTopLeftRadius: 3,
+                  borderBottomLeftRadius: 3,
+                }}
+              />
             </View>
 
-            {/* Step items */}
             <View style={[styles.stepRow, { width: "100%", justifyContent: "space-between" }]}>
               {["Pendonor Muda", "Pahlawan Donor", "Duta Donor", "Patriot Donor"].map((label, index) => (
                 <View key={index} style={{ alignItems: "center", zIndex: 2 }}>
@@ -139,7 +172,7 @@ export default function Reward2() {
             </View>
           </View>
 
-          {/* Next Achievement Progress */}
+          {/* Next Achievement */}
           <TouchableOpacity onPress={handleNextAchievementPress}>
             <LinearGradient
               colors={["#E0C0C0", "#FFFFFF"]}
@@ -162,31 +195,32 @@ export default function Reward2() {
             </LinearGradient>
           </TouchableOpacity>
 
-          {/* Vouchers Carousel */}
-            <View style={styles.carouselWrapper}>
-                <ScrollView 
-                horizontal 
-                pagingEnabled 
-                showsHorizontalScrollIndicator={false} 
-                style={styles.carousel}
-                onScroll={handleScroll}
-                scrollEventThrottle={16}
-                >
-                {carouselItems.map((item) => (
-                    <Image key={item.id} source={item.image} style={styles.carouselImage} />
-                ))}
-                </ScrollView>
-                <View style={styles.indicatorContainer}>
-                {carouselItems.map((_, index) => (
-                    <View key={index} style={[styles.indicator, activeIndex === index && styles.activeIndicator]} />
-                ))}
-                </View>
+          {/* Carousel */}
+          <View style={styles.carouselWrapper}>
+            <ScrollView
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              style={styles.carousel}
+              onScroll={handleScroll}
+              scrollEventThrottle={16}
+            >
+              {carouselItems.map((item) => (
+                <Image key={item.id} source={item.image} style={styles.carouselImage} />
+              ))}
+            </ScrollView>
+            <View style={styles.indicatorContainer}>
+              {carouselItems.map((_, index) => (
+                <View key={index} style={[styles.indicator, activeIndex === index && styles.activeIndicator]} />
+              ))}
             </View>
+          </View>
         </View>
       </ScrollView>
     </ImageBackground>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
