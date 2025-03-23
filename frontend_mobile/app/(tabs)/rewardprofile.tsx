@@ -25,6 +25,7 @@ const carouselItems = [
 export default function Reward2() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [username, setUsername] = useState("...");
+  const [points, setPoints] = useState(0);
   const router = useRouter();
   const dropImages = [
     require("../../assets/images/drop1.png"),
@@ -65,12 +66,15 @@ export default function Reward2() {
         });
 
         const data = await response.json();
-        if (response.ok && data.username) {
-          setUsername(data.username);
-        } else if (response.ok && data.name) {
-          setUsername(data.name);
+        if (response.ok) {
+          if (data.username || data.name) {
+            setUsername(data.username || data.name);
+          }
+          if (data.total_points !== undefined) {
+            setPoints(data.total_points);
+          }
         } else {
-          console.warn("Gagal mendapatkan username:", data);
+          console.warn("Gagal mendapatkan data user:", data);
         }
       } catch (err) {
         console.error("Gagal fetch user:", err);
@@ -87,7 +91,6 @@ export default function Reward2() {
       style={{ flex: 1, backgroundColor: "#8E1616" }}
     >
       <ScrollView contentContainerStyle={styles.container}>
-        {/* Header */}
         <View style={styles.header}>
           <FontAwesome name="arrow-left" size={24} color="#8E1616" />
           <TouchableOpacity onPress={handleAvatarPress}>
@@ -98,15 +101,12 @@ export default function Reward2() {
           </TouchableOpacity>
         </View>
 
-        {/* Drop Icon Center */}
         <View style={styles.dropWrapper}>
           <Text style={styles.greeting}>Hi, {username}!</Text>
           <Image style={[styles.dropIconLarge, { marginTop: 0 }]} resizeMode="contain" />
         </View>
 
-        {/* White Card */}
         <View style={styles.cardWithCut}>
-          {/* Drop overlap */}
           <View style={styles.dropContainer}>
             <Image
               source={require("../../assets/images/drop.png")}
@@ -115,14 +115,13 @@ export default function Reward2() {
             />
           </View>
 
-          <Text style={styles.title}>Pahlawan Donor • 590 Points</Text>
+          <Text style={styles.title}>Pahlawan Donor • {points} Points</Text>
 
-          {/* Info Grid */}
           <View style={styles.infoGridWrapper}>
             <View style={styles.infoGridBox}>
               <Image source={require("../../assets/images/points.png")} style={styles.infoIcon} resizeMode="contain" />
               <Text style={styles.infoTitle}>POINTS</Text>
-              <Text style={styles.infoValue}>590</Text>
+              <Text style={styles.infoValue}>{points}</Text>
             </View>
             <View style={[styles.infoGridBox, styles.infoDivider]}>
               <Image source={require("../../assets/images/nasional.png")} style={styles.infoIcon} resizeMode="contain" />
@@ -136,29 +135,24 @@ export default function Reward2() {
             </View>
           </View>
 
-          {/* Progress Steps */}
           <View style={{ position: "relative", width: "100%", alignItems: "center", marginBottom: 15 }}>
-            <View
-              style={{
-                position: "absolute",
-                top: 22,
-                left: 0,
-                right: 0,
+            <View style={{
+              position: "absolute",
+              top: 22,
+              left: 0,
+              right: 0,
+              height: 6,
+              backgroundColor: "#eee",
+              borderRadius: 3,
+              zIndex: 0,
+            }}>
+              <View style={{
                 height: 6,
-                backgroundColor: "#eee",
-                borderRadius: 3,
-                zIndex: 0,
-              }}
-            >
-              <View
-                style={{
-                  height: 6,
-                  width: "40%",
-                  backgroundColor: "#8E1616",
-                  borderTopLeftRadius: 3,
-                  borderBottomLeftRadius: 3,
-                }}
-              />
+                width: "40%",
+                backgroundColor: "#8E1616",
+                borderTopLeftRadius: 3,
+                borderBottomLeftRadius: 3,
+              }} />
             </View>
 
             <View style={[styles.stepRow, { width: "100%", justifyContent: "space-between" }]}>
@@ -172,7 +166,6 @@ export default function Reward2() {
             </View>
           </View>
 
-          {/* Next Achievement */}
           <TouchableOpacity onPress={handleNextAchievementPress}>
             <LinearGradient
               colors={["#E0C0C0", "#FFFFFF"]}
@@ -195,7 +188,6 @@ export default function Reward2() {
             </LinearGradient>
           </TouchableOpacity>
 
-          {/* Carousel */}
           <View style={styles.carouselWrapper}>
             <ScrollView
               horizontal
