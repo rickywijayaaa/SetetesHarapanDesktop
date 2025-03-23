@@ -11,12 +11,23 @@ import {
   Tooltip,
   Legend,
   ArcElement,
+  BarElement,
   CategoryScale,
   LinearScale,
-  BarElement,
 } from "chart.js";
+
 import IndonesiaMap from "../pages/IndonesianMap";
 import urgent from "../assets/urgent.png";
+
+ChartJS.register(
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  LinearScale
+);
 
 // Initialize Supabase
 const supabase = createClient(
@@ -25,21 +36,46 @@ const supabase = createClient(
 );
 
 // Register chart components
-ChartJS.register(
-  Title, 
-  Tooltip, 
-  Legend, 
-  ArcElement, 
-  CategoryScale,
-  LinearScale,
-  BarElement
-);
+ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
 
 // API base URL
 const API_BASE_URL = "https://backend-setetesharapandesktop.up.railway.app"; // Sesuaikan dengan URL backend Anda
 
 // Interval refresh (dalam milidetik) - 1 detik
 const REFRESH_INTERVAL = 100000;
+
+// Data dummy untuk grafik
+const DUMMY_DATA = {
+  // Data untuk Pertambahan Stok Darah (berdasarkan golongan darah)
+  pertambahan_stok: {
+    A: 120,
+    B: 95,
+    AB: 45,
+    O: 150,
+  },
+
+  // Data untuk Pengurangan Stok Darah (berdasarkan jenis darah)
+  pengurangan_stok: {
+    "Whole Blood": 85,
+    "Packed Red Cells": 60,
+    Plasma: 40,
+    Platelet: 30,
+    Cryoprecipitate: 15,
+  },
+
+  // Data untuk Perbandingan Stok Darah (berdasarkan rhesus)
+  perbandingan_rhesus: {
+    "Rhesus Positif": 85,
+    "Rhesus Negatif": 15,
+  },
+
+  // Data untuk Perbandingan Kebutuhan Darah (berdasarkan umur stok)
+  perbandingan_umur_stok: {
+    "< 7 hari": 25,
+    "7-21 hari": 45,
+    "> 21 hari": 30,
+  },
+};
 
 interface DashboardData {
   tanggal: string;
@@ -50,14 +86,6 @@ interface DashboardData {
   stok_per_jenis: Record<string, number>;
   distribusi_per_kota: Record<string, number>;
 }
-
-// Dummy data for blood supply increment
-const dummyBloodSupplyData = {
-  "A": 54779,
-  "B": 33887,
-  "O": 19027,
-  "AB": 8142
-};
 
 const Homepage: React.FC = () => {
   const navigate = useNavigate();
@@ -83,6 +111,73 @@ const Homepage: React.FC = () => {
   const [golonganFilter, setGolonganFilter] = useState("");
   const [jenisFilter, setJenisFilter] = useState("");
   const [autoRefresh, setAutoRefresh] = useState(true);
+
+  // Replace the existing chart preparation functions with these updated versions that use red color variations
+
+  // Fungsi untuk mendapatkan data grafik Pertambahan Stok Darah (berdasarkan golongan)
+  const prepareBloodStockAdditionChart = () => {
+    return {
+      labels: Object.keys(DUMMY_DATA.pertambahan_stok),
+      datasets: [
+        {
+          data: Object.values(DUMMY_DATA.pertambahan_stok),
+          backgroundColor: "rgba(220, 53, 69, 0.6)", // Lighter red with transparency
+          borderColor: "rgba(220, 53, 69, 1)", // Solid red border
+          borderWidth: 1,
+        },
+      ],
+    };
+  };
+
+  // Fungsi untuk mendapatkan data grafik Pengurangan Stok Darah (berdasarkan jenis)
+  const prepareBloodStockReductionChart = () => {
+    return {
+      labels: Object.keys(DUMMY_DATA.pengurangan_stok),
+      datasets: [
+        {
+          data: Object.values(DUMMY_DATA.pengurangan_stok),
+          backgroundColor: "rgba(165, 42, 42, 0.6)", // Brown-red with transparency
+          borderColor: "rgba(165, 42, 42, 1)", // Solid brown-red border
+          borderWidth: 1,
+        },
+      ],
+    };
+  };
+
+  // Fungsi untuk mendapatkan data grafik Perbandingan Stok Darah (berdasarkan rhesus)
+  const prepareRhesusComparisonChart = () => {
+    return {
+      labels: Object.keys(DUMMY_DATA.perbandingan_rhesus),
+      datasets: [
+        {
+          data: Object.values(DUMMY_DATA.perbandingan_rhesus),
+          backgroundColor: [
+            "rgba(220, 53, 69, 1)", // Bright red
+            "rgba(128, 0, 0, 1)", // Dark red/maroon
+          ],
+          hoverOffset: 4,
+        },
+      ],
+    };
+  };
+
+  // Fungsi untuk mendapatkan data grafik Perbandingan Kebutuhan Darah (berdasarkan umur stok)
+  const prepareStockAgeComparisonChart = () => {
+    return {
+      labels: Object.keys(DUMMY_DATA.perbandingan_umur_stok),
+      datasets: [
+        {
+          data: Object.values(DUMMY_DATA.perbandingan_umur_stok),
+          backgroundColor: [
+            "rgba(255, 99, 71, 1)", // Tomato red
+            "rgba(178, 34, 34, 1)", // Firebrick red
+            "rgba(139, 0, 0, 1)", // Dark red
+          ],
+          hoverOffset: 4,
+        },
+      ],
+    };
+  };
 
   // Load user info from localStorage
   useEffect(() => {
@@ -110,28 +205,29 @@ const Homepage: React.FC = () => {
     setError(null);
 
     try {
-      const params = new URLSearchParams();
-      if (cityFilter) params.append("city", cityFilter);
-      if (golonganFilter) params.append("golongan", golonganFilter);
-      if (jenisFilter) params.append("jenis", jenisFilter);
-      params.append("_t", new Date().getTime().toString());
-
-      // Get user_info from localStorage
-      const userInfo = JSON.parse(localStorage.getItem("user_info") || "{}");
-
-      // Set headers with user_info
-      const res = await axios.get(`${API_BASE_URL}/api/dashboard`, {
-        headers: {
-          "x-user-info": JSON.stringify(userInfo), // Send user_info in the request header
+      // Simulate API call
+      // Instead of actual API call, we'll create dummy data
+      const dummyData: DashboardData = {
+        tanggal: new Date().toLocaleDateString("id-ID"),
+        total_kantong: 5580000,
+        total_darah_harian: 12750,
+        total_pendonor: 1250000,
+        stok_per_golongan: DUMMY_DATA.pertambahan_stok,
+        stok_per_jenis: DUMMY_DATA.pengurangan_stok,
+        distribusi_per_kota: {
+          Jakarta: 12500,
+          Surabaya: 8900,
+          Bandung: 7500,
+          Medan: 6800,
+          Makassar: 5200,
         },
-        params, // Add the query parameters (filters)
-      });
+      };
 
-      setDashboardData(res.data);
+      setDashboardData(dummyData);
       setLastUpdated(new Date());
+      setIsLoading(false);
     } catch (err) {
       setError("Gagal memuat data dashboard.");
-    } finally {
       setIsLoading(false);
     }
   };
@@ -161,96 +257,11 @@ const Homepage: React.FC = () => {
 
   const toggleAutoRefresh = () => setAutoRefresh(!autoRefresh);
 
-  // Prepare pie chart data for blood type distribution
-  const prepareBloodTypePieChartData = (type: string) => {
-    if (!dashboardData || !dashboardData.stok_per_golongan) {
-      return {
-        labels: ["A", "B", "AB", "O"],
-        datasets: [
-          {
-            label: "Blood Type Distribution",
-            data: [0, 0, 0, 0],
-            backgroundColor: [
-              "rgba(255, 99, 132, 1)",
-              "rgba(255, 159, 64, 1)",
-              "rgba(255, 205, 86, 1)",
-              "rgba(75, 192, 192, 1)",
-            ],
-            hoverOffset: 4,
-          },
-        ],
-      };
-    }
-
-    // Filtered data based on blood type
-    let chartData;
-    if (type === "golongan") {
-      chartData = dashboardData.stok_per_golongan;
-    } else if (type === "jenis") {
-      chartData = dashboardData.stok_per_jenis;
-    } else {
-      // For other potential chart types
-      chartData = dashboardData.stok_per_golongan;
-    }
-
-    const backgroundColors = [
-      "rgba(255, 99, 132, 1)",
-      "rgba(255, 159, 64, 1)",
-      "rgba(255, 205, 86, 1)",
-      "rgba(75, 192, 192, 1)",
-      "rgba(54, 162, 235, 1)",
-      "rgba(153, 102, 255, 1)",
-      "rgba(201, 203, 207, 1)",
-      "rgba(255, 0, 0, 1)",
-    ];
-
-    return {
-      labels: Object.keys(chartData),
-      datasets: [
-        {
-          label: "Blood Stock Distribution",
-          data: Object.values(chartData),
-          backgroundColor: backgroundColors.slice(
-            0,
-            Object.keys(chartData).length
-          ),
-          hoverOffset: 4,
-        },
-      ],
-    };
-  };
-
-  // Prepare bar chart data for blood supply increment
-  const prepareBloodSupplyBarChartData = () => {
-    // Use dummy data or actual data if available
-    const bloodData = dashboardData?.stok_per_golongan || dummyBloodSupplyData;
-    
-    // Calculate total for display
-    const totalSupply = Object.values(bloodData).reduce((sum, val) => sum + val, 0);
-    
-    return {
-      labels: Object.keys(bloodData),
-      datasets: [
-        {
-          label: "Pertambahan Stok Darah",
-          data: Object.values(bloodData),
-          backgroundColor: "rgba(153, 27, 27, 1)", // dark red color similar to image
-          barThickness: 35,
-          borderRadius: 4,
-        },
-      ],
-      total: totalSupply,
-    };
-  };
-
   const clearFilters = () => {
     setCityFilter("");
     setGolonganFilter("");
     setJenisFilter("");
   };
-
-  // Prepare the blood supply bar chart data
-  const bloodSupplyData = prepareBloodSupplyBarChartData();
 
   return (
     <div className="homepage-container">
@@ -268,9 +279,11 @@ const Homepage: React.FC = () => {
           - {userInfo?.name}
         </span>
         <div className="navbar-actions">
-          <button className="navbar-button" onClick={() => navigate("/edit")}>
-            Edit Darah
-          </button>
+          {userInfo?.role !== "Kemenkes" && (
+            <button className="navbar-button" onClick={() => navigate("/edit")}>
+              Edit Darah
+            </button>
+          )}
           <button className="logout-button-hp" onClick={handleLogout}>
             Logout
           </button>
@@ -376,111 +389,79 @@ const Homepage: React.FC = () => {
               {/* Column 2: Blood Stock Comparison Charts (4 charts in 2x2 grid) */}
               <div className="blood-comparison-grid">
                 <div className="blood-comparison-row">
-                  {/* Chart 1 - Blood Supply Bar Chart */}
+                  {/* Chart 1: Pertambahan Stok Darah */}
                   <div className="chart-card-hp blood-chart">
                     <h3>Pertambahan Stok Darah</h3>
-                    <div className="chart-header">
-                      <div className="chart-title">{bloodSupplyData.total.toLocaleString()}</div>
-                    </div>
-                    <div className="chart-container">
-                      <Bar 
-                        data={{
-                          labels: bloodSupplyData.labels,
-                          datasets: bloodSupplyData.datasets,
-                        }}
-                        options={{
-                          indexAxis: 'y',
-                          scales: {
-                            x: {
-                              grid: {
-                                display: true,
-                              },
-                              border: {
-                                display: false,
-                              },
-                              ticks: {
-                                stepSize: 20000,
-                                callback: (value) => `${value}K`.replace('000K', 'K'),
-                              },
-                            },
-                            y: {
-                              grid: {
-                                display: false,
-                              },
-                              border: {
-                                display: false,
-                              },
-                            },
+                    <Bar
+                      data={prepareBloodStockAdditionChart()}
+                      options={{
+                        indexAxis: "y", // Mengubah ke horizontal bar chart
+                        scales: {
+                          x: {
+                            beginAtZero: true, // Pastikan sumbu X mulai dari 0
                           },
-                          plugins: {
-                            legend: {
-                              display: false,
-                            },
-                            tooltip: {
-                              callbacks: {
-                                label: (context) => `${context.formattedValue.replace(/,/g, '').toLocaleString()}`,
-                              },
-                            },
+                        },
+                        plugins: {
+                          legend: {
+                            display: false, // Menyembunyikan label/legend
                           },
-                          maintainAspectRatio: false,
-                        }}
-                        height={200}
-                      />
-                    </div>
+                        },
+                      }}
+                    />
                   </div>
 
-                  {/* Chart 2 */}
+                  {/* Chart 2: Pengurangan Stok Darah */}
                   <div className="chart-card-hp blood-chart">
                     <h3>Pengurangan Stok Darah</h3>
-                    <div className="chart-placeholder-hp">
-                      <Pie data={prepareBloodTypePieChartData("jenis")} />
-                    </div>
+                    <Bar
+                      data={prepareBloodStockReductionChart()}
+                      options={{
+                        indexAxis: "y", // Mengubah ke horizontal bar chart
+                        scales: {
+                          x: {
+                            beginAtZero: true,
+                          },
+                        },
+                        plugins: {
+                          legend: {
+                            display: false, // Menyembunyikan label/legend
+                          },
+                        },
+                      }}
+                    />
                   </div>
                 </div>
 
                 <div className="blood-comparison-row">
-                  {/* Chart 3 */}
+                  {/* Chart 3: Perbandingan Stok Darah (Rhesus) */}
                   <div className="chart-card-hp blood-chart">
                     <h3>Perbandingan Stok Darah</h3>
                     <div className="chart-placeholder-hp">
                       <Pie
-                        data={{
-                          labels: ["Positif", "Negatif"],
-                          datasets: [
-                            {
-                              label: "Rhesus Distribution",
-                              data: [85, 15], // Example data, replace with actual data
-                              backgroundColor: [
-                                "rgba(54, 162, 235, 1)",
-                                "rgba(255, 99, 132, 1)",
-                              ],
-                              hoverOffset: 4,
+                        data={prepareRhesusComparisonChart()}
+                        options={{
+                          plugins: {
+                            legend: {
+                              display: true, // Menyembunyikan label/legend
                             },
-                          ],
+                          },
                         }}
                       />
                     </div>
                   </div>
 
-                  {/* Chart 4 */}
+                  {/* Chart 4: Perbandingan Kebutuhan Darah (Umur Stok) */}
                   <div className="chart-card-hp blood-chart">
                     <h3>Perbandingan Kebutuhan Darah</h3>
                     <div className="chart-placeholder-hp">
                       <Pie
-                        data={{
-                          labels: ["< 7 hari", "7-21 hari", "> 21 hari"],
-                          datasets: [
-                            {
-                              label: "Expiry Distribution",
-                              data: [25, 45, 30], // Example data, replace with actual data
-                              backgroundColor: [
-                                "rgba(255, 99, 132, 1)",
-                                "rgba(255, 205, 86, 1)",
-                                "rgba(75, 192, 192, 1)",
-                              ],
-                              hoverOffset: 4,
+                        data={prepareStockAgeComparisonChart()}
+                        options={{
+                          plugins: {
+                            legend: {
+                              display: true, // Menyembunyikan label/legend
                             },
-                          ],
+                          },
                         }}
                       />
                     </div>
@@ -489,6 +470,7 @@ const Homepage: React.FC = () => {
               </div>
             </div>
 
+            {/* Conditional rendering based on user role */}
             <div className="full-width-map-container">
               {userInfo?.role === "Rumah Sakit" && (
                 <div className="emergency-blood-request-section">
@@ -512,7 +494,7 @@ const Homepage: React.FC = () => {
                   </div>
                 </div>
               )}
-              
+
               {/* Indonesia Map section - only visible for PMI and Kemenkes roles */}
               {userInfo?.role !== "Rumah Sakit" && (
                 <div className="chart-card-hp full-width">
@@ -520,7 +502,7 @@ const Homepage: React.FC = () => {
                   <IndonesiaMap />
                 </div>
               )}
-            </div>              
+            </div>
           </div>
         )}
       </div>

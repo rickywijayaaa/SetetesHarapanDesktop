@@ -1117,15 +1117,16 @@
 .full-width-map-container {
   width: 100%;
   margin: 15px 0;
-  margin-bottom: 30px; /* Add bottom margin to the map container */
+  margin-bottom: 30px;
 }
 
 .chart-card-hp.full-width {
   width: 100%;
   box-sizing: border-box;
   padding: 15px;
-  overflow: hidden;
-  height: 60%;
+  overflow: visible; /* Changed from hidden to visible */
+  height: auto; /* Changed from 60% to auto to fit content */
+  min-height: 650px; /* Set a minimum height for the container */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1133,23 +1134,27 @@
 }
 
 .chart-card-hp h3 {
-  margin-bottom: 0px; /* Kurangi jarak bawah */
-  margin-top: 50px;
+  margin-bottom: 10px; /* Slightly increased */
+  margin-top: 10px; /* Reduced from 50px */
 }
 
 .map-container {
   width: 100%;
-  min-height: 600px;
+  height: 600px; /* Fixed height */
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: visible;
+  position: relative; /* Added position relative */
 }
 
 /* Make the Plotly container responsive */
 .map-container > div {
   width: 100% !important;
   height: 100% !important;
+  position: absolute !important; /* Position absolute to prevent overflow issues */
+  top: 0;
+  left: 0;
 }
 
 /* Make sure SVG elements in the map are fully visible */
@@ -1157,12 +1162,19 @@
   width: 100% !important;
   height: 100% !important;
   max-width: none !important;
+  overflow: visible;
 }
 
 /* Make the legend visible and properly sized */
 .map-container .legend {
-  max-width: 100%;
-  overflow: visible;
+  max-width: 200px;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 5px;
+  border-radius: 5px;
+  z-index: 1000;
 }
 
 /* Ensure text elements are readable */
