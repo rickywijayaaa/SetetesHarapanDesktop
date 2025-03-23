@@ -89,7 +89,7 @@ const Register: React.FC = () => {
     };
 
     try {
-      const res = await axios.post("http://127.0.0.1:8000/users/register", payload);
+      const res = await axios.post("https://backend-setetesharapandesktop.up.railway.app/users/register", payload);
       alert("Registrasi berhasil!");
       navigate("/verification");
     } catch (err: any) {

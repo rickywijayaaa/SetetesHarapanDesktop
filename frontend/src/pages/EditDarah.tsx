@@ -69,7 +69,7 @@ const EditDarah: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://127.0.0.1:8000/donor/", formData);
+      const res = await axios.post("https://backend-setetesharapandesktop.up.railway.app/donor/", formData);
       alert("Data berhasil ditambahkan!");
     } catch (err) {
       console.error(err);
