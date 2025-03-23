@@ -1,5 +1,11 @@
 # SetetesHarapan
 
+## Author
+1. Nasywaa Anggun Athiefah (https://github.com/nasywaanaa)
+2. Naomi Pricilla Agustine (https://github.com/naomipricillaa)
+3. Ricky Wijaya (https://github.com/rickywijayaaa)
+4. Micky Valentino (https://github.com/MickyV18)
+
 **SetetesHarapan** merupakan platform digital yang bertujuan membantu pemerataan distribusi stok darah di Indonesia dan mempermudah pencarian donor darah dalam keadaan darurat. Proyek ini menggabungkan teknologi **Machine Learning**, **Notifikasi Real-Time**, dan **Komunikasi Emosional** antara pendonor dan penerima darah.
 
 ## SetetesHarapan Project
