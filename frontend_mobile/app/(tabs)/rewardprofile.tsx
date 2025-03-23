@@ -159,7 +159,7 @@ export default function Reward2() {
               {["Pendonor Muda", "Pahlawan Donor", "Duta Donor", "Patriot Donor"].map((label, index) => (
                 <View key={index} style={{ alignItems: "center", zIndex: 2 }}>
                   <Image source={dropImages[index]} style={styles.stepIcon} resizeMode="contain" />
-                  <Text style={[styles.stepLabel, { color: index <= 1 ? "#8E1616" : "#999" }]}>{label}</Text>
+                  <Text style={[styles.stepLabel, { color: index <= 1 ? "#8E1616" : "#8E1616" }]}>{label}</Text>
                   <Text style={styles.stepXP}>{xpValues[index]} XP</Text>
                 </View>
               ))}
@@ -402,6 +402,7 @@ const styles = StyleSheet.create({
   },
   carouselWrapper: {
     alignItems: "center", 
+    marginTop: 25,
   },
   carousel: {
     marginVertical: 10,
