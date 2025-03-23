@@ -42,7 +42,12 @@ export default function PesanScreen() {
   }
 
   const handlePress = (item) => {
+    // Mark notification as read when clicked
+    item.is_read = true;
+    // Update the state of the notification to reflect it is read
     setSelectedNotification(item); // Show modal when a notification is clicked
+    // Optionally, send an update request to the backend to mark the notification as read
+    axios.put(`https://backend-setetesharapandesktop.up.railway.app/api/notifications/${item.idnotification}/read`);
   };
 
   const handleCloseModal = () => {
@@ -52,8 +57,7 @@ export default function PesanScreen() {
   const handleDonatePress = () => {
     // Navigate to the "Kuesioner" screen after clicking "Bantu Donor"
     setSelectedNotification(null); // Close modal
-    // Assuming navigation to /kuesioner, you can change it to your actual route
-    router.push('/kuesioner');
+    router.push('/kuesioner'); // Assuming navigation to /kuesioner
   };
 
   // Function to return the avatar image source based on the index
@@ -61,6 +65,18 @@ export default function PesanScreen() {
     const avatarIndex = index % 5; // Cycle through 5 images
     return avatars[avatarIndex]; // Return the correct avatar based on index
   };
+
+  // Filter notifications based on the selected tab
+  const filteredNotifications = notifications.filter((notification) => {
+    if (selectedTab === 'Unread') {
+      return !notification.is_read;
+    }
+    if (selectedTab === 'Read') {
+      return notification.is_read;
+    }
+    return true; // For 'All' tab, return all notifications
+  });
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Notifikasi</Text>
@@ -73,7 +89,7 @@ export default function PesanScreen() {
       </View>
 
       <FlatList
-        data={notifications}
+        data={filteredNotifications}
         keyExtractor={(item) => item.idnotification.toString()} // Ensure correct key for unique ids
         renderItem={({ item, index }) => (
           <TouchableOpacity
@@ -93,7 +109,6 @@ export default function PesanScreen() {
                   hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit", year: "2-digit"
                 })}
               </Text>
-
             </View>
           </TouchableOpacity>
         )}
@@ -125,7 +140,7 @@ export default function PesanScreen() {
                 <Text style={styles.detailText}><Text style={styles.bold}>Golongan darah:</Text> {selectedNotification.golongan_darah}</Text>
                 <Text style={styles.detailText}><Text style={styles.bold}>Rhesus:</Text> {selectedNotification.rhesus}</Text>
                 <Text style={styles.detailText}><Text style={styles.bold}>Deadline:</Text> {new Date(selectedNotification.deadline).toLocaleString()}</Text>
-                <Text style={styles.detailText}><Text style={styles.bold}>Alamat:</Text> RS. Borromeus, Jl. Ir. H. Djuanda No 100, Jawa Barat</Text>
+                <Text style={styles.detailText}><Text style={styles.bold}>Alamat:</Text> {selectedNotification.address}</Text>
               </View>
               <TouchableOpacity style={styles.button} onPress={handleDonatePress}>
                 <Text style={styles.buttonText}>Bantu Donor</Text>
