@@ -108,6 +108,7 @@ class NotificationSchema(BaseModel):
     deadline: datetime
     message: str
     address: str
+    is_read : bool
 
 class PesanSchema(BaseModel):
     idUser: int
