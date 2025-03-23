@@ -178,6 +178,7 @@ class NotificationResponse(BaseModel):
     deadline: datetime
     message: str
     created_at: datetime
+    address : str
 
     class Config:
         from_attributes = True
