@@ -17,13 +17,11 @@
 | Description              | Link                                                                 |
 |--------------------------|----------------------------------------------------------------------|
 | Access SetetesHarapan Website (Kemenkes & PMI)             | (https://setetesharapan.vercel.app/) |
-| Access SetetesHarapan Android Mobile App (Masyarakat)      | (coming soon) |
+| Access SetetesHarapan Android Mobile App (Masyarakat)      | [(Aplikasi SetetesHarapan)](https://drive.google.com/file/d/16WzFaCPO40StXmj0RyaDuEMth2-PzlcL/view?usp=sharing) |
 | Access SetetesHarapan IoS Mobile App (Masyarakat)          | (coming soon) |
-| Access SetetesHarapan Website (Masyarakat)                 | (coming soon) |
 | Demo Video     | (coming soon)                                                         |
 | Deployment Frontend Website     | (https://setetesharapan.vercel.app/)                                                         |
 | Deployment Backend Website & Mobile App      | (https://backend-setetesharapandesktop.up.railway.app) |
-| Deployment Mobile       | (coming soon)                                                         |
 | GitHub          | (https://github.com/nasywaanaa/SetetesHarapan.git)                                               |
 | Prototype untuk Mobile          | (https://bit.ly/SetetesHarapanPrototypeMobile)                                               |
 | Prototype untuk Mobile          | (https://bit.ly/SetetesHarapanPrototypeDesktop)                                               |
