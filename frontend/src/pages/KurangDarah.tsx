@@ -42,7 +42,7 @@ const KurangDarah: React.FC = () => {
   const fetchDonorData = () => {
     const userInfo = localStorage.getItem("user_info");
   
-    fetch("http://127.0.0.1:8000/donor/", {
+    fetch("https://backend-setetesharapandesktop.up.railway.app/donor/", {
       headers: {
         "x-user-info": userInfo || "", // 🧠 Make sure it's stringified JSON
       },
@@ -104,9 +104,9 @@ const KurangDarah: React.FC = () => {
           </Link>
         </div>
         <span className="navbar-text-kd">
-          {userInfo?.role === "kemenkes"
+          {userInfo?.role === "Kemenkes"
             ? "Kementerian Kesehatan Indonesia"
-            : userInfo?.role === "pmi"
+            : userInfo?.role === "PMI"
             ? "Palang Merah Indonesia"
             : "Rumah Sakit"}{" "}
           - {userInfo?.name}
