@@ -4,7 +4,7 @@ import axios from "axios";
 import logo from "../assets/logo.png";
 import "../App.css";
 import { createClient } from "@supabase/supabase-js";
-import { Pie } from "react-chartjs-2";
+import { Pie, Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   Title,
@@ -12,6 +12,8 @@ import {
   Legend,
   ArcElement,
   CategoryScale,
+  LinearScale,
+  BarElement,
 } from "chart.js";
 import IndonesiaMap from "../pages/IndonesianMap";
 import urgent from "../assets/urgent.png";
@@ -23,7 +25,15 @@ const supabase = createClient(
 );
 
 // Register chart components
-ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
+ChartJS.register(
+  Title, 
+  Tooltip, 
+  Legend, 
+  ArcElement, 
+  CategoryScale,
+  LinearScale,
+  BarElement
+);
 
 // API base URL
 const API_BASE_URL = "https://backend-setetesharapandesktop.up.railway.app"; // Sesuaikan dengan URL backend Anda
@@ -40,6 +50,14 @@ interface DashboardData {
   stok_per_jenis: Record<string, number>;
   distribusi_per_kota: Record<string, number>;
 }
+
+// Dummy data for blood supply increment
+const dummyBloodSupplyData = {
+  "A": 54779,
+  "B": 33887,
+  "O": 19027,
+  "AB": 8142
+};
 
 const Homepage: React.FC = () => {
   const navigate = useNavigate();
@@ -202,11 +220,37 @@ const Homepage: React.FC = () => {
     };
   };
 
+  // Prepare bar chart data for blood supply increment
+  const prepareBloodSupplyBarChartData = () => {
+    // Use dummy data or actual data if available
+    const bloodData = dashboardData?.stok_per_golongan || dummyBloodSupplyData;
+    
+    // Calculate total for display
+    const totalSupply = Object.values(bloodData).reduce((sum, val) => sum + val, 0);
+    
+    return {
+      labels: Object.keys(bloodData),
+      datasets: [
+        {
+          label: "Pertambahan Stok Darah",
+          data: Object.values(bloodData),
+          backgroundColor: "rgba(153, 27, 27, 1)", // dark red color similar to image
+          barThickness: 35,
+          borderRadius: 4,
+        },
+      ],
+      total: totalSupply,
+    };
+  };
+
   const clearFilters = () => {
     setCityFilter("");
     setGolonganFilter("");
     setJenisFilter("");
   };
+
+  // Prepare the blood supply bar chart data
+  const bloodSupplyData = prepareBloodSupplyBarChartData();
 
   return (
     <div className="homepage-container">
@@ -332,11 +376,56 @@ const Homepage: React.FC = () => {
               {/* Column 2: Blood Stock Comparison Charts (4 charts in 2x2 grid) */}
               <div className="blood-comparison-grid">
                 <div className="blood-comparison-row">
-                  {/* Chart 1 */}
+                  {/* Chart 1 - Blood Supply Bar Chart */}
                   <div className="chart-card-hp blood-chart">
                     <h3>Pertambahan Stok Darah</h3>
-                    <div className="chart-placeholder-hp">
-                      <Pie data={prepareBloodTypePieChartData("golongan")} />
+                    <div className="chart-header">
+                      <div className="chart-title">{bloodSupplyData.total.toLocaleString()}</div>
+                    </div>
+                    <div className="chart-container">
+                      <Bar 
+                        data={{
+                          labels: bloodSupplyData.labels,
+                          datasets: bloodSupplyData.datasets,
+                        }}
+                        options={{
+                          indexAxis: 'y',
+                          scales: {
+                            x: {
+                              grid: {
+                                display: true,
+                              },
+                              border: {
+                                display: false,
+                              },
+                              ticks: {
+                                stepSize: 20000,
+                                callback: (value) => `${value}K`.replace('000K', 'K'),
+                              },
+                            },
+                            y: {
+                              grid: {
+                                display: false,
+                              },
+                              border: {
+                                display: false,
+                              },
+                            },
+                          },
+                          plugins: {
+                            legend: {
+                              display: false,
+                            },
+                            tooltip: {
+                              callbacks: {
+                                label: (context) => `${context.formattedValue.replace(/,/g, '').toLocaleString()}`,
+                              },
+                            },
+                          },
+                          maintainAspectRatio: false,
+                        }}
+                        height={200}
+                      />
                     </div>
                   </div>
 
@@ -400,33 +489,38 @@ const Homepage: React.FC = () => {
               </div>
             </div>
 
-            {/* Conditional rendering based on user role */}
             <div className="full-width-map-container">
-              <div className="emergency-blood-request-section">
-                <div className="emergency-card">
-                  <div className="emergency-content">
-                    <div className="emergency-header">
-                      <h2>Darurat!</h2>
-                      <h1>Butuh darah darurat?</h1>
-                      <h3>Cari donor darah terdekat!</h3>
+              {userInfo?.role === "Rumah Sakit" && (
+                <div className="emergency-blood-request-section">
+                  <div className="emergency-card">
+                    <div className="emergency-content">
+                      <div className="emergency-header">
+                        <h2>Darurat!</h2>
+                        <h1>Butuh darah darurat?</h1>
+                        <h3>Cari donor darah terdekat!</h3>
+                      </div>
+                      <button
+                        className="emergency-button"
+                        onClick={handleEmergencySearch}
+                      >
+                        Cari Sekarang
+                      </button>
                     </div>
-                    <button
-                      className="emergency-button"
-                      onClick={handleEmergencySearch}
-                    >
-                      Cari Sekarang
-                    </button>
-                  </div>
-                  <div className="urgent-container">
-                    <img src={urgent} alt="URGENT" className="urgent-logo" />
+                    <div className="urgent-container">
+                      <img src={urgent} alt="URGENT" className="urgent-logo" />
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="chart-card-hp full-width">
-                <h3>Distribusi Darah di Indonesia</h3>
-                <IndonesiaMap />
-              </div>
-            </div>
+              )}
+              
+              {/* Indonesia Map section - only visible for PMI and Kemenkes roles */}
+              {userInfo?.role !== "Rumah Sakit" && (
+                <div className="chart-card-hp full-width">
+                  <h3>Distribusi Darah di Indonesia</h3>
+                  <IndonesiaMap />
+                </div>
+              )}
+            </div>              
           </div>
         )}
       </div>

@@ -78,7 +78,7 @@ const BlastingInfo: React.FC = () => {
       try {
         const formattedDeadline = new Date(formData.deadline).toISOString(); // Format the deadline as ISO string
         const response = await axios.post(
-          "http://127.0.0.1:8000/api/notification",
+          "https://backend-setetesharapandesktop.up.railway.app/api/notification",
           {
             iduser: userInfo.iduser, // Getting iduser from localStorage or user info
             golongan_darah: formData.blood_type,
