@@ -303,109 +303,92 @@ const Homepage: React.FC = () => {
             <button onClick={fetchDashboardData}>Coba Lagi</button>
           </div>
         ) : (
-          <div className="dashboard-layout">
-            {/* Top row: Statistics Cards */}
-            <div className="stats-row">
-              <div className="stats-card-hp">
-                <h3>Total Darah Tersedia</h3>
-                <p className="stats-value-hp">
-                  {dashboardData?.total_kantong.toLocaleString()}{" "}
-                  <span>Kantong</span>
-                </p>
-                <p className="stats-subtext-hp">
-                  {dashboardData && dashboardData.total_kantong < 5600000
-                    ? `-${(
-                        5600000 - dashboardData.total_kantong
-                      ).toLocaleString()} dari Anjuran WHO`
-                    : `+${(
-                        dashboardData!.total_kantong - 5600000
-                      ).toLocaleString()} dari Anjuran WHO`}
-                </p>
-              </div>
+          <div className="main-content-hp">
+            {/* Top row: 3 columns - Statistics, Blood Stock Chart, City Distribution */}
+            <div className="top-row-content">
+              {/* Column 1: Statistics Cards */}
+              <div className="stats-column">
+                <div className="stats-card-hp">
+                  <h3>Total Darah Tersedia</h3>
+                  <p className="stats-value-hp">
+                    {dashboardData?.total_kantong.toLocaleString()}{" "}
+                    <span>Kantong</span>
+                  </p>
+                  <p className="stats-subtext-hp">
+                    {dashboardData && dashboardData.total_kantong < 5600000
+                      ? `-${(
+                          5600000 - dashboardData.total_kantong
+                        ).toLocaleString()} dari Anjuran WHO`
+                      : `+${(
+                          dashboardData!.total_kantong - 5600000
+                        ).toLocaleString()} dari Anjuran WHO`}
+                  </p>
+                </div>
 
-              <div className="stats-card-hp">
-                <h3>Total Pendonor</h3>
-                <p className="stats-value-hp">
-                  {dashboardData?.total_pendonor.toLocaleString()}{" "}
-                  <span>Orang</span>
-                </p>
-              </div>
+                <div className="stats-card-hp">
+                  <h3>Total Pendonor</h3>
+                  <p className="stats-value-hp">
+                    {dashboardData?.total_pendonor.toLocaleString()}{" "}
+                    <span>Orang</span>
+                  </p>
+                </div>
 
-              <div className="stats-card-hp">
-                <h3>Total Darah Hari Ini</h3>
-                <p className="stats-value-hp">
-                  {dashboardData?.total_darah_harian.toLocaleString()}{" "}
-                  <span>Kantong</span>
-                </p>
-                <p className="stats-subtext-hp">
-                  Tanggal: {dashboardData?.tanggal}
-                </p>
-              </div>
-            </div>
-
-            {/* Middle row: Charts (2 column layout) */}
-            <div className="charts-row">
-              <div className="chart-card-hp">
-                <h3>Perbandingan Stok Darah</h3>
-                <div className="chart-placeholder-hp">
-                  <Pie data={preparePieChartData()} />
+                <div className="stats-card-hp">
+                  <h3>Total Darah Hari Ini</h3>
+                  <p className="stats-value-hp">
+                    {dashboardData?.total_darah_harian.toLocaleString()}{" "}
+                    <span>Kantong</span>
+                  </p>
+                  <p className="stats-subtext-hp">
+                    Tanggal: {dashboardData?.tanggal}
+                  </p>
                 </div>
               </div>
 
-              <div className="chart-card-hp">
-                <h3>Distribusi per Kota</h3>
-                <div className="chart-placeholder-hp">
-                  {dashboardData &&
-                  Object.keys(dashboardData.distribusi_per_kota).length > 0 ? (
-                    <div className="city-distribution">
-                      {Object.entries(dashboardData.distribusi_per_kota)
-                        .sort(([, a], [, b]) => b - a)
-                        .map(([city, count], index) => (
-                          <div key={index} className="city-item">
-                            <span className="city-name">{city}</span>
-                            <span className="city-count">{count} kantong</span>
-                          </div>
-                        ))}
-                    </div>
-                  ) : (
-                    <p>Tidak ada data distribusi kota</p>
-                  )}
+              {/* Column 2: Blood Stock Comparison Chart */}
+              <div className="chart-column">
+                <div className="chart-card-hp">
+                  <h3>Perbandingan Stok Darah</h3>
+                  <div className="chart-placeholder-hp">
+                    <Pie data={preparePieChartData()} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Column 3: City Distribution */}
+              <div className="chart-column">
+                <div className="chart-card-hp">
+                  <h3>Distribusi per Kota</h3>
+                  <div className="chart-placeholder-hp">
+                    {dashboardData &&
+                    Object.keys(dashboardData.distribusi_per_kota).length >
+                      0 ? (
+                      <div className="city-distribution">
+                        {Object.entries(dashboardData.distribusi_per_kota)
+                          .sort(([, a], [, b]) => b - a)
+                          .map(([city, count], index) => (
+                            <div key={index} className="city-item">
+                              <span className="city-name">{city}</span>
+                              <span className="city-count">
+                                {count} kantong
+                              </span>
+                            </div>
+                          ))}
+                      </div>
+                    ) : (
+                      <p>Tidak ada data distribusi kota</p>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Bottom row: Map in single column */}
-            <div className="full-width-row">
-              <div className="chart-card-hp map-container">
+            {/* Bottom row: Indonesia Map (full width) */}
+            <div className="full-width-map-container">
+              <div className="chart-card-hp full-width">
                 <h3>Distribusi Darah di Indonesia</h3>
-                <div className="map-wrapper">
+                <div className="chart-placeholder-hp map-container">
                   <IndonesiaMap />
-                </div>
-              </div>
-            </div>
-
-            {/* Extra row for blood types */}
-            <div className="full-width-row">
-              <div className="chart-card-hp">
-                <h3>Jenis Darah</h3>
-                <div className="chart-placeholder-hp blood-types-container">
-                  {dashboardData &&
-                  Object.keys(dashboardData.stok_per_jenis).length > 0 ? (
-                    <div className="blood-type-distribution">
-                      {Object.entries(dashboardData.stok_per_jenis)
-                        .sort(([, a], [, b]) => b - a)
-                        .map(([type, count], index) => (
-                          <div key={index} className="blood-type-item">
-                            <span className="blood-type-name">{type}</span>
-                            <span className="blood-type-count">
-                              {count} kantong
-                            </span>
-                          </div>
-                        ))}
-                    </div>
-                  ) : (
-                    <p>Tidak ada data jenis darah</p>
-                  )}
                 </div>
               </div>
             </div>

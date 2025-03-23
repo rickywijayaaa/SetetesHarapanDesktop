@@ -3,9 +3,41 @@ import Plot from "react-plotly.js";
 
 const IndonesiaMap = () => {
   const [loading, setLoading] = useState(true);
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+
+  // Responsive sizing
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Calculate responsive dimensions for the plot
+  const getPlotDimensions = () => {
+    // Base width on container width
+    const width =
+      windowSize.width < 768
+        ? windowSize.width * 0.95
+        : windowSize.width < 1200
+        ? windowSize.width * 0.9
+        : windowSize.width * 0.85;
+
+    // Height based on width to maintain aspect ratio
+    const height = Math.min(600, width * 0.6);
+
+    return { width, height };
+  };
 
   // Data dummy untuk distribusi darah per provinsi
-  // Dalam kasus nyata, ini bisa diambil dari API
   const provinceData = {
     Aceh: 1245,
     "Sumatera Utara": 2850,
@@ -43,9 +75,12 @@ const IndonesiaMap = () => {
     Papua: 580,
   };
 
+  // Get responsive dimensions
+  const dimensions = getPlotDimensions();
+
   // Konfigurasi layout untuk peta
   const layout = {
-    title: "",
+    title: "Distribusi Stok Darah Seluruh Indonesia",
     geo: {
       scope: "asia",
       resolution: 50,
@@ -71,13 +106,13 @@ const IndonesiaMap = () => {
       coastlinecolor: "rgb(128, 128, 128)",
       coastlinewidth: 1,
     },
-    autosize: true,
-    height: 500,
+    width: dimensions.width,
+    height: dimensions.height,
     margin: {
-      l: 0,
-      r: 0,
-      t: 10,
-      b: 0,
+      l: 10,
+      r: 10,
+      t: 50,
+      b: 30,
     },
     paper_bgcolor: "white",
     plot_bgcolor: "white",
@@ -85,6 +120,7 @@ const IndonesiaMap = () => {
       bgcolor: "white",
       font: { size: 14 },
     },
+    autosize: true,
   };
 
   // Data untuk peta choropleth
@@ -174,35 +210,19 @@ const IndonesiaMap = () => {
   const data = [...mapData, ...scatterData];
 
   return (
-    <div className="map-content">
-      <div className="plot-container">
+    <div className="w-full bg-white rounded-xl shadow-md p-4">
+      <div className="flex justify-center map-container-inner">
         <Plot
           data={data}
           layout={layout}
-          config={{ responsive: true, displayModeBar: false }}
-          style={{ width: "100%", height: "100%" }}
+          config={{
+            responsive: true,
+            displayModeBar: false,
+            scrollZoom: true,
+          }}
+          className="w-full h-full"
+          useResizeHandler={true}
         />
-      </div>
-
-      <div className="map-legend">
-        <div className="legend-items">
-          <div className="legend-item">
-            <span className="legend-color bg-red-600"></span>
-            <span className="legend-text">{">"} 4000 kantong</span>
-          </div>
-          <div className="legend-item">
-            <span className="legend-color bg-red-400"></span>
-            <span className="legend-text">2000-4000 kantong</span>
-          </div>
-          <div className="legend-item">
-            <span className="legend-color bg-red-300"></span>
-            <span className="legend-text">1000-2000 kantong</span>
-          </div>
-          <div className="legend-item">
-            <span className="legend-color bg-red-200"></span>
-            <span className="legend-text">{"<"} 1000 kantong</span>
-          </div>
-        </div>
       </div>
     </div>
   );
