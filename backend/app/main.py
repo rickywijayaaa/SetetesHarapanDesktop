@@ -19,6 +19,10 @@ from app.routes.points import router as points_router
 from app.routes.profile import router as profile_router  
 from app.routes.vouchers import router as vouchers_router
 from app.routes.stok_darah import router as stok_darah_router  # Import router stok darah
+from fastapi import Request
+from fastapi import HTTPException
+import json
+
 
 app = FastAPI()
 
@@ -49,16 +53,22 @@ async def root():
 
 # Endpoint to handle blood donation data and insert it into Supabase
 @app.post("/donor/")
-async def add_blood_donation(data: DarahSchema):
+async def add_blood_donation(data: DarahSchema, request: Request):
     try:
-        # Convert tanggal_donor (date) to string in YYYY-MM-DD format
-        tanggal_donor_str = data.tanggal_donor.strftime('%Y-%m-%d')  # Convert date to string
+        # Get user_info from session/cookie/localStorage, here assumed to be passed in headers
+        user_info = request.headers.get("x-user-info")
+        if not user_info:
+            raise HTTPException(status_code=400, detail="User info not provided")
         
-        # Ensure waktu_donor is a valid string in HH:MM:SS format
-        # If it's already in the right format, this step can be skipped
-        waktu_donor_str = data.waktu_donor  # Assuming it's already in HH:MM:SS format
+        user_info = json.loads(user_info)
+        user_id = user_info["iduser"]
+        role = user_info["role"].lower()
 
-        response = supabase.table("donor").insert({
+        tanggal_donor_str = data.tanggal_donor.strftime('%Y-%m-%d')
+        waktu_donor_str = data.waktu_donor
+
+        # Insert into main donor table
+        supabase.table("donor").insert({
             "first_name": data.first_name,
             "last_name": data.last_name,
             "nik": data.nik,
@@ -67,7 +77,7 @@ async def add_blood_donation(data: DarahSchema):
             "rhesus": data.rhesus,
             "jenis_darah": data.jenis_darah,
             "jumlah_darah": data.jumlah_darah,
-            "iddarah": data.iddarah,  # ← updated key
+            "iddarah": data.iddarah,
             "petugas": data.petugas,
             "tanggal_donor": tanggal_donor_str,
             "waktu_donor": waktu_donor_str,
@@ -75,12 +85,29 @@ async def add_blood_donation(data: DarahSchema):
             "city_donor": data.city_donor
         }).execute()
 
+        # Insert into role-based table
+        if role == "pmi":
+            supabase.table("darah_pmi").insert({
+                "idpmi": user_id,
+                "iddarah": data.iddarah,
+                "tanggal_donor": tanggal_donor_str,
+                "waktu_donor": waktu_donor_str
+            }).execute()
+        elif role == "rumah sakit":
+            supabase.table("darah_rs").insert({
+                "idrumahsakit": user_id,
+                "iddarah": data.iddarah,
+                "tanggal_donor": tanggal_donor_str,
+                "waktu_donor": waktu_donor_str
+            }).execute()
 
-        # If the insertion is successful, return a success message with the response
-        return {"message": "Blood donation record added successfully!", "data": response.data}
+        return {"message": "Blood donation inserted successfully."}
 
     except Exception as e:
-        return {"error": str(e)}
+        import traceback
+        print("❌ Full traceback:")
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
 @app.delete("/donor/{iddarah}/")
 async def delete_blood_donation(iddarah: str):

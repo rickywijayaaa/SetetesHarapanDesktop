@@ -83,10 +83,14 @@ const EditDarah: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await axios.post("https://backend-setetesharapandesktop.up.railway.app/donor/", formData);
+      const headers: any = {};
+      if (userInfo) {
+        headers["x-user-info"] = JSON.stringify(userInfo);
+      }
+
+      const res = await axios.post("http://127.0.0.1:8000/donor/", formData, { headers });
       alert("Data berhasil ditambahkan!");
-  
-      // ✅ Clear form inputs
+
       setFormData({
         first_name: "",
         last_name: "",
@@ -106,31 +110,11 @@ const EditDarah: React.FC = () => {
     } catch (err) {
       console.error(err);
       alert("Gagal menambahkan darah.");
-  
-      // (Optional) Also reset form after failure
-      setFormData({
-        first_name: "",
-        last_name: "",
-        nik: "",
-        phone_number: "",
-        golongan_darah: "",
-        rhesus: "",
-        jenis_darah: "",
-        jumlah_darah: "",
-        iddarah: "",
-        petugas: "",
-        tanggal_donor: "",
-        waktu_donor: "",
-        province_donor: "",
-        city_donor: "",
-      });
     }
   };
-  
 
   return (
     <div className="edit-darah-container-ed">
-      {/* ✅ Navbar with dynamic user info */}
       <div className="navbar-ed">
         <div className="navbar-left-ed">
           <Link to="/homepage" style={{ textDecoration: 'none', color: 'inherit' }}>
@@ -158,7 +142,6 @@ const EditDarah: React.FC = () => {
         </button>
       </div>
 
-      {/* Main Form Card */}
       <div className="card-ed">
         <div className="tabs-ed">
           <button className={activeTab === "penambahan" ? "tab-ed active-ed" : "tab-ed"} onClick={() => setActiveTab("penambahan")}>Penambahan</button>
@@ -187,7 +170,7 @@ const EditDarah: React.FC = () => {
           </div>
           <div className="input-group-ed">
             <select name="jenis_darah" value={formData.jenis_darah} onChange={handleInputChange}>
-            <option value="">Jenis Darah</option>
+              <option value="">Jenis Darah</option>
               <option value="AHF">AHF</option>
               <option value="BC">BC</option>
               <option value="FFP">FFP</option>
@@ -241,17 +224,14 @@ const EditDarah: React.FC = () => {
             </select>
             <input type="text" placeholder="Jumlah Darah yang Diambil (mL)" name="jumlah_darah" value={formData.jumlah_darah} onChange={handleInputChange} />
           </div>
-
           <div className="input-group-ed">
             <input type="text" placeholder="Nomor ID Darah" name="iddarah" value={formData.iddarah} onChange={handleInputChange} />
             <input type="text" placeholder="Petugas yang Menangani" name="petugas" value={formData.petugas} onChange={handleInputChange} />
           </div>
-
           <div className="input-group-ed">
             <input type="date" name="tanggal_donor" value={formData.tanggal_donor} onChange={handleInputChange} />
             <input type="time" name="waktu_donor" value={formData.waktu_donor} onChange={handleInputChange} />
           </div>
-
           <div className="input-group-ed">
             <select name="province_donor" value={formData.province_donor} onChange={handleInputChange}>
               <option value="">Pilih Provinsi</option>
@@ -262,7 +242,6 @@ const EditDarah: React.FC = () => {
               {provinceCityMap[formData.province_donor]?.map((city) => <option key={city} value={city}>{city}</option>)}
             </select>
           </div>
-
           <button type="submit" className="submit-button-ed">Tambah Darah</button>
         </form>
       </div>
