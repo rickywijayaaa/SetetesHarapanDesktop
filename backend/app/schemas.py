@@ -107,6 +107,8 @@ class NotificationSchema(BaseModel):
     rhesus: str
     deadline: datetime
     message: str
+    address: str
+    is_read : str
 
 class PesanSchema(BaseModel):
     idUser: int
@@ -177,6 +179,7 @@ class NotificationResponse(BaseModel):
     deadline: datetime
     message: str
     created_at: datetime
+    address : str
 
     class Config:
         from_attributes = True

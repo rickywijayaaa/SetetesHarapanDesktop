@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -12,14 +12,15 @@ import { useFonts } from 'expo-font';
 import { useRouter } from 'expo-router';
 import warningIcon from '../../assets/images/warning.jpg';
 
-const notifications = [
-  { id: 1, title: 'Darurat! Butuh Pendonor', message: 'Golongan darah B+ diperlukan di RS Borromeus' },
-  { id: 2, title: 'Update Aplikasi', message: 'Versi terbaru telah tersedia' }
-];
 
 const NotificationList = () => {
   const [selectedNotification, setSelectedNotification] = useState(null);
   const router = useRouter();
+
+  useEffect(() => {
+    // Automatically show the notification modal when the page is loaded
+    setSelectedNotification(notifications[0]); // Display the first notification on page load
+  }, []);
 
   const handlePress = (notif) => {
     if (notif.id === 1) {
