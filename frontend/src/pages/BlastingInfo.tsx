@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios"; // Import axios for HTTP requests
 import logo from "../assets/logo.png";
 import "../App.css";
 
@@ -44,8 +45,6 @@ const provinces = Object.keys(provinceCityMap);
 
 const BlastingInfo: React.FC = () => {
   const [formData, setFormData] = useState({
-    hospital_name: "RS. Borromeus",
-    hospital_address: "Jl. Ir. H. Djuanda No 100",
     province: "",
     city: "",
     blood_type: "",
@@ -54,144 +53,207 @@ const BlastingInfo: React.FC = () => {
     additional_message: ""
   });
 
+  const [userInfo, setUserInfo] = useState<{ iduser: string; name: string; role: string } | null>(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("user_info");
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        setUserInfo(parsed);
+      } catch (err) {
+        console.error("❌ Failed to parse user_info:", err);
+      }
+    }
+  }, []);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (userInfo) {
+      try {
+        const formattedDeadline = new Date(formData.deadline).toISOString(); // Format the deadline as ISO string
+        const response = await axios.post(
+          "http://127.0.0.1:8000/api/notification",
+          {
+            iduser: userInfo.iduser, // Getting iduser from localStorage or user info
+            golongan_darah: formData.blood_type,
+            rhesus: formData.rhesus,
+            deadline: formattedDeadline, // Ensure it's an ISO string
+            message: formData.additional_message,
+            address: formData.hospital_address // Include address in the request
+          }
+        );
+        alert("Notification sent successfully!");
+        setFormData({ 
+          province: "",
+          city: "",
+          blood_type: "",
+          rhesus: "",
+          deadline: "",
+          additional_message: ""
+        });
+      } catch (error) {
+        console.error("Error submitting notification:", error);
+        alert("Failed to send notification.");
+      }
+    }
+  };
+
   return (
     <div className="blasting-info-container">
-      {/* Navbar */}
       <div className="blasting-card">
-        <div className="navbar-blasting">
-          <div className="navbar-left-blasting">
-            <Link to="/">
-              <img src={logo} alt="Setetes Harapan" className="logo-blasting" />
-            </Link>
-            <span className="app-title-blasting">SetetesHarapan</span>
-          </div>
+      <div className="navbar-blasting">
+        <div className="navbar-left-blasting">
+          <Link to="/">
+            <img src={logo} alt="Setetes Harapan" className="logo-blasting" />
+          </Link>
+          <span className="app-title-blasting">SetetesHarapan</span>
         </div>
+        <div className="navbar-right-blasting">
+          <span className="navbar-text-ed">
+            {userInfo
+              ? `${userInfo.role === "Kemenkes"
+                  ? "Kementerian Kesehatan Indonesia"
+                  : userInfo.role === "PMI"
+                  ? "Palang Merah Indonesia"
+                  : "Rumah Sakit"} - ${userInfo.name}`
+              : "Memuat user..."}
+          </span>
+          <button
+            className="logout-button-ed"
+            onClick={() => {
+              localStorage.removeItem("user_info");
+              window.location.href = "/";
+            }}
+          >
+            Logout
+          </button>
+        </div>
+      </div>
 
-        {/* Form Content */}
         <div className="form-container-blasting">
           <h2 className="form-title-blasting">Form Blasting Notifikasi</h2>
 
-          {/* Form Grid Layout */}
-          <div className="blasting-content">
-            {/* Left Column */}
-            <div className="form-group-blasting">
-              <label className="blasting-label">Nama Rumah Sakit</label>
-              <select 
-                className="blasting-select"
-                name="hospital_name"
-                value={formData.hospital_name}
-                onChange={handleInputChange}
-              >
-                <option>RS. Borromeus</option>
-              </select>
+          <form onSubmit={handleSubmit}>
+            <div className="blasting-content">
+              {/* Left Column */}
+              <div className="form-group-blasting">
+                <label className="blasting-label">Nama Rumah Sakit</label>
+                <input 
+                  type="text"
+                  className="blasting-input"
+                  name="hospital_name"
+                  value={formData.hospital_name}
+                  onChange={handleInputChange}
+                  placeholder="Masukkan nama rumah sakit"
+                />
+              </div>
+
+              <div className="form-group-blasting">
+                <label className="blasting-label">Alamat Rumah Sakit</label>
+                <input 
+                  type="text"
+                  className="blasting-input"
+                  name="hospital_address"
+                  value={formData.hospital_address}
+                  onChange={handleInputChange}
+                  placeholder="Masukkan alamat rumah sakit"
+                />
+              </div>
+
+              <div className="form-group-blasting">
+                <label className="blasting-label">Provinsi Rumah Sakit</label>
+                <select 
+                  className="blasting-select"
+                  name="province"
+                  value={formData.province}
+                  onChange={handleInputChange}
+                >
+                  <option value="">Pilih Provinsi</option>
+                  {provinces.map((prov) => (
+                    <option key={prov} value={prov}>{prov}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group-blasting">
+                <label className="blasting-label">Kota / Kabupaten Rumah Sakit</label>
+                <select 
+                  className="blasting-select"
+                  name="city"
+                  value={formData.city}
+                  onChange={handleInputChange}
+                  disabled={!formData.province}
+                >
+                  <option value="">Pilih Kota/Kabupaten</option>
+                  {formData.province && provinceCityMap[formData.province]?.map((city) => (
+                    <option key={city} value={city}>{city}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group-blasting">
+                <label className="blasting-label">Golongan Darah</label>
+                <select 
+                  className="blasting-select"
+                  name="blood_type"
+                  value={formData.blood_type}
+                  onChange={handleInputChange}
+                >
+                  <option value="">Pilih Golongan Darah</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="AB">AB</option>
+                  <option value="O">O</option>
+                </select>
+              </div>
+
+              <div className="form-group-blasting">
+                <label className="blasting-label">Rhesus</label>
+                <select 
+                  className="blasting-select"
+                  name="rhesus"
+                  value={formData.rhesus}
+                  onChange={handleInputChange}
+                >
+                  <option value="">Pilih Rhesus</option>
+                  <option value="Positif">Positif</option>
+                  <option value="Negatif">Negatif</option>
+                </select>
+              </div>
+
+              <div className="form-group-blasting">
+                <label className="blasting-label">Deadline</label>
+                <input 
+                  type="date"
+                  className="blasting-select"
+                  name="deadline"
+                  value={formData.deadline}
+                  onChange={handleInputChange}
+                />
+              </div>
             </div>
 
-            <div className="form-group-blasting">
-              <label className="blasting-label">Alamat Rumah Sakit</label>
-              <select 
-                className="blasting-select"
-                name="hospital_address"
-                value={formData.hospital_address}
+            <div className="form-group-blasting full-width">
+              <label className="blasting-label">Tambahan Pesan</label>
+              <textarea
+                className="blasting-textarea"
+                placeholder="Tambahan pesan jika ada"
+                name="additional_message"
+                value={formData.additional_message}
                 onChange={handleInputChange}
-              >
-                <option>Jl. Ir. H. Djuanda No 100</option>
-              </select>
+              ></textarea>
             </div>
 
-            <div className="form-group-blasting">
-              <label className="blasting-label">Provinsi Rumah Sakit</label>
-              <select 
-                className="blasting-select"
-                name="province"
-                value={formData.province}
-                onChange={handleInputChange}
-              >
-                <option value="">Pilih Provinsi</option>
-                {provinces.map((prov) => (
-                  <option key={prov} value={prov}>{prov}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-group-blasting">
-              <label className="blasting-label">Kota / Kabupaten Rumah Sakit</label>
-              <select 
-                className="blasting-select"
-                name="city"
-                value={formData.city}
-                onChange={handleInputChange}
-                disabled={!formData.province}
-              >
-                <option value="">Pilih Kota/Kabupaten</option>
-                {formData.province && provinceCityMap[formData.province]?.map((city) => (
-                  <option key={city} value={city}>{city}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-group-blasting">
-              <label className="blasting-label">Golongan Darah</label>
-              <select 
-                className="blasting-select"
-                name="blood_type"
-                value={formData.blood_type}
-                onChange={handleInputChange}
-              >
-                <option value="">Pilih Golongan Darah</option>
-                <option value="A">A</option>
-                <option value="B">B</option>
-                <option value="AB">AB</option>
-                <option value="O">O</option>
-              </select>
-            </div>
-
-            <div className="form-group-blasting">
-              <label className="blasting-label">Rhesus</label>
-              <select 
-                className="blasting-select"
-                name="rhesus"
-                value={formData.rhesus}
-                onChange={handleInputChange}
-              >
-                <option value="">Pilih Rhesus</option>
-                <option value="+">+</option>
-                <option value="-">-</option>
-              </select>
-            </div>
-
-            <div className="form-group-blasting">
-              <label className="blasting-label">Deadline</label>
-              <input 
-                type="date"
-                className="blasting-select"
-                name="deadline"
-                value={formData.deadline}
-                onChange={handleInputChange}
-              />
-            </div>
-          </div>
-
-          {/* Full Width Textarea */}
-          <div className="form-group-blasting full-width">
-            <label className="blasting-label">Tambahan Pesan</label>
-            <textarea
-              className="blasting-textarea"
-              placeholder="Tambahan pesan jika ada"
-              name="additional_message"
-              value={formData.additional_message}
-              onChange={handleInputChange}
-            ></textarea>
-          </div>
-
-          {/* Submit Button */}
-          <button className="submit-button-blasting">
-            Sebarkan Notifikasi Sekarang
-          </button>
+            <button type="submit" className="submit-button-blasting">
+              Sebarkan Notifikasi Sekarang
+            </button>
+          </form>
         </div>
       </div>
     </div>

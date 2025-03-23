@@ -170,6 +170,7 @@ class NotificationCreate(BaseModel):
     rhesus: str
     deadline: datetime
     message: str
+    address: str
 
 class NotificationResponse(BaseModel):
     idnotification: int
