@@ -88,7 +88,7 @@ const EditDarah: React.FC = () => {
         headers["x-user-info"] = JSON.stringify(userInfo);
       }
 
-      const res = await axios.post("http://127.0.0.1:8000/donor/", formData, { headers });
+      const res = await axios.post("https://backend-setetesharapandesktop.up.railway.app/donor/", formData, { headers });
       alert("Data berhasil ditambahkan!");
 
       setFormData({
@@ -124,9 +124,9 @@ const EditDarah: React.FC = () => {
         </div>
         <span className="navbar-text-ed">
           {userInfo
-            ? `${userInfo.role === "kemenkes"
+            ? `${userInfo.role === "Kemenkes"
               ? "Kementerian Kesehatan Indonesia"
-              : userInfo.role === "pmi"
+              : userInfo.role === "PMI"
               ? "Palang Merah Indonesia"
               : "Rumah Sakit"} - ${userInfo.name}`
             : "Memuat user..."}

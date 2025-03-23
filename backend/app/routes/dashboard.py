@@ -3,38 +3,39 @@ from fastapi import APIRouter, HTTPException, Query, Depends
 from typing import Optional
 from app.database import supabase
 from datetime import datetime
+from fastapi import Request
+import json
 # from app.auth import get_current_user
 
 router = APIRouter()
 
 @router.get("/dashboard")
 async def get_dashboard(
-    golongan: Optional[str] = Query(None, description="Filter berdasarkan golongan darah (A, B, AB, O)"),
-    jenis: Optional[str] = Query(None, description="Filter berdasarkan jenis darah (Whole Blood, Platelet, Plasma, etc)"),
-    city: Optional[str] = Query(None, description="Filter berdasarkan kota"),
-    tanggal: Optional[str] = Query(None, description="Filter berdasarkan tanggal (YYYY-MM-DD)"),
-    # current_user: dict = Depends(get_current_user)
+    request: Request,
+    golongan: Optional[str] = Query(None),
+    jenis: Optional[str] = Query(None),
+    city: Optional[str] = Query(None),
+    tanggal: Optional[str] = Query(None),
 ):
     try:
-        # Dapatkan role dan informasi pengguna
-        user_role = "kemenkes"
-        first_name = "Micky"
-        last_name = "Valentino"
-        full_name = f"{first_name} {last_name}".strip()
+        # ✅ Get user_info from headers
+        user_info_str = request.headers.get("x-user-info")
+        if not user_info_str:
+            raise HTTPException(status_code=400, detail="User info not found in request headers")
         
-        # Tentukan tabel yang akan digunakan berdasarkan role
-        table_name = ""
-        if user_role == "kemenkes":
+        user_info = json.loads(user_info_str)
+        user_role = user_info["role"]
+        full_name = user_info["name"]
+
+        # ✅ Role-based table selection
+        if user_role.lower() == "kemenkes":
             table_name = "donor"
-        elif user_role == "pmi":
+        elif user_role.lower() == "pmi":
             table_name = "darah_pmi"
-        elif user_role == "rumah_sakit":
+        elif user_role.lower() == "rumah sakit":
             table_name = "darah_rs"
         else:
-            raise HTTPException(
-                status_code=403, 
-                detail=f"Role tidak valid: {user_role}. Role yang anda milikit tidak memiliki akses."
-            )
+            raise HTTPException(status_code=403, detail=f"Invalid role: {user_role}")
         
         # Jika tanggal tidak disediakan, gunakan tanggal hari ini
         if not tanggal:

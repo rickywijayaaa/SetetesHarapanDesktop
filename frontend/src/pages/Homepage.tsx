@@ -14,6 +14,7 @@ import {
   CategoryScale,
 } from "chart.js";
 import IndonesiaMap from "../pages/IndonesianMap";
+import urgent from "../assets/urgent.png";
 
 // Initialize Supabase
 const supabase = createClient(
@@ -42,8 +43,14 @@ interface DashboardData {
 
 const Homepage: React.FC = () => {
   const navigate = useNavigate();
+  const handleEmergencySearch = () => {
+    navigate("/blastinginfo"); // Pindah ke halaman BlastingInfo
+  };
+
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -59,7 +66,6 @@ const Homepage: React.FC = () => {
   const [jenisFilter, setJenisFilter] = useState("");
   const [autoRefresh, setAutoRefresh] = useState(true);
 
-  
   // Load user info from localStorage
   useEffect(() => {
     const stored = localStorage.getItem("user_info");
@@ -92,7 +98,17 @@ const Homepage: React.FC = () => {
       if (jenisFilter) params.append("jenis", jenisFilter);
       params.append("_t", new Date().getTime().toString());
 
-      const res = await axios.get(`${API_BASE_URL}/api/dashboard`, { params });
+      // Get user_info from localStorage
+      const userInfo = JSON.parse(localStorage.getItem("user_info") || "{}");
+
+      // Set headers with user_info
+      const res = await axios.get(`${API_BASE_URL}/api/dashboard`, {
+        headers: {
+          "x-user-info": JSON.stringify(userInfo), // Send user_info in the request header
+        },
+        params, // Add the query parameters (filters)
+      });
+
       setDashboardData(res.data);
       setLastUpdated(new Date());
     } catch (err) {
@@ -176,7 +192,10 @@ const Homepage: React.FC = () => {
         {
           label: "Blood Stock Distribution",
           data: Object.values(chartData),
-          backgroundColor: backgroundColors.slice(0, Object.keys(chartData).length),
+          backgroundColor: backgroundColors.slice(
+            0,
+            Object.keys(chartData).length
+          ),
           hoverOffset: 4,
         },
       ],
@@ -197,9 +216,9 @@ const Homepage: React.FC = () => {
           <span className="app-title-hp">SetetesHarapan</span>
         </div>
         <span className="navbar-text-hp">
-          {userInfo?.role === "kemenkes"
+          {userInfo?.role === "Kemenkes"
             ? "Kementerian Kesehatan Indonesia"
-            : userInfo?.role === "pmi"
+            : userInfo?.role === "PMI"
             ? "Palang Merah Indonesia"
             : "Rumah Sakit"}{" "}
           - {userInfo?.name}
@@ -224,10 +243,20 @@ const Homepage: React.FC = () => {
               onChange={(e) => setCityFilter(e.target.value)}
               className="search-input-hp"
             />
-            <button onClick={() => setGolonganFilter(prompt("Golongan darah (A, B, AB, O):") || "")}>
+            <button
+              onClick={() =>
+                setGolonganFilter(prompt("Golongan darah (A, B, AB, O):") || "")
+              }
+            >
               {golonganFilter || "Golongan"}
             </button>
-            <button onClick={() => setJenisFilter(prompt("Jenis darah (Whole, Plasma, etc):") || "")}>
+            <button
+              onClick={() =>
+                setJenisFilter(
+                  prompt("Jenis darah (Whole, Plasma, etc):") || ""
+                )
+              }
+            >
               {jenisFilter || "Jenis"}
             </button>
             {(cityFilter || golonganFilter || jenisFilter) && (
@@ -235,7 +264,10 @@ const Homepage: React.FC = () => {
             )}
           </div>
           <div className="realtime-controls">
-            <button onClick={toggleAutoRefresh} className={autoRefresh ? "active" : "inactive"}>
+            <button
+              onClick={toggleAutoRefresh}
+              className={autoRefresh ? "active" : "inactive"}
+            >
               <div className="status-dot"></div>
               <span>{autoRefresh ? "Auto Refresh Aktif" : "Nonaktif"}</span>
             </button>
@@ -248,9 +280,13 @@ const Homepage: React.FC = () => {
         </div>
 
         {isLoading ? (
-          <div className="loading-container"><p>Memuat data...</p></div>
+          <div className="loading-container">
+            <p>Memuat data...</p>
+          </div>
         ) : error ? (
-          <div className="error-container"><p>{error}</p></div>
+          <div className="error-container">
+            <p>{error}</p>
+          </div>
         ) : (
           <div className="main-content-hp">
             {/* Main content: 2 columns layout - Stats column and Blood Stock Charts */}
@@ -259,28 +295,37 @@ const Homepage: React.FC = () => {
                 <div className="stats-card-hp">
                   <h3>Total Darah Tersedia</h3>
                   <p className="stats-value-hp">
-                    {dashboardData?.total_kantong?.toLocaleString() ?? "0"} <span>Kantong</span>
+                    {dashboardData?.total_kantong?.toLocaleString() ?? "0"}{" "}
+                    <span>Kantong</span>
                   </p>
                   <p className="stats-subtext-hp">
                     {dashboardData && dashboardData.total_kantong < 5600000
-                      ? `-${(5600000 - dashboardData.total_kantong).toLocaleString()} dari WHO`
-                      : `+${(dashboardData?.total_kantong - 5600000).toLocaleString()} dari WHO`}
+                      ? `-${(
+                          5600000 - dashboardData.total_kantong
+                        ).toLocaleString()} dari WHO`
+                      : `+${(
+                          dashboardData?.total_kantong - 5600000
+                        ).toLocaleString()} dari WHO`}
                   </p>
                 </div>
 
                 <div className="stats-card-hp">
                   <h3>Total Pendonor</h3>
                   <p className="stats-value-hp">
-                    {dashboardData?.total_pendonor?.toLocaleString() ?? "0"} <span>Orang</span>
+                    {dashboardData?.total_pendonor?.toLocaleString() ?? "0"}{" "}
+                    <span>Orang</span>
                   </p>
                 </div>
 
                 <div className="stats-card-hp">
                   <h3>Total Darah Hari Ini</h3>
                   <p className="stats-value-hp">
-                    {dashboardData?.total_darah_harian?.toLocaleString() ?? "0"} <span>Kantong</span>
+                    {dashboardData?.total_darah_harian?.toLocaleString() ?? "0"}{" "}
+                    <span>Kantong</span>
                   </p>
-                  <p className="stats-subtext-hp">Tanggal: {dashboardData?.tanggal}</p>
+                  <p className="stats-subtext-hp">
+                    Tanggal: {dashboardData?.tanggal}
+                  </p>
                 </div>
               </div>
 
@@ -309,7 +354,7 @@ const Homepage: React.FC = () => {
                   <div className="chart-card-hp blood-chart">
                     <h3>Perbandingan Stok Darah</h3>
                     <div className="chart-placeholder-hp">
-                      <Pie 
+                      <Pie
                         data={{
                           labels: ["Positif", "Negatif"],
                           datasets: [
@@ -323,7 +368,7 @@ const Homepage: React.FC = () => {
                               hoverOffset: 4,
                             },
                           ],
-                        }} 
+                        }}
                       />
                     </div>
                   </div>
@@ -332,7 +377,7 @@ const Homepage: React.FC = () => {
                   <div className="chart-card-hp blood-chart">
                     <h3>Perbandingan Kebutuhan Darah</h3>
                     <div className="chart-placeholder-hp">
-                      <Pie 
+                      <Pie
                         data={{
                           labels: ["< 7 hari", "7-21 hari", "> 21 hari"],
                           datasets: [
@@ -347,7 +392,7 @@ const Homepage: React.FC = () => {
                               hoverOffset: 4,
                             },
                           ],
-                        }} 
+                        }}
                       />
                     </div>
                   </div>
@@ -355,7 +400,28 @@ const Homepage: React.FC = () => {
               </div>
             </div>
 
+            {/* Conditional rendering based on user role */}
             <div className="full-width-map-container">
+              <div className="emergency-blood-request-section">
+                <div className="emergency-card">
+                  <div className="emergency-content">
+                    <div className="emergency-header">
+                      <h2>Darurat!</h2>
+                      <h1>Butuh darah darurat?</h1>
+                      <h3>Cari donor darah terdekat!</h3>
+                    </div>
+                    <button
+                      className="emergency-button"
+                      onClick={handleEmergencySearch}
+                    >
+                      Cari Sekarang
+                    </button>
+                  </div>
+                  <div className="urgent-container">
+                    <img src={urgent} alt="URGENT" className="urgent-logo" />
+                  </div>
+                </div>
+              </div>
               <div className="chart-card-hp full-width">
                 <h3>Distribusi Darah di Indonesia</h3>
                 <IndonesiaMap />

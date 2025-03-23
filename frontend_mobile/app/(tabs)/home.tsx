@@ -71,6 +71,7 @@ const events = [
 export default function Home() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [username, setUsername] = useState("...");
+  const [totalPoints, setTotalPoints] = useState(0);
   const router = useRouter();
 
   const handleScroll = (event) => {
@@ -88,14 +89,20 @@ export default function Home() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Jika pakai JWT
+            Authorization: `Bearer ${token}`,
           },
-          credentials: "include", // Penting jika pakai session
+          credentials: "include",
         });
 
         const data = await response.json();
-        if (response.ok && data.username) {
-          setUsername(data.username);
+
+        if (response.ok) {
+          if (data.username || data.name) {
+            setUsername(data.username || data.name);
+          }
+          if (data.total_points !== undefined) {
+            setTotalPoints(data.total_points);
+          }
         } else {
           console.warn("Gagal mengambil user:", data);
         }
@@ -158,19 +165,19 @@ export default function Home() {
         <View style={styles.statItem}>
           <Image source={require("../../assets/images/star.png")} style={styles.icon} />
           <Text style={styles.statLabel}>POINTS</Text>
-          <Text style={styles.statValue}>590</Text>
+          <Text style={styles.statValue}>{totalPoints}</Text>
         </View>
         <View style={styles.divider} />
         <View style={styles.statItem}>
           <Image source={require("../../assets/images/globe.png")} style={styles.icon} />
-          <Text style={styles.statLabel}>LOCAL RANK</Text>
+          <Text style={styles.statLabel}>JUARA NASIONAL</Text>
           <Text style={styles.statValue}>#1,438</Text>
         </View>
         <View style={styles.divider} />
         <View style={styles.statItem}>
           <Image source={require("../../assets/images/region.png")} style={styles.icon} />
-          <Text style={styles.statLabel}>REGION RANK</Text>
-          <Text style={styles.statValue}>#56</Text>
+          <Text style={styles.statLabel}>JUARA KOTA</Text>
+          <Text style={styles.statValue}>#6</Text>
         </View>
       </View>
 
@@ -269,7 +276,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   statLabel: {
-    color: "#E0E0E0",
+    color: "#FFF",
     fontSize: 12,
     fontWeight: "bold",
     marginVertical: 3,

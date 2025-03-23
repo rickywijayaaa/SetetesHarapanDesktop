@@ -1,25 +1,72 @@
-import React from "react";
-import { View, Text, Image, TouchableOpacity, ScrollView, Dimensions } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  Dimensions,
+  ImageBackground,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
-import { LinearGradient } from 'expo-linear-gradient';
-import { ImageBackground } from "react-native";
-
+import { LinearGradient } from "expo-linear-gradient";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width } = Dimensions.get("window");
 const screenWidth = Dimensions.get("window").width;
 
-const leaderboardData = [
-  { id: 1, name: "Ricky Wijaya", points: 2569, avatar: require("../../assets/images/avatar1.png") },
-  { id: 2, name: "Naomi August", points: 1469, avatar: require("../../assets/images/avatar2.png") },
-  { id: 3, name: "Micky Mouse", points: 1053, avatar: require("../../assets/images/avatar3.png") },
-  { id: 4, name: "Nasywaa Anggun", points: 590, avatar: require("../../assets/images/avatar4.png") },
-  { id: 5, name: "Athena Antares", points: 448, avatar: require("../../assets/images/avatar5.png") },
-  { id: 6, name: "Raesa Rezqita", points: 448, avatar: require("../../assets/images/avatar6.png") },
-];
-
 export default function Leaderboard() {
   const router = useRouter();
+  const [leaderboardData, setLeaderboardData] = useState([
+    { id: 1, name: "Ricky Wijaya", points: 2569, avatar: require("../../assets/images/avatar1.png") },
+    { id: 2, name: "Naomi August", points: 1469, avatar: require("../../assets/images/avatar2.png") },
+    { id: 3, name: "Micky Mouse", points: 1053, avatar: require("../../assets/images/avatar3.png") },
+    { id: 4, name: "Nasywaa Anggun", points: 590, avatar: require("../../assets/images/avatar4.png") },
+    { id: 5, name: "Athena Antares", points: 448, avatar: require("../../assets/images/avatar5.png") },
+    { id: 6, name: "Raesa Rezqita", points: 448, avatar: require("../../assets/images/avatar6.png") },
+    { id: 8, name: "Ricky Wijaya", points: 2569, avatar: require("../../assets/images/avatar1.png") },
+    { id: 9, name: "Naomi August", points: 1469, avatar: require("../../assets/images/avatar2.png") },
+    { id: 10, name: "Micky Mouse", points: 1053, avatar: require("../../assets/images/avatar3.png") },
+    { id: 11, name: "Nasywaa Anggun", points: 590, avatar: require("../../assets/images/avatar4.png") },
+    { id: 12, name: "Athena Antares", points: 448, avatar: require("../../assets/images/avatar5.png") },
+    { id: 13, name: "Raesa Rezqita", points: 448, avatar: require("../../assets/images/avatar6.png") },
+  ]);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = await AsyncStorage.getItem("token");
+
+        const response = await fetch("https://backend-setetesharapandesktop.up.railway.app/users/me", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          const userCard = {
+            id: 7,
+            name: data.username || "User",
+            points: data.total_points || 0,
+            avatar: require("../../assets/images/avatar1.png"),
+          };
+
+          setLeaderboardData(prev => [...prev, userCard]);
+        } else {
+          console.warn("Gagal ambil user:", data);
+        }
+      } catch (error) {
+        console.error("Error fetch user:", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   return (
     <View style={{ flex: 1, backgroundColor: "#8E1616", paddingTop: 60 }}>
@@ -62,7 +109,8 @@ export default function Leaderboard() {
         alignItems: "center",
         borderRadius: 20,
       }}>
-        <Text style={{ fontSize: 24, fontWeight: "bold", color: "#FFFF" }}>#4</Text>
+        <Text style={{ fontSize: 24, fontWeight: "bold", color: "#FFFF" }}>#7</Text>
+      
       </View>
         <View style={{
           flex: 1,
@@ -228,7 +276,7 @@ export default function Leaderboard() {
         </View>
       </ImageBackground>
 
-
+      {/* Full List */}
       <ScrollView
         style={{
           backgroundColor: "#EFEEFC",
@@ -238,15 +286,10 @@ export default function Leaderboard() {
           flex: 1,
           paddingTop: 20,
           paddingHorizontal: 15,
-          width: screenWidth - 20,      // ⬅️ sisakan 10px kiri + 10px kanan (total 20px ≈ 1cm)
+          width: screenWidth - 20,
           alignSelf: "center"
         }}
-
-        contentContainerStyle={{
-          paddingTop: 5,
-          paddingHorizontal: 10, // ⬅️ padding agar item tidak mentok ke tepi
-          paddingBottom: 40,     // opsional: beri ruang di bawah
-        }}
+        contentContainerStyle={{ paddingTop: 5, paddingHorizontal: 10, paddingBottom: 40 }}
       >
         {leaderboardData.map((player, index) => (
           <View
@@ -263,37 +306,27 @@ export default function Leaderboard() {
               shadowOpacity: 0.05,
               shadowOffset: { width: 0, height: 2 },
               shadowRadius: 5,
-              elevation: 2, // for Android
+              elevation: 2,
             }}
           >
-            {/* Rank circle */}
-            <View
-              style={{
-                width: 30,
-                height: 30,
-                borderRadius: 15,
-                borderWidth: 1,
-                borderColor: "#ccc",
-                justifyContent: "center",
-                alignItems: "center",
-                marginRight: 12,
-              }}
-            >
+            <View style={{
+              width: 30,
+              height: 30,
+              borderRadius: 15,
+              borderWidth: 1,
+              borderColor: "#ccc",
+              justifyContent: "center",
+              alignItems: "center",
+              marginRight: 12,
+            }}>
               <Text style={{ fontSize: 14, fontWeight: "bold", color: "#999" }}>{index + 1}</Text>
             </View>
 
-            {/* Avatar */}
             <Image
               source={player.avatar}
-              style={{
-                width: 50,
-                height: 50,
-                borderRadius: 25,
-                marginRight: 12,
-              }}
+              style={{ width: 50, height: 50, borderRadius: 25, marginRight: 12 }}
             />
 
-            {/* Name and XP */}
             <View style={{ flex: 1 }}>
               <Text style={{ fontSize: 16, fontWeight: "bold", color: "#111" }}>{player.name}</Text>
               <Text style={{ fontSize: 14, color: "#888", marginTop: 2 }}>
@@ -301,7 +334,6 @@ export default function Leaderboard() {
               </Text>
             </View>
 
-            {/* Drop icon */}
             <Image
               source={require("../../assets/images/drop.png")}
               style={{ width: 60, height: 40 }}
