@@ -10,7 +10,7 @@ Base = declarative_base()
 class UserRole(str, PyEnum):
     kemenkes = "Kemenkes"
     pmi = "PMI"
-    rumah_sakit = "Rumah sakit"
+    rumah_sakit = "Rumah Sakit"
     masyarakat = "Masyarakat"
 
 class User(Base):

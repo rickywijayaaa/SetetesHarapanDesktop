@@ -41,7 +41,6 @@ class UserRegister(BaseModel):
         from_attributes = True
 
 class UserResponse(BaseModel):
-    iduser: str
     name: str
     email: EmailStr
     phone_number: str
