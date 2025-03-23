@@ -745,8 +745,6 @@
   top: 0;
   left: 0;
 }
-/* HOME PAGEEEE*/
-
 /* Homepage Container */
 .homepage-container {
   width: 100vw;
@@ -933,43 +931,31 @@
   border: 1px solid #eee;
 }
 
-/* Main Content: Three-Column Layout for top row */
+/* Main Content */
 .main-content-hp {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  width: 100%;
   margin-top: 20px;
   flex: 1;
 }
 
-/* Top row with 3 columns */
+/* Top Row Content */
 .top-row-content {
   display: flex;
-  gap: 20px;
-}
-
-/* Statistics Column */
-.stats-column {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-/* Chart Columns */
-.chart-column {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+  gap: 30px; /* Increased gap between stats column and charts */
+  margin-bottom: 30px; /* Increased bottom margin */
 }
 
 /* Statistics Cards */
 .stats-column {
-  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  max-width: 250px; /* Atur lebar maksimum */
+  gap: 16px;
+  width: 320px;
+  min-width: 280px; /* Ensure minimum width for stats column */
+  margin-right: 10px; /* Additional right margin for stats column */
 }
 
 .stats-card-hp {
@@ -983,6 +969,7 @@
   flex-grow: 1;
   transition: transform 0.2s ease;
   width: 100%;
+  height: 10;
 }
 
 .stats-card-hp:hover {
@@ -1006,6 +993,13 @@
   color: #8e1616;
 }
 
+/* Chart Section - Add space between chart column and stats column */
+.chart-column {
+  flex: 1;
+  padding-left: 10px; /* Add left padding to create visual separation */
+  margin-bottom: 40px; /* Add bottom margin to create vertical gap */
+}
+
 /* Chart Cards */
 .chart-card-hp {
   background: white;
@@ -1017,6 +1011,7 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  margin-bottom: 40px; /* Add bottom margin to each chart card */
 }
 
 .chart-card-hp:hover {
@@ -1035,6 +1030,41 @@
   font-size: 14px;
   color: #999;
   min-height: 250px;
+}
+
+/* Blood comparison grid layout */
+.blood-comparison-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+  margin-bottom: 40px; /* Add bottom margin to the entire grid */
+}
+
+.blood-comparison-row {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+  margin-bottom: 40px; /* Add bottom margin to each row */
+}
+
+.blood-chart {
+  flex: 1;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 40px; /* Add bottom margin to each chart */
+}
+
+.blood-chart h3 {
+  margin-bottom: 8px;
+}
+
+.blood-chart .chart-placeholder-hp {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* City Distribution */
@@ -1062,15 +1092,49 @@
 
 /* Full Width Map */
 .full-width-map-container {
-  margin-top: 20px;
+  width: 100%;
+  margin: 15px 0;
+  margin-bottom: 30px; /* Add bottom margin to the map container */
 }
 
 .chart-card-hp.full-width {
   width: 100%;
+  box-sizing: border-box;
+  padding: 15px;
+  overflow: hidden;
 }
 
 .map-container {
-  height: 300px;
+  width: 100%;
+  min-height: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: visible;
+}
+
+/* Make the Plotly container responsive */
+.map-container > div {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Make sure SVG elements in the map are fully visible */
+.map-container svg {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+}
+
+/* Make the legend visible and properly sized */
+.map-container .legend {
+  max-width: 100%;
+  overflow: visible;
+}
+
+/* Ensure text elements are readable */
+.map-container text {
+  font-size: 12px !important;
 }
 
 /* Loading and Error Containers */
@@ -1107,84 +1171,32 @@
   }
 }
 
-/* Add these styles to your App.css */
-
-.main-content-hp {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 100%;
-}
-
-.top-row-content {
-  display: flex;
-  flex-direction: row;
-  gap: 20px;
-  width: 100%;
-}
-
-.left-panel-hp,
-.right-panel-hp {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-/* Enhanced map container styles */
-.full-width-map-container {
-  width: 100%;
-  margin: 15px 0;
-}
-
-.chart-card-hp.full-width {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 15px;
-  overflow: hidden; /* Prevent overflow issues */
-}
-
-.map-container {
-  width: 100%;
-  min-height: 600px; /* Increased height to accommodate all content */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: visible; /* Allow map elements to be fully visible */
-}
-
-/* Make the Plotly container responsive */
-.map-container > div {
-  width: 100% !important;
-  height: 100% !important;
-}
-
-/* Make sure SVG elements in the map are fully visible */
-.map-container svg {
-  width: 100% !important;
-  height: 100% !important;
-  max-width: none !important; /* Override any max-width limitations */
-}
-
-/* Make the legend visible and properly sized */
-.map-container .legend {
-  max-width: 100%;
-  overflow: visible;
-}
-
-/* Ensure text elements are readable */
-.map-container text {
-  font-size: 12px !important; /* Set minimum font size for readability */
-}
-
-/* Media query for larger screens to ensure map is well-proportioned */
+/* Responsive adjustments */
 @media screen and (min-width: 1200px) {
   .map-container {
     min-height: 700px;
   }
 }
 
-/* Media query for smaller screens */
+@media screen and (max-width: 1200px) {
+  .top-row-content {
+    flex-direction: column;
+  }
+  
+  .stats-column {
+    width: 100%;
+    margin-right: 0;
+  }
+  
+  .chart-column {
+    padding-left: 0;
+  }
+  
+  .blood-comparison-row {
+    flex-direction: column;
+  }
+}
+
 @media screen and (max-width: 768px) {
   .map-container {
     min-height: 450px;

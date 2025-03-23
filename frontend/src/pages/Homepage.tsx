@@ -24,7 +24,12 @@ const supabase = createClient(
 // Register chart components
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
 
-// Types
+// API base URL
+const API_BASE_URL = "https://backend-setetesharapandesktop.up.railway.app"; // Sesuaikan dengan URL backend Anda
+
+// Interval refresh (dalam milidetik) - 1 detik
+const REFRESH_INTERVAL = 100000;
+
 interface DashboardData {
   tanggal: string;
   total_kantong: number;
@@ -54,9 +59,7 @@ const Homepage: React.FC = () => {
   const [jenisFilter, setJenisFilter] = useState("");
   const [autoRefresh, setAutoRefresh] = useState(true);
 
-  const API_BASE_URL = "http://127.0.0.1:8000";
-  const REFRESH_INTERVAL = 1000;
-
+  
   // Load user info from localStorage
   useEffect(() => {
     const stored = localStorage.getItem("user_info");
@@ -124,21 +127,59 @@ const Homepage: React.FC = () => {
 
   const toggleAutoRefresh = () => setAutoRefresh(!autoRefresh);
 
-  const preparePieChartData = () => {
-    const data = dashboardData?.stok_per_golongan || { A: 0, B: 0, AB: 0, O: 0 };
-    return {
-      labels: Object.keys(data),
-      datasets: [{
-        label: "Blood Type",
-        data: Object.values(data),
-        backgroundColor: [
-          "rgba(255, 99, 132, 1)",
-          "rgba(255, 159, 64, 1)",
-          "rgba(255, 205, 86, 1)",
-          "rgba(75, 192, 192, 1)",
+  // Prepare pie chart data for blood type distribution
+  const prepareBloodTypePieChartData = (type: string) => {
+    if (!dashboardData || !dashboardData.stok_per_golongan) {
+      return {
+        labels: ["A", "B", "AB", "O"],
+        datasets: [
+          {
+            label: "Blood Type Distribution",
+            data: [0, 0, 0, 0],
+            backgroundColor: [
+              "rgba(255, 99, 132, 1)",
+              "rgba(255, 159, 64, 1)",
+              "rgba(255, 205, 86, 1)",
+              "rgba(75, 192, 192, 1)",
+            ],
+            hoverOffset: 4,
+          },
         ],
-        hoverOffset: 4,
-      }]
+      };
+    }
+
+    // Filtered data based on blood type
+    let chartData;
+    if (type === "golongan") {
+      chartData = dashboardData.stok_per_golongan;
+    } else if (type === "jenis") {
+      chartData = dashboardData.stok_per_jenis;
+    } else {
+      // For other potential chart types
+      chartData = dashboardData.stok_per_golongan;
+    }
+
+    const backgroundColors = [
+      "rgba(255, 99, 132, 1)",
+      "rgba(255, 159, 64, 1)",
+      "rgba(255, 205, 86, 1)",
+      "rgba(75, 192, 192, 1)",
+      "rgba(54, 162, 235, 1)",
+      "rgba(153, 102, 255, 1)",
+      "rgba(201, 203, 207, 1)",
+      "rgba(255, 0, 0, 1)",
+    ];
+
+    return {
+      labels: Object.keys(chartData),
+      datasets: [
+        {
+          label: "Blood Stock Distribution",
+          data: Object.values(chartData),
+          backgroundColor: backgroundColors.slice(0, Object.keys(chartData).length),
+          hoverOffset: 4,
+        },
+      ],
     };
   };
 
@@ -212,6 +253,7 @@ const Homepage: React.FC = () => {
           <div className="error-container"><p>{error}</p></div>
         ) : (
           <div className="main-content-hp">
+            {/* Main content: 2 columns layout - Stats column and Blood Stock Charts */}
             <div className="top-row-content">
               <div className="stats-column">
                 <div className="stats-card-hp">
@@ -242,31 +284,73 @@ const Homepage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="chart-column">
-                <div className="chart-card-hp">
-                  <h3>Perbandingan Stok Darah</h3>
-                  <Pie data={preparePieChartData()} />
-                </div>
-              </div>
-
-              <div className="chart-column">
-                <div className="chart-card-hp">
-                  <h3>Distribusi per Kota</h3>
-                  {dashboardData?.distribusi_per_kota &&
-                  Object.keys(dashboardData.distribusi_per_kota).length > 0 ? (
-                    <div className="city-distribution">
-                      {Object.entries(dashboardData.distribusi_per_kota)
-                        .sort(([, a], [, b]) => b - a)
-                        .map(([city, count], idx) => (
-                          <div key={idx} className="city-item">
-                            <span className="city-name">{city}</span>
-                            <span className="city-count">{count} kantong</span>
-                          </div>
-                        ))}
+              {/* Column 2: Blood Stock Comparison Charts (4 charts in 2x2 grid) */}
+              <div className="blood-comparison-grid">
+                <div className="blood-comparison-row">
+                  {/* Chart 1 */}
+                  <div className="chart-card-hp blood-chart">
+                    <h3>Golongan Darah</h3>
+                    <div className="chart-placeholder-hp">
+                      <Pie data={prepareBloodTypePieChartData("golongan")} />
                     </div>
-                  ) : (
-                    <p>Tidak ada data distribusi kota</p>
-                  )}
+                  </div>
+
+                  {/* Chart 2 */}
+                  <div className="chart-card-hp blood-chart">
+                    <h3>Jenis Darah</h3>
+                    <div className="chart-placeholder-hp">
+                      <Pie data={prepareBloodTypePieChartData("jenis")} />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="blood-comparison-row">
+                  {/* Chart 3 */}
+                  <div className="chart-card-hp blood-chart">
+                    <h3>Rhesus Darah</h3>
+                    <div className="chart-placeholder-hp">
+                      <Pie 
+                        data={{
+                          labels: ["Positif", "Negatif"],
+                          datasets: [
+                            {
+                              label: "Rhesus Distribution",
+                              data: [85, 15], // Example data, replace with actual data
+                              backgroundColor: [
+                                "rgba(54, 162, 235, 1)",
+                                "rgba(255, 99, 132, 1)",
+                              ],
+                              hoverOffset: 4,
+                            },
+                          ],
+                        }} 
+                      />
+                    </div>
+                  </div>
+
+                  {/* Chart 4 */}
+                  <div className="chart-card-hp blood-chart">
+                    <h3>Kadaluarsa Darah</h3>
+                    <div className="chart-placeholder-hp">
+                      <Pie 
+                        data={{
+                          labels: ["< 7 hari", "7-21 hari", "> 21 hari"],
+                          datasets: [
+                            {
+                              label: "Expiry Distribution",
+                              data: [25, 45, 30], // Example data, replace with actual data
+                              backgroundColor: [
+                                "rgba(255, 99, 132, 1)",
+                                "rgba(255, 205, 86, 1)",
+                                "rgba(75, 192, 192, 1)",
+                              ],
+                              hoverOffset: 4,
+                            },
+                          ],
+                        }} 
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
