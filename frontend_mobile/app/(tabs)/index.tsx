@@ -1,11 +1,20 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import { useRouter } from "expo-router";
+import { useFonts } from "expo-font";
 
 const { width, height } = Dimensions.get("window");
 
 export default function Index() {
   const router = useRouter();
+  const [fontsLoaded] = useFonts({
+    PoppinsBold: require("../../assets/fonts/Poppins-Bold.ttf"),
+    PoppinsRegular: require("../../assets/fonts/Poppins-Regular.ttf"),
+  });
+
+  if (!fontsLoaded) {
+    return <Text>Loading...</Text>;
+  }
 
   return (
     <View style={styles.container}>
@@ -38,14 +47,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   logo: {
-    width: 200, // 50% dari lebar layar
-    height: 200, // 25% dari tinggi layar
+    width: 200,
+    height: 200,
     resizeMode: "contain",
     marginTop: 120
   },
   title: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontFamily: "PoppinsBold",
     color: "#8E1616",
     marginTop: 30,
     textAlign: "center",
@@ -55,20 +64,21 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     padding: 20,
     marginTop: 50,
-    width: "120%", // 90% dari layar agar fleksibel
-    maxWidth: 405, // Maksimal 400px agar tidak terlalu besar di layar lebar
+    width: "120%",
+    maxWidth: 405,
     alignItems: "center",
     height: "50%"
   },
   heading: {
     fontSize: 22,
-    fontWeight: "bold",
+    fontFamily: "PoppinsBold",
     color: "#fff",
     textAlign: "center",
     marginTop: 70
   },
   description: {
     fontSize: 15,
+    fontFamily: "PoppinsRegular",
     color: "#fff",
     textAlign: "center",
     marginVertical: 10,
@@ -83,7 +93,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#8E1616",
-    fontWeight: "bold",
+    fontFamily: "PoppinsBold",
     fontSize: 16,
   },
 });

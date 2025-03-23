@@ -1,18 +1,20 @@
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
 
-export default function Qualified() {
+export default function NotQualified() {
   return (
-    <LinearGradient colors={["#8E1616", "#FFFFFF"]} style={styles.container}>
-      <View style={styles.content}>
-        <Image source={require("../../assets/images/unqualified.png")} style={styles.checkmark} />
+    <TouchableOpacity style={{ flex: 1 }} onPress={() => router.push("/ketersediaan_donor")}>
+      <LinearGradient colors={["#8E1616", "#FFFFFF"]} style={styles.container}>
+        <View style={styles.content}>
+          <Image source={require("../../assets/images/unqualified.png")} style={styles.checkmark} />
 
-        {/* Pesan Kualifikasi */}
-        <Text style={styles.title}>Maaf!</Text>
-        <Text style={styles.subtitle}>Saat ini kamu belum memenuhi syarat untuk menjadi pendonor darah.</Text>
-      </View>
-    </LinearGradient>
+          <Text style={styles.title}>Maaf!</Text>
+          <Text style={styles.subtitle}>Saat ini kamu belum memenuhi syarat untuk menjadi pendonor darah.</Text>
+        </View>
+      </LinearGradient>
+    </TouchableOpacity>
   );
 }
 
@@ -21,7 +23,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    padding: 20
+    padding: 20,
   },
   content: {
     alignItems: "center",
@@ -30,7 +32,6 @@ const styles = StyleSheet.create({
     width: 230,
     height: 230,
     marginBottom: 20,
-    marginTop: -60,
   },
   title: {
     fontSize: 26,

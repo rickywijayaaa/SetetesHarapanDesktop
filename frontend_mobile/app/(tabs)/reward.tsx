@@ -24,7 +24,7 @@ export default function Leaderboard() {
   return (
     <View style={{ flex: 1, backgroundColor: "#8E1616", paddingTop: 60 }}>
       {/* Header */}
-      <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 20 }}>
+      <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 20, marginBottom: 20 }}>
         <TouchableOpacity onPress={() => router.back()}>
           <FontAwesome name="arrow-left" size={24} color="#fff" />
         </TouchableOpacity>

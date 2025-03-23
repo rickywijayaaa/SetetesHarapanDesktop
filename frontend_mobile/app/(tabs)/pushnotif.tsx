@@ -9,10 +9,43 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
+import { useRouter } from 'expo-router';
 import warningIcon from '../../assets/images/warning.jpg';
 
-const PushNotificationModal = () => {
+const notifications = [
+  { id: 1, title: 'Darurat! Butuh Pendonor', message: 'Golongan darah B+ diperlukan di RS Borromeus' },
+  { id: 2, title: 'Update Aplikasi', message: 'Versi terbaru telah tersedia' }
+];
+
+const NotificationList = () => {
+  const [selectedNotification, setSelectedNotification] = useState(null);
+  const router = useRouter();
+
+  const handlePress = (notif) => {
+    if (notif.id === 1) {
+      setSelectedNotification(notif);
+    } else {
+      alert('Notifikasi lainnya diklik');
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      {notifications.map((notif) => (
+        <TouchableOpacity key={notif.id} style={styles.notification} onPress={() => handlePress(notif)}>
+          <Text style={styles.title}>{notif.title}</Text>
+          <Text style={styles.message}>{notif.message}</Text>
+        </TouchableOpacity>
+      ))}
+
+      {selectedNotification && <PushNotificationModal onClose={() => setSelectedNotification(null)} />}
+    </View>
+  );
+};
+
+const PushNotificationModal = ({ onClose }) => {
   const [modalVisible, setModalVisible] = useState(true);
+  const router = useRouter();
 
   const [fontsLoaded] = useFonts({
     PoppinsBold: require('../../assets/fonts/Poppins-Bold.ttf'),
@@ -23,16 +56,27 @@ const PushNotificationModal = () => {
     return <Text>Loading...</Text>;
   }
 
+  const handleClosePress = () => {
+    setModalVisible(false);
+    setTimeout(() => {
+      onClose();
+      router.push('/home');
+    }, 300);
+  };
+
+  const handleDonatePress = () => {
+    setModalVisible(false);
+    setTimeout(() => {
+      onClose();
+      router.push('/kuesioner');
+    }, 300);
+  };
+
   return (
-    <Modal
-      animationType="fade"
-      transparent={true}
-      visible={modalVisible}
-      onRequestClose={() => setModalVisible(false)}
-    >
+    <Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={handleClosePress}>
       <View style={styles.overlay}>
         <View style={styles.modalContainer}>
-          <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
+          <TouchableOpacity onPress={handleClosePress} style={styles.closeButton}>
             <Ionicons name="close" size={24} color="darkred" />
           </TouchableOpacity>
           <Image source={warningIcon} style={styles.warningIcon} />
@@ -49,7 +93,7 @@ const PushNotificationModal = () => {
             <Text style={styles.detailText}><Text style={styles.bold}>Rhesus:</Text> +</Text>
             <Text style={styles.detailText}><Text style={styles.bold}>Alamat:</Text> RS. Borromeus, Jl. Ir. H. Djuanda No 100, Jawa Barat</Text>
           </View>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={handleDonatePress}>
             <Text style={styles.buttonText}>Bantu Donor</Text>
           </TouchableOpacity>
         </View>
@@ -59,6 +103,10 @@ const PushNotificationModal = () => {
 };
 
 const styles = StyleSheet.create({
+  container: { flex: 1, padding: 20 },
+  notification: { padding: 15, backgroundColor: '#f8f9fa', marginBottom: 10, borderRadius: 8 },
+  title: { fontSize: 16, fontWeight: 'bold' },
+  message: { fontSize: 14, color: '#555' },
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -75,45 +123,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 2 },
   },
-  closeButton: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-  },
-  warningIcon: {
-    width: 50,
-    height: 50,
-    marginBottom: 10,
-  },
-  title: {
-    fontSize: 22,
-    fontFamily: 'PoppinsBold',
-    color: 'darkred',
-    marginBottom: 10,
-  },
-  message: {
-    fontSize: 16,
-    fontFamily: 'PoppinsRegular',
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-  highlight: {
-    fontFamily: 'PoppinsBold',
-    color: 'darkred',
-  },
-  detailsContainer: {
-    width: '100%',
-    paddingHorizontal: 10,
-    marginBottom: 15,
-  },
-  detailText: {
-    fontSize: 14,
-    fontFamily: 'PoppinsRegular',
-    marginBottom: 5,
-  },
-  bold: {
-    fontFamily: 'PoppinsBold',
-  },
+  closeButton: { position: 'absolute', top: 10, right: 10 },
+  warningIcon: { width: 50, height: 50, marginBottom: 10 },
+  highlight: { fontFamily: 'PoppinsBold', color: 'darkred' },
+  detailsContainer: { width: '100%', paddingHorizontal: 10, marginBottom: 20 },
+  detailText: { fontSize: 14, fontFamily: 'PoppinsRegular', marginBottom: 5 },
+  bold: { fontFamily: 'PoppinsBold' },
   button: {
     backgroundColor: 'darkred',
     paddingVertical: 12,
@@ -121,12 +136,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     width: '100%',
     alignItems: 'center',
+    marginBottom: 10,
   },
-  buttonText: {
-    fontSize: 16,
-    fontFamily: 'PoppinsBold',
-    color: '#fff',
-  },
+  buttonText: { fontSize: 16, fontFamily: 'PoppinsBold', color: '#fff' },
 });
 
-export default PushNotificationModal;
+export default NotificationList;

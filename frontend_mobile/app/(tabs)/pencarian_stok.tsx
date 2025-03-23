@@ -145,6 +145,7 @@ const styles = StyleSheet.create({
     color: "#8E1616",
     textAlign: "center",
     marginBottom: 30,
+    marginTop: 30
   },
   totalBloodCard: {
     backgroundColor: "#B01E1E",
