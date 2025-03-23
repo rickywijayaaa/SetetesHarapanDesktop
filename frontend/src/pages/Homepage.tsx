@@ -13,6 +13,7 @@ import {
   ArcElement,
   CategoryScale,
 } from "chart.js";
+import IndonesiaMap from "../pages/IndonesianMap";
 
 // Inisialisasi Supabase client
 const supabaseUrl = "https://opoxtyinqfbsqxlgrewy.supabase.co";
@@ -81,7 +82,9 @@ const Homepage: React.FC = () => {
       params.append("_t", new Date().getTime().toString());
 
       // Make API request
-      const response = await axios.get(`${API_BASE_URL}/api/dashboard`, { params });
+      const response = await axios.get(`${API_BASE_URL}/api/dashboard`, {
+        params,
+      });
       setDashboardData(response.data);
       setLastUpdated(new Date());
     } catch (err) {
@@ -300,9 +303,9 @@ const Homepage: React.FC = () => {
             <button onClick={fetchDashboardData}>Coba Lagi</button>
           </div>
         ) : (
-          <div className="main-content-hp">
-            {/* Left Panel: Statistics Cards */}
-            <div className="left-panel-hp">
+          <div className="dashboard-layout">
+            {/* Top row: Statistics Cards */}
+            <div className="stats-row">
               <div className="stats-card-hp">
                 <h3>Total Darah Tersedia</h3>
                 <p className="stats-value-hp">
@@ -340,8 +343,8 @@ const Homepage: React.FC = () => {
               </div>
             </div>
 
-            {/* Right Panel: Pie Charts */}
-            <div className="right-panel-hp">
+            {/* Middle row: Charts (2 column layout) */}
+            <div className="charts-row">
               <div className="chart-card-hp">
                 <h3>Perbandingan Stok Darah</h3>
                 <div className="chart-placeholder-hp">
@@ -369,10 +372,23 @@ const Homepage: React.FC = () => {
                   )}
                 </div>
               </div>
+            </div>
 
+            {/* Bottom row: Map in single column */}
+            <div className="full-width-row">
+              <div className="chart-card-hp map-container">
+                <h3>Distribusi Darah di Indonesia</h3>
+                <div className="map-wrapper">
+                  <IndonesiaMap />
+                </div>
+              </div>
+            </div>
+
+            {/* Extra row for blood types */}
+            <div className="full-width-row">
               <div className="chart-card-hp">
                 <h3>Jenis Darah</h3>
-                <div className="chart-placeholder-hp">
+                <div className="chart-placeholder-hp blood-types-container">
                   {dashboardData &&
                   Object.keys(dashboardData.stok_per_jenis).length > 0 ? (
                     <div className="blood-type-distribution">
