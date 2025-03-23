@@ -18,7 +18,7 @@ def verify_password(plain_password, hashed_password):
 
 @router.post("/login")
 def login_user(user: LoginRequest, response: Response):
-    response_data = supabase.table("users").select("iduser, email, password").eq("email", user.email).execute()
+    response_data = supabase.table("users").select("iduser, email, password, role, name").eq("email", user.email).execute()
     
     if not response_data.data:
         raise HTTPException(status_code=400, detail="Email tidak terdaftar")
@@ -44,7 +44,16 @@ def login_user(user: LoginRequest, response: Response):
 
     response.set_cookie(key="session_id", value=session_id, httponly=True, max_age=SESSION_EXPIRE_MINUTES * 60)
 
-    return {"message": "Login berhasil", "session_id": session_id}
+    # ⬇ Return additional user info to frontend
+    return {
+        "message": "Login berhasil",
+        "session_id": session_id,
+        "user_info": {
+            "iduser": user_data["iduser"],
+            "name": user_data["name"],
+            "role": user_data["role"]
+        }
+    }
 
 @router.post("/logout")
 def logout_user(response: Response):

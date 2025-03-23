@@ -23,10 +23,15 @@ const Login: React.FC = () => {
   const handleLogin = async () => {
     try {
       const response = await axios.post(
-        "https://backend-setetesharapandesktop.up.railway.app/users/login",
+        "http://127.0.0.1:8000/users/login",
         { email, password },
         { withCredentials: true } // required for cookie/session
       );
+      
+      // ✅ Save user_info to localStorage
+      const userInfo = response.data.user_info;
+      console.log("🧾 user_info from backend:", userInfo); // ✅ Debug output
+      localStorage.setItem("user_info", JSON.stringify(userInfo));
 
       alert("Login berhasil!");
       navigate("/homepage"); // ✅ redirect to homepage
