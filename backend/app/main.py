@@ -125,18 +125,42 @@ async def delete_blood_donation(iddarah: str):
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 @app.get("/donor/")
-async def get_donors():
+async def get_donors(request: Request):
     try:
-        # Query data from Supabase
-        response = supabase.table("donor").select("*").execute()
+        # Step 1: Get user_info from header
+        user_info = request.headers.get("x-user-info")
+        if not user_info:
+            raise HTTPException(status_code=400, detail="User info not provided")
+        
+        user_info = json.loads(user_info)
+        user_id = user_info["iduser"]
+        role = user_info["role"].lower()
 
-        # Return the response data
-        if response.data:
-            return response.data  # Should be a list of donor records
+        # Step 2: Tentukan tabel relasi berdasarkan role
+        if role == "pmi":
+            role_table = "darah_pmi"
+            role_key = "idpmi"
+        elif role == "rumah sakit":
+            role_table = "darah_rs"
+            role_key = "idrumahsakit"
         else:
-            raise HTTPException(status_code=404, detail="No donors found")
+            raise HTTPException(status_code=403, detail="Unauthorized role to fetch donor data")
+
+        # Step 3: Ambil iddarah yang terkait dengan user_id dari tabel relasi
+        rel_response = supabase.table(role_table).select("iddarah").eq(role_key, user_id).execute()
+        if not rel_response.data:
+            return []  # Tidak ada data
+
+        iddarah_list = [entry["iddarah"] for entry in rel_response.data]
+
+        # Step 4: Ambil data donor yang cocok dengan daftar iddarah
+        donor_response = supabase.table("donor").select("*").in_("iddarah", iddarah_list).execute()
+        return donor_response.data if donor_response.data else []
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+        import traceback
+        print("❌ Full traceback:")
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
 app.include_router(users_router, prefix="/users", tags=["users"])
 app.include_router(auth_router, prefix="/users", tags=["auth"])

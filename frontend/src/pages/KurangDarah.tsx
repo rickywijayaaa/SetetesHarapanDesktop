@@ -39,21 +39,27 @@ const KurangDarah: React.FC = () => {
     }
   }, []);
 
-  // Fetch donor data
   const fetchDonorData = () => {
-    fetch("https://backend-setetesharapandesktop.up.railway.app/donor/")
+    const userInfo = localStorage.getItem("user_info");
+  
+    fetch("http://127.0.0.1:8000/donor/", {
+      headers: {
+        "x-user-info": userInfo || "", // 🧠 Make sure it's stringified JSON
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
           setDonors(data);
         } else {
-          console.error("❌ Unexpected donor data:", data);
+          console.error("❌ Unexpected donor data format:", data);
         }
       })
       .catch((err) => {
         console.error("❌ Failed to fetch donor data:", err);
       });
   };
+  
 
   useEffect(() => {
     fetchDonorData();
