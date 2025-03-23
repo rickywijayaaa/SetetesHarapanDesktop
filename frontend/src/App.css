@@ -874,7 +874,6 @@
   background: #b3260e;
   transform: translateY(-2px);
 }
-
 /* Real-time Controls */
 .realtime-controls {
   display: flex;
@@ -882,7 +881,8 @@
   gap: 15px;
 }
 
-.refresh-toggle {
+/* Apply styles to button elements in realtime-controls */
+.realtime-controls button {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -894,13 +894,15 @@
   transition: all 0.3s ease;
 }
 
-.refresh-toggle.active {
+/* Active button state (auto refresh on) - green */
+.realtime-controls button.active {
   background-color: #e8f5e9;
   color: #2e7d32;
   border: 1px solid #4caf50;
 }
 
-.refresh-toggle.inactive {
+/* Inactive button state (auto refresh off) - red */
+.realtime-controls button.inactive {
   background-color: #ffebee;
   color: #c62828;
   border: 1px solid #ef5350;
@@ -910,16 +912,34 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 5px;
 }
 
-.refresh-toggle.active .status-dot {
+/* Status dot for active state */
+.realtime-controls button.active .status-dot {
   background-color: #4caf50;
   box-shadow: 0 0 5px #4caf50;
   animation: pulse 2s infinite;
 }
 
-.refresh-toggle.inactive .status-dot {
+/* Status dot for inactive state */
+.realtime-controls button.inactive .status-dot {
   background-color: #ef5350;
+}
+
+/* Define the pulse animation */
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .last-updated {
@@ -960,7 +980,7 @@
 
 .stats-card-hp {
   background: white;
-  padding: 15px;
+  padding: 10px; /* Reduced padding from 15px to 10px */
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   border: 1px solid #eaeaea;
@@ -969,7 +989,8 @@
   flex-grow: 1;
   transition: transform 0.2s ease;
   width: 100%;
-  height: 10;
+  height: auto; /* Changed from 10% to auto */
+  max-height: 140px; /* Added max-height to make cards smaller */
 }
 
 .stats-card-hp:hover {
@@ -978,9 +999,9 @@
 }
 
 .stats-value-hp {
-  font-size: 24px;
+  font-size: 22px; /* Slightly reduced from 24px */
   font-weight: bold;
-  margin: 10px 0;
+  margin: 6px 0; /* Reduced from 10px */
 }
 
 .stats-value-hp span {
@@ -991,6 +1012,8 @@
 .stats-subtext-hp {
   font-size: 12px;
   color: #8e1616;
+  margin-top: 4px; /* Added to reduce spacing */
+  margin-bottom: 4px; /* Added to reduce spacing */
 }
 
 /* Chart Section - Add space between chart column and stats column */

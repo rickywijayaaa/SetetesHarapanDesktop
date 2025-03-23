@@ -1,10 +1,9 @@
-from fastapi import FastAPI, Query, HTTPException
+from fastapi import APIRouter, Query, HTTPException
 from typing import List, Dict, Optional
-import uvicorn
 from enum import Enum
 
-app = FastAPI(title="Blood Inventory API", 
-              description="API untuk mengambil informasi stok darah dengan filter kota dan golongan darah")
+# Membuat router dengan tag
+router = APIRouter(tags=["blood_inventory"])
 
 # Enum untuk golongan darah yang valid
 class BloodType(str, Enum):
@@ -48,7 +47,7 @@ blood_inventory_db = [
 ]
 
 # Endpoint untuk mendapatkan daftar kota yang tersedia
-@app.get("/cities", tags=["Cities"])
+@router.get("/cities")
 def get_cities():
     """
     Mendapatkan daftar kota yang tersedia pada sistem
@@ -57,7 +56,7 @@ def get_cities():
     return {"cities": cities}
 
 # Endpoint untuk mendapatkan stok darah dengan filter
-@app.get("/blood-stock", tags=["Blood Stock"])
+@router.get("/blood-stock")
 def get_blood_stock(
     city: Optional[str] = Query(None, description="Filter berdasarkan kota"),
     blood_type: Optional[BloodType] = Query(None, description="Filter berdasarkan golongan darah")
@@ -100,7 +99,7 @@ def get_blood_stock(
     }
 
 # Endpoint untuk mendapatkan total stok darah
-@app.get("/blood-stock/total", tags=["Blood Stock"])
+@router.get("/blood-stock/total")
 def get_total_blood_stock(
     city: Optional[str] = Query(None, description="Filter berdasarkan kota")
 ):
@@ -120,6 +119,3 @@ def get_total_blood_stock(
     return {
         "total_stock": total_stock
     }
-
-if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

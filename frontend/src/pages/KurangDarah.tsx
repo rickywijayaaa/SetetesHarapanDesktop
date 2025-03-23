@@ -9,7 +9,7 @@ const KurangDarah: React.FC = () => {
 
   // Fetch donor data from the Supabase API
   useEffect(() => {
-    fetch("http://localhost:8000/donor/")
+    fetch("https://backend-setetesharapandesktop.up.railway.app/donor/")
       .then((response) => response.json())
       .then((data) => {
         console.log("Fetched donor data:", data);  // Log response to verify structure
@@ -29,7 +29,7 @@ const KurangDarah: React.FC = () => {
 
   // Handle DELETE
   const handleDelete = (iddarah: string) => {
-    fetch(`http://localhost:8000/donor/${iddarah}/`, {
+    fetch(`https://backend-setetesharapandesktop.up.railway.app/donor/${iddarah}/`, {
       method: "DELETE",
     })
       .then((response) => response.json())
