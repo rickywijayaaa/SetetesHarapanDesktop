@@ -9,15 +9,40 @@ import {
   TextInput,
   ScrollView,
   ActivityIndicator,
-  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
-import axios from "axios";
 
 const { width, height } = Dimensions.get("window");
 
-// URL API - Ganti dengan URL server FastAPI Anda
-const API_URL = "http://localhost:8000"; // Untuk development di emulator
+// Static data from stok_darah.py
+const BLOOD_INVENTORY_DATA = [
+  { city: "Jakarta", blood_type: "A+", stock: 100 },
+  { city: "Jakarta", blood_type: "A-", stock: 25 },
+  { city: "Jakarta", blood_type: "B+", stock: 80 },
+  { city: "Jakarta", blood_type: "B-", stock: 20 },
+  { city: "Jakarta", blood_type: "O+", stock: 150 },
+  { city: "Jakarta", blood_type: "O-", stock: 35 },
+  { city: "Jakarta", blood_type: "AB+", stock: 40 },
+  { city: "Jakarta", blood_type: "AB-", stock: 15 },
+
+  { city: "Surabaya", blood_type: "A+", stock: 70 },
+  { city: "Surabaya", blood_type: "A-", stock: 15 },
+  { city: "Surabaya", blood_type: "B+", stock: 65 },
+  { city: "Surabaya", blood_type: "B-", stock: 18 },
+  { city: "Surabaya", blood_type: "O+", stock: 90 },
+  { city: "Surabaya", blood_type: "O-", stock: 25 },
+  { city: "Surabaya", blood_type: "AB+", stock: 30 },
+  { city: "Surabaya", blood_type: "AB-", stock: 10 },
+
+  { city: "Bandung", blood_type: "A+", stock: 60 },
+  { city: "Bandung", blood_type: "A-", stock: 12 },
+  { city: "Bandung", blood_type: "B+", stock: 55 },
+  { city: "Bandung", blood_type: "B-", stock: 15 },
+  { city: "Bandung", blood_type: "O+", stock: 80 },
+  { city: "Bandung", blood_type: "O-", stock: 20 },
+  { city: "Bandung", blood_type: "AB+", stock: 25 },
+  { city: "Bandung", blood_type: "AB-", stock: 8 },
+];
 
 // Interface untuk definisi tipe data
 interface BloodStock {
@@ -66,50 +91,75 @@ export default function PencarianStok() {
     fetchCities();
   }, []);
 
-  // Fungsi untuk mengambil data stok darah
-  const fetchBloodStock = async (city?: string, bloodType?: string) => {
+  // Fungsi untuk mengambil data stok darah dari data statis
+  const fetchBloodStock = (city?: string, bloodType?: string) => {
     setLoading(true);
     setError(null);
 
     try {
-      let url = `${API_URL}/blood-stock`;
-      const params: Record<string, string> = {};
+      // Filter data berdasarkan kota dan golongan darah
+      let filteredData = [...BLOOD_INVENTORY_DATA];
 
       if (city && city.trim() !== "") {
-        params.city = city;
+        filteredData = filteredData.filter((item) => item.city === city);
       }
 
       if (bloodType && bloodType !== "Semua") {
-        params.blood_type = bloodType;
+        filteredData = filteredData.filter(
+          (item) => item.blood_type === bloodType
+        );
       }
 
-      const response = await axios.get<BloodStockResponse>(url, { params });
-      setBloodData(response.data);
-    } catch (err) {
-      console.error("Error fetching blood stock:", err);
-      setError("Gagal mengambil data stok darah. Silakan coba lagi nanti.");
-      Alert.alert("Error", "Gagal mengambil data stok darah.");
+      // Hitung total stok
+      const total_stock = filteredData.reduce(
+        (sum, item) => sum + item.stock,
+        0
+      );
+
+      // Hitung stok per golongan darah
+      const stock_by_type: Record<string, number> = {};
+
+      filteredData.forEach((item) => {
+        if (stock_by_type[item.blood_type]) {
+          stock_by_type[item.blood_type] += item.stock;
+        } else {
+          stock_by_type[item.blood_type] = item.stock;
+        }
+      });
+
+      const response: BloodStockResponse = {
+        total_stock,
+        stock_by_type,
+        detailed_stock: filteredData,
+      };
+
+      setBloodData(response);
+    } catch (err: any) {
+      console.error("Error processing blood stock data:", err);
+      setError("Terjadi kesalahan dalam memproses data stok darah");
     } finally {
       setLoading(false);
     }
   };
 
-  // Fungsi untuk mengambil daftar kota
-  const fetchCities = async () => {
+  // Fungsi untuk mengambil daftar kota dari data statis
+  const fetchCities = () => {
     try {
-      const response = await axios.get<{ cities: string[] }>(
-        `${API_URL}/cities`
-      );
-      setCities(response.data.cities);
-    } catch (err) {
-      console.error("Error fetching cities:", err);
+      // Extract unique cities from the blood inventory data
+      const uniqueCities = Array.from(
+        new Set(BLOOD_INVENTORY_DATA.map((item) => item.city))
+      ).sort();
+      setCities(uniqueCities);
+    } catch (err: any) {
+      console.error("Error processing cities data:", err);
+      setError("Terjadi kesalahan dalam memproses data kota");
     }
   };
 
   // Fungsi untuk melakukan pencarian
   const handleSearch = () => {
     fetchBloodStock(
-      cityInput,
+      cityInput.trim() !== "" ? cityInput : undefined,
       selectedBloodType !== "Semua" ? selectedBloodType : undefined
     );
     setShowCityDropdown(false);
@@ -121,7 +171,7 @@ export default function PencarianStok() {
     setCityInput(city);
     setShowCityDropdown(false);
     fetchBloodStock(
-      city,
+      city.trim() !== "" ? city : undefined,
       selectedBloodType !== "Semua" ? selectedBloodType : undefined
     );
   };
@@ -130,7 +180,10 @@ export default function PencarianStok() {
   const handleBloodTypeSelect = (type: string) => {
     setSelectedBloodType(type);
     setShowTypeDropdown(false);
-    fetchBloodStock(cityInput, type !== "Semua" ? type : undefined);
+    fetchBloodStock(
+      cityInput.trim() !== "" ? cityInput : undefined,
+      type !== "Semua" ? type : undefined
+    );
   };
 
   // Mendapatkan jumlah stok untuk setiap golongan darah
@@ -139,8 +192,32 @@ export default function PencarianStok() {
     return bloodData.stock_by_type[bloodType] || 0;
   };
 
+  // Function to close dropdowns when clicking outside
+  const handleOutsidePress = () => {
+    if (showCityDropdown || showTypeDropdown) {
+      setShowCityDropdown(false);
+      setShowTypeDropdown(false);
+    }
+  };
+
+  // Reset city and blood type filters
+  const handleReset = () => {
+    setCityInput("");
+    setSelectedBloodType(null);
+    fetchBloodStock();
+  };
+
   return (
     <View style={styles.container}>
+      {/* Invisible touchable area to close dropdowns */}
+      {(showCityDropdown || showTypeDropdown) && (
+        <TouchableOpacity
+          style={styles.outsideOverlay}
+          activeOpacity={0}
+          onPress={handleOutsidePress}
+        />
+      )}
+
       {/* Header - White background with red text */}
       <View style={styles.headerSection}>
         <Text style={styles.headerTitle}>Informasi Darah</Text>
@@ -195,7 +272,10 @@ export default function PencarianStok() {
           {/* City Dropdown */}
           {showCityDropdown && (
             <View style={styles.dropdown}>
-              <ScrollView style={{ maxHeight: 200 }}>
+              <ScrollView
+                style={{ maxHeight: 200 }}
+                keyboardShouldPersistTaps="handled"
+              >
                 <TouchableOpacity
                   style={styles.dropdownItem}
                   onPress={() => handleCitySelect("")}
@@ -229,7 +309,10 @@ export default function PencarianStok() {
           {/* Blood Type Dropdown */}
           {showTypeDropdown && (
             <View style={[styles.dropdown, styles.typeDropdownMenu]}>
-              <ScrollView style={{ maxHeight: 200 }}>
+              <ScrollView
+                style={{ maxHeight: 200 }}
+                keyboardShouldPersistTaps="handled"
+              >
                 {bloodTypes.map((type) => (
                   <TouchableOpacity
                     key={type}
@@ -245,6 +328,19 @@ export default function PencarianStok() {
         </TouchableOpacity>
       </View>
 
+      {/* Filter indicator and reset button */}
+      {(cityInput || selectedBloodType) && (
+        <View style={styles.filterIndicatorContainer}>
+          <Text style={styles.filterIndicatorText}>
+            Filter: {cityInput ? cityInput : "Semua Kota"}
+            {selectedBloodType ? ` • ${selectedBloodType}` : ""}
+          </Text>
+          <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
+            <Text style={styles.resetButtonText}>Reset</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
       {/* Error message */}
       {error && (
         <View style={styles.errorContainer}>
@@ -252,8 +348,8 @@ export default function PencarianStok() {
         </View>
       )}
 
-      {/* Loading indicator */}
-      {loading && (
+      {/* Loading indicator for initial load */}
+      {loading && !bloodData && (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#fff" />
         </View>
@@ -347,6 +443,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#B01E1E",
   },
+  outsideOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 5,
+  },
   headerSection: {
     backgroundColor: "#fff",
     paddingVertical: 40,
@@ -359,7 +463,7 @@ const styles = StyleSheet.create({
     color: "#8E1616",
     textAlign: "center",
     marginBottom: 30,
-    marginTop: 30
+    marginTop: 30,
   },
   totalBloodCard: {
     backgroundColor: "#B01E1E",
@@ -535,7 +639,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   errorContainer: {
-    backgroundColor: "#FF6B6B",
+    backgroundColor: "rgba(255, 107, 107, 0.8)",
     padding: 10,
     marginHorizontal: 20,
     borderRadius: 8,
@@ -545,5 +649,30 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
     textAlign: "center",
+  },
+  filterIndicatorContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginHorizontal: 20,
+    marginBottom: 15,
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
+    borderRadius: 8,
+    padding: 8,
+  },
+  filterIndicatorText: {
+    color: "#fff",
+    fontSize: 14,
+  },
+  resetButton: {
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    borderRadius: 4,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+  },
+  resetButtonText: {
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "bold",
   },
 });
