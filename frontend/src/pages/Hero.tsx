@@ -34,7 +34,7 @@ const Hero: React.FC = () => {
             darah yang mereka butuhkan tepat waktu.
           </p>
 
-          <Link to="/donate" className="cta-button">
+          <Link to="/login" className="cta-button">
             Get Blood Now
           </Link>
         </div>
