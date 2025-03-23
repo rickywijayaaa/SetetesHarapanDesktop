@@ -4,6 +4,7 @@ from app.schemas import LoginRequest
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 import uuid
+from fastapi import Cookie
 
 router = APIRouter()
 

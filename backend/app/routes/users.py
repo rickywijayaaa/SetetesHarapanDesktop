@@ -4,6 +4,7 @@ from app.schemas import UserRegister, UserResponse
 from passlib.context import CryptContext
 from uuid import uuid4
 from app.utils.auth_utils import hash_password, verify_password
+from fastapi import Cookie
 
 router = APIRouter()
 
@@ -73,22 +74,29 @@ def register_user(user: UserRegister):
 from fastapi import Request
 
 @router.get("/me")
-def get_current_user(request: Request):
-    session_id = request.cookies.get("session_id")
+def get_current_user(session_id: str = Cookie(None)):
     if not session_id:
-        raise HTTPException(status_code=401, detail="Unauthorized")
+        raise HTTPException(status_code=401, detail="Belum login")
 
     session = supabase.table("sessions").select("user_id").eq("session_id", session_id).execute()
     if not session.data:
-        raise HTTPException(status_code=401, detail="Invalid session")
+        raise HTTPException(status_code=401, detail="Session tidak valid")
 
     user_id = session.data[0]["user_id"]
-    user = supabase.table("users").select("name, role").eq("iduser", user_id).execute()
 
-    if not user.data:
-        raise HTTPException(status_code=404, detail="User not found")
+    # Ambil semua kolom dulu untuk debugging
+    user_data = supabase.table("users").select("*").eq("iduser", user_id).single().execute()
+    print("User Data:", user_data.data)  # <--- Lihat isi field yang sebenarnya
 
-    return user.data[0]
+    if not user_data.data:
+        raise HTTPException(status_code=404, detail="User tidak ditemukan")
+
+    return {
+        "iduser": user_data.data.get("iduser"),
+        "email": user_data.data.get("email"),
+        "role": user_data.data.get("role"),
+        "username": user_data.data.get("name")
+    }
 
 @router.get("/test-hash")
 def test_hash():
