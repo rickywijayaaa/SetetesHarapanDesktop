@@ -107,6 +107,7 @@ class NotificationSchema(BaseModel):
     rhesus: str
     deadline: datetime
     message: str
+    address: str
 
 class PesanSchema(BaseModel):
     idUser: int
