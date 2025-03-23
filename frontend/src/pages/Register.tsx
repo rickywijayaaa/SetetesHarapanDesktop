@@ -91,7 +91,7 @@ const Register: React.FC = () => {
     try {
       const res = await axios.post("https://backend-setetesharapandesktop.up.railway.app/users/register", payload);
       alert("Registrasi berhasil!");
-      navigate("/verification");
+      navigate("/login");
     } catch (err: any) {
       console.error("Debug Error Response:", err.response?.data);
     }

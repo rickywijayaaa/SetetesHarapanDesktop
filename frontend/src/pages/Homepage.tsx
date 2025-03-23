@@ -391,7 +391,7 @@ const Homepage: React.FC = () => {
                 <div className="blood-comparison-row">
                   {/* Chart 1: Pertambahan Stok Darah */}
                   <div className="chart-card-hp blood-chart">
-                    <h3>Pertambahan Stok Darah</h3>
+                    <h3>Stok Darah Berdasarkan Golongan</h3>
                     <Bar
                       data={prepareBloodStockAdditionChart()}
                       options={{
@@ -412,7 +412,7 @@ const Homepage: React.FC = () => {
 
                   {/* Chart 2: Pengurangan Stok Darah */}
                   <div className="chart-card-hp blood-chart">
-                    <h3>Pengurangan Stok Darah</h3>
+                    <h3>Stok Darah Berdasarkan Jenis</h3>
                     <Bar
                       data={prepareBloodStockReductionChart()}
                       options={{
