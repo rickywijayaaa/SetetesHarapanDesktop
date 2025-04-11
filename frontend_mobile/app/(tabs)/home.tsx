@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
   statsContainer: {
     flexDirection: "row",
     backgroundColor: "#8E1616",
-    borderRadius: 40,
+    borderRadius: 30,
     marginHorizontal: 10,
     paddingTop: 80,
     paddingBottom: 30,
@@ -348,4 +348,5 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     resizeMode: "contain",
   },
+  
 });
