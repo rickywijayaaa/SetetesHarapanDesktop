@@ -36,7 +36,7 @@ const supabase = createClient(
 );
 
 // API base URL - make sure this is correct
-const API_BASE_URL = "http://127.0.0.1:8000"; // Verify this URL is correct
+const API_BASE_URL = "https://backend-setetesharapandesktop.up.railway.app"; // Verify this URL is correct
 
 // Refresh interval (in milliseconds)
 const REFRESH_INTERVAL = 10000;
