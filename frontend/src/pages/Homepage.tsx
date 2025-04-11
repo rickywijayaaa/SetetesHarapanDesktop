@@ -35,11 +35,47 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_KEY as string
 );
 
-// API base URL - make sure this is correct
-const API_BASE_URL = "https://backend-setetesharapandesktop.up.railway.app"; // Verify this URL is correct
+// Register chart components
+ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
 
-// Refresh interval (in milliseconds)
-const REFRESH_INTERVAL = 10000;
+// API base URL
+const API_BASE_URL = "https://backend-setetesharapandesktop.up.railway.app"; // Sesuaikan dengan URL backend Anda
+
+// Interval refresh (dalam milidetik) - 1 detik
+const REFRESH_INTERVAL = 100000;
+
+// Data dummy untuk grafik
+const DUMMY_DATA = {
+  // Data untuk Pertambahan Stok Darah (berdasarkan golongan darah)
+  pertambahan_stok: {
+    A: 120,
+    B: 95,
+    AB: 45,
+    O: 150,
+  },
+
+  // Data untuk Pengurangan Stok Darah (berdasarkan jenis darah)
+  pengurangan_stok: {
+    "Whole Blood": 85,
+    "Packed Red Cells": 60,
+    Plasma: 40,
+    Platelet: 30,
+    Cryoprecipitate: 15,
+  },
+
+  // Data untuk Perbandingan Stok Darah (berdasarkan rhesus)
+  perbandingan_rhesus: {
+    "Rhesus Positif": 85,
+    "Rhesus Negatif": 15,
+  },
+
+  // Data untuk Perbandingan Kebutuhan Darah (berdasarkan umur stok)
+  perbandingan_umur_stok: {
+    "< 7 hari": 25,
+    "7-21 hari": 45,
+    "> 21 hari": 30,
+  },
+};
 
 interface DashboardData {
   tanggal: string;
@@ -48,18 +84,13 @@ interface DashboardData {
   total_pendonor: number;
   stok_per_golongan: Record<string, number>;
   stok_per_jenis: Record<string, number>;
-  stok_per_rhesus: Record<string, number>; // Add stok_per_rhesus
   distribusi_per_kota: Record<string, number>;
-  user_info?: {
-    role: string;
-    full_name: string;
-  };
 }
 
 const Homepage: React.FC = () => {
   const navigate = useNavigate();
   const handleEmergencySearch = () => {
-    navigate("/blastinginfo");
+    navigate("/blastinginfo"); // Pindah ke halaman BlastingInfo
   };
 
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -69,7 +100,6 @@ const Homepage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-  const [apiConnecting, setApiConnecting] = useState(false);
 
   const [userInfo, setUserInfo] = useState<{
     iduser: string;
@@ -80,77 +110,50 @@ const Homepage: React.FC = () => {
   const [cityFilter, setCityFilter] = useState("");
   const [golonganFilter, setGolonganFilter] = useState("");
   const [jenisFilter, setJenisFilter] = useState("");
-  const [rhesusFilter, setRhesusFilter] = useState(""); // Add rhesus filter
   const [autoRefresh, setAutoRefresh] = useState(true);
 
-  // Function for blood group stock chart (A, B, AB, O)
-  const prepareBloodStockByGroupChart = () => {
-    if (!dashboardData?.stok_per_golongan) return { labels: [], datasets: [] };
+  // Replace the existing chart preparation functions with these updated versions that use red color variations
 
+  // Fungsi untuk mendapatkan data grafik Pertambahan Stok Darah (berdasarkan golongan)
+  const prepareBloodStockAdditionChart = () => {
     return {
-      labels: Object.keys(dashboardData.stok_per_golongan),
+      labels: Object.keys(DUMMY_DATA.pertambahan_stok),
       datasets: [
         {
-          data: Object.values(dashboardData.stok_per_golongan),
-          backgroundColor: "rgba(220, 53, 69, 0.6)",
-          borderColor: "rgba(220, 53, 69, 1)",
+          data: Object.values(DUMMY_DATA.pertambahan_stok),
+          backgroundColor: "rgba(220, 53, 69, 0.6)", // Lighter red with transparency
+          borderColor: "rgba(220, 53, 69, 1)", // Solid red border
           borderWidth: 1,
         },
       ],
     };
   };
 
-  // Function for blood type stock chart (Whole Blood, Plasma, etc)
-  const prepareBloodStockByTypeChart = () => {
-    if (!dashboardData?.stok_per_jenis) return { labels: [], datasets: [] };
-
+  // Fungsi untuk mendapatkan data grafik Pengurangan Stok Darah (berdasarkan jenis)
+  const prepareBloodStockReductionChart = () => {
     return {
-      labels: Object.keys(dashboardData.stok_per_jenis),
+      labels: Object.keys(DUMMY_DATA.pengurangan_stok),
       datasets: [
         {
-          data: Object.values(dashboardData.stok_per_jenis),
-          backgroundColor: "rgba(165, 42, 42, 0.6)",
-          borderColor: "rgba(165, 42, 42, 1)",
+          data: Object.values(DUMMY_DATA.pengurangan_stok),
+          backgroundColor: "rgba(165, 42, 42, 0.6)", // Brown-red with transparency
+          borderColor: "rgba(165, 42, 42, 1)", // Solid brown-red border
           borderWidth: 1,
         },
       ],
     };
   };
 
-  // Updated function for Rhesus comparison - using real database values
+  // Fungsi untuk mendapatkan data grafik Perbandingan Stok Darah (berdasarkan rhesus)
   const prepareRhesusComparisonChart = () => {
-    if (!dashboardData?.stok_per_rhesus) {
-      // Fallback to sample data if stok_per_rhesus is not available
-      const fallbackData = {
-        "Rhesus Positif": 85,
-        "Rhesus Negatif": 15,
-      };
-
-      return {
-        labels: Object.keys(fallbackData),
-        datasets: [
-          {
-            data: Object.values(fallbackData),
-            backgroundColor: [
-              "rgba(220, 53, 69, 1)", // Bright red
-              "rgba(128, 0, 0, 1)", // Dark red/maroon
-            ],
-            hoverOffset: 4,
-          },
-        ],
-      };
-    }
-
-    // Use real data from API
     return {
-      labels: Object.keys(dashboardData.stok_per_rhesus),
+      labels: Object.keys(DUMMY_DATA.perbandingan_rhesus),
       datasets: [
         {
-          data: Object.values(dashboardData.stok_per_rhesus),
+          data: Object.values(DUMMY_DATA.perbandingan_rhesus),
           backgroundColor: [
-            "rgba(220, 53, 69, 1)", // Bright red for positive
-            "rgba(128, 0, 0, 1)", // Dark red/maroon for negative
-            "rgba(169, 169, 169, 1)", // Grey for unknown/other values
+            "rgba(220, 53, 69, 1)", // Bright red
+            "rgba(128, 0, 0, 1)", // Dark red/maroon
           ],
           hoverOffset: 4,
         },
@@ -158,19 +161,13 @@ const Homepage: React.FC = () => {
     };
   };
 
-  // Function for blood age comparison
+  // Fungsi untuk mendapatkan data grafik Perbandingan Kebutuhan Darah (berdasarkan umur stok)
   const prepareStockAgeComparisonChart = () => {
-    const ageData = {
-      "< 7 hari": 25,
-      "7-21 hari": 45,
-      "> 21 hari": 30,
-    };
-
     return {
-      labels: Object.keys(ageData),
+      labels: Object.keys(DUMMY_DATA.perbandingan_umur_stok),
       datasets: [
         {
-          data: Object.values(ageData),
+          data: Object.values(DUMMY_DATA.perbandingan_umur_stok),
           backgroundColor: [
             "rgba(255, 99, 71, 1)", // Tomato red
             "rgba(178, 34, 34, 1)", // Firebrick red
@@ -203,163 +200,50 @@ const Homepage: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Fallback to use dummy data if API fails
-  const useDummyData = () => {
-    console.log("Using fallback dummy data");
-    const dummyData: DashboardData = {
-      tanggal: new Date().toLocaleDateString("id-ID"),
-      total_kantong: 5580000,
-      total_darah_harian: 12750,
-      total_pendonor: 1250000,
-      stok_per_golongan: {
-        A: 120,
-        B: 95,
-        AB: 45,
-        O: 150,
-      },
-      stok_per_jenis: {
-        "Whole Blood": 85,
-        "Packed Red Cells": 60,
-        Plasma: 40,
-        Platelet: 30,
-        Cryoprecipitate: 15,
-      },
-      stok_per_rhesus: {
-        "Rhesus Positif": 85,
-        "Rhesus Negatif": 15,
-      },
-      distribusi_per_kota: {
-        Jakarta: 12500,
-        Surabaya: 8900,
-        Bandung: 7500,
-        Medan: 6800,
-        Makassar: 5200,
-      },
-    };
-
-    setDashboardData(dummyData);
-    setLastUpdated(new Date());
-    setIsLoading(false);
-  };
-
   const fetchDashboardData = async () => {
-    if (!userInfo) {
-      console.log("No user info available, can't fetch data");
-      return;
-    }
-
     if (!dashboardData) setIsLoading(true);
     setError(null);
-    setApiConnecting(true);
-
-    // For debug purposes, log the attempts
-    console.log("Attempting to fetch dashboard data...");
-    console.log(`User role: ${userInfo.role}, name: ${userInfo.name}`);
 
     try {
-      // Prepare filters for API call
-      const params = new URLSearchParams();
-      if (cityFilter) params.append("city", cityFilter);
-      if (golonganFilter) params.append("golongan", golonganFilter);
-      if (jenisFilter) params.append("jenis", jenisFilter);
-      if (rhesusFilter) params.append("rhesus", rhesusFilter); // Add rhesus filter to params
-
-      // Create user_info header that the backend expects
-      const userInfoHeader = JSON.stringify({
-        role: userInfo.role,
-        name: userInfo.name,
-      });
-
-      console.log(`Calling API at: ${API_BASE_URL}/api/dashboard`);
-      console.log(`With headers: x-user-info = ${userInfoHeader}`);
-
-      // Make actual API call to the backend with timeout
-      const response = await axios.get(`${API_BASE_URL}/api/dashboard`, {
-        params,
-        headers: {
-          "x-user-info": userInfoHeader,
+      // Simulate API call
+      // Instead of actual API call, we'll create dummy data
+      const dummyData: DashboardData = {
+        tanggal: new Date().toLocaleDateString("id-ID"),
+        total_kantong: 5580000,
+        total_darah_harian: 12750,
+        total_pendonor: 1250000,
+        stok_per_golongan: DUMMY_DATA.pertambahan_stok,
+        stok_per_jenis: DUMMY_DATA.pengurangan_stok,
+        distribusi_per_kota: {
+          Jakarta: 12500,
+          Surabaya: 8900,
+          Bandung: 7500,
+          Medan: 6800,
+          Makassar: 5200,
         },
-        timeout: 10000, // 10 second timeout
-      });
+      };
 
-      console.log("API response:", response);
-
-      if (response.status === 200 && response.data) {
-        console.log("✅ Successfully fetched dashboard data", response.data);
-        setDashboardData(response.data);
-        setLastUpdated(new Date());
-        setIsLoading(false);
-      } else {
-        console.warn(
-          "⚠️ API returned unexpected status or empty data",
-          response
-        );
-        throw new Error(`API returned unexpected response`);
-      }
-    } catch (err: any) {
-      console.error("❌ Error fetching dashboard data:", err);
-
-      // Check if this is a network error
-      if (
-        err.code === "ECONNABORTED" ||
-        err.message.includes("timeout") ||
-        !navigator.onLine
-      ) {
-        console.log("Network issue detected - using fallback data");
-        useDummyData();
-      } else if (err.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        console.error("❌ Server error response:", err.response);
-        setError(`Server error: ${err.response.status}`);
-      } else if (err.request) {
-        // The request was made but no response was received
-        console.error("❌ No response from server:", err.request);
-        setError(
-          "Tidak dapat terhubung ke server. Menggunakan data sementara."
-        );
-        useDummyData();
-      } else {
-        setError("Gagal memuat data dashboard. Menggunakan data sementara.");
-        useDummyData();
-      }
-
-      if (!dashboardData) {
-        setIsLoading(false);
-      }
-    } finally {
-      setApiConnecting(false);
+      setDashboardData(dummyData);
+      setLastUpdated(new Date());
+      setIsLoading(false);
+    } catch (err) {
+      setError("Gagal memuat data dashboard.");
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    if (userInfo) {
-      fetchDashboardData();
+    fetchDashboardData();
+    let intervalId: NodeJS.Timeout | null = null;
 
-      let intervalId: NodeJS.Timeout | null = null;
-      if (autoRefresh) {
-        intervalId = setInterval(fetchDashboardData, REFRESH_INTERVAL);
-      }
-
-      return () => {
-        if (intervalId) clearInterval(intervalId);
-      };
+    if (autoRefresh) {
+      intervalId = setInterval(fetchDashboardData, REFRESH_INTERVAL);
     }
-  }, [
-    userInfo,
-    cityFilter,
-    golonganFilter,
-    jenisFilter,
-    rhesusFilter,
-    autoRefresh,
-  ]);
 
-  // Manual refresh function
-  const handleManualRefresh = () => {
-    if (!apiConnecting) {
-      fetchDashboardData();
-    }
-  };
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [cityFilter, golonganFilter, jenisFilter, autoRefresh]);
 
   const handleLogout = async () => {
     try {
@@ -377,7 +261,6 @@ const Homepage: React.FC = () => {
     setCityFilter("");
     setGolonganFilter("");
     setJenisFilter("");
-    setRhesusFilter("");
   };
 
   return (
@@ -433,12 +316,7 @@ const Homepage: React.FC = () => {
             >
               {jenisFilter || "Jenis"}
             </button>
-            <button
-              onClick={() => setRhesusFilter(prompt("Rhesus (+/-):") || "")}
-            >
-              {rhesusFilter || "Rhesus"}
-            </button>
-            {(cityFilter || golonganFilter || jenisFilter || rhesusFilter) && (
+            {(cityFilter || golonganFilter || jenisFilter) && (
               <button onClick={clearFilters}>Hapus Filter</button>
             )}
           </div>
@@ -449,13 +327,6 @@ const Homepage: React.FC = () => {
             >
               <div className="status-dot"></div>
               <span>{autoRefresh ? "Auto Refresh Aktif" : "Nonaktif"}</span>
-            </button>
-            <button
-              onClick={handleManualRefresh}
-              disabled={apiConnecting}
-              className="refresh-button"
-            >
-              {apiConnecting ? "Memuat..." : "Refresh"}
             </button>
             {lastUpdated && (
               <span className="last-updated">
@@ -472,9 +343,6 @@ const Homepage: React.FC = () => {
         ) : error ? (
           <div className="error-container">
             <p>{error}</p>
-            <button onClick={handleManualRefresh} disabled={apiConnecting}>
-              Coba Lagi
-            </button>
           </div>
         ) : (
           <div className="main-content-hp">
@@ -521,34 +389,34 @@ const Homepage: React.FC = () => {
               {/* Column 2: Blood Stock Comparison Charts (4 charts in 2x2 grid) */}
               <div className="blood-comparison-grid">
                 <div className="blood-comparison-row">
-                  {/* Chart 1: Stok Darah Berdasarkan Golongan */}
+                  {/* Chart 1: Pertambahan Stok Darah */}
                   <div className="chart-card-hp blood-chart">
                     <h3>Stok Darah Berdasarkan Golongan</h3>
                     <Bar
-                      data={prepareBloodStockByGroupChart()}
+                      data={prepareBloodStockAdditionChart()}
                       options={{
-                        indexAxis: "y",
+                        indexAxis: "y", // Mengubah ke horizontal bar chart
                         scales: {
                           x: {
-                            beginAtZero: true,
+                            beginAtZero: true, // Pastikan sumbu X mulai dari 0
                           },
                         },
                         plugins: {
                           legend: {
-                            display: false,
+                            display: false, // Menyembunyikan label/legend
                           },
                         },
                       }}
                     />
                   </div>
 
-                  {/* Chart 2: Stok Darah Berdasarkan Jenis */}
+                  {/* Chart 2: Pengurangan Stok Darah */}
                   <div className="chart-card-hp blood-chart">
                     <h3>Stok Darah Berdasarkan Jenis</h3>
                     <Bar
-                      data={prepareBloodStockByTypeChart()}
+                      data={prepareBloodStockReductionChart()}
                       options={{
-                        indexAxis: "y",
+                        indexAxis: "y", // Mengubah ke horizontal bar chart
                         scales: {
                           x: {
                             beginAtZero: true,
@@ -556,7 +424,7 @@ const Homepage: React.FC = () => {
                         },
                         plugins: {
                           legend: {
-                            display: false,
+                            display: false, // Menyembunyikan label/legend
                           },
                         },
                       }}
@@ -565,16 +433,16 @@ const Homepage: React.FC = () => {
                 </div>
 
                 <div className="blood-comparison-row">
-                  {/* Chart 3: Perbandingan Stok Darah (Rhesus) - Now using real data */}
+                  {/* Chart 3: Perbandingan Stok Darah (Rhesus) */}
                   <div className="chart-card-hp blood-chart">
-                    <h3>Perbandingan Rhesus</h3>
+                    <h3>Perbandingan Stok Darah</h3>
                     <div className="chart-placeholder-hp">
                       <Pie
                         data={prepareRhesusComparisonChart()}
                         options={{
                           plugins: {
                             legend: {
-                              display: true,
+                              display: true, // Menyembunyikan label/legend
                             },
                           },
                         }}
@@ -591,7 +459,7 @@ const Homepage: React.FC = () => {
                         options={{
                           plugins: {
                             legend: {
-                              display: true,
+                              display: true, // Menyembunyikan label/legend
                             },
                           },
                         }}

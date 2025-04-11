@@ -23,6 +23,7 @@ const IndonesiaMap = () => {
 
   // Calculate responsive dimensions for the plot
   const getPlotDimensions = () => {
+    // Base width on container width
     const width =
       windowSize.width < 768
         ? windowSize.width * 0.95
@@ -30,144 +31,56 @@ const IndonesiaMap = () => {
         ? windowSize.width * 0.9
         : windowSize.width * 0.85;
 
+    // Height based on width to maintain aspect ratio
     const height = Math.min(600, width * 0.6);
+
     return { width, height };
   };
 
-  // Data provinsi Indonesia dengan koordinat dan nama
-  const provinceData = [
-    { name: "Aceh", lon: 95.3, lat: 5.6, value: 1245, code: "ID-AC" },
-    { name: "Sumatera Utara", lon: 98.7, lat: 3.6, value: 2850, code: "ID-SU" },
-    {
-      name: "Sumatera Barat",
-      lon: 100.4,
-      lat: 0.5,
-      value: 1560,
-      code: "ID-SB",
-    },
-    { name: "Riau", lon: 101.4, lat: 0.5, value: 1320, code: "ID-RI" },
-    { name: "Jambi", lon: 103.6, lat: -1.6, value: 980, code: "ID-JA" },
-    {
-      name: "Sumatera Selatan",
-      lon: 104.8,
-      lat: -2.9,
-      value: 1760,
-      code: "ID-SS",
-    },
-    { name: "Bengkulu", lon: 102.3, lat: -3.8, value: 720, code: "ID-BE" },
-    { name: "Lampung", lon: 105.3, lat: -5.4, value: 1440, code: "ID-LA" },
-    {
-      name: "Kepulauan Bangka Belitung",
-      lon: 106.1,
-      lat: -2.1,
-      value: 540,
-      code: "ID-BB",
-    },
-    { name: "Kepulauan Riau", lon: 104.0, lat: 0.9, value: 680, code: "ID-KR" },
-    { name: "DKI Jakarta", lon: 106.8, lat: -6.2, value: 5280, code: "ID-JK" },
-    { name: "Jawa Barat", lon: 107.6, lat: -6.9, value: 7650, code: "ID-JB" },
-    { name: "Jawa Tengah", lon: 110.4, lat: -7.0, value: 4980, code: "ID-JT" },
-    {
-      name: "DI Yogyakarta",
-      lon: 110.4,
-      lat: -7.8,
-      value: 1250,
-      code: "ID-YO",
-    },
-    { name: "Jawa Timur", lon: 112.7, lat: -7.3, value: 6320, code: "ID-JI" },
-    { name: "Banten", lon: 106.1, lat: -6.4, value: 2140, code: "ID-BT" },
-    { name: "Bali", lon: 115.2, lat: -8.7, value: 1540, code: "ID-BA" },
-    {
-      name: "Nusa Tenggara Barat",
-      lon: 116.3,
-      lat: -8.6,
-      value: 920,
-      code: "ID-NB",
-    },
-    {
-      name: "Nusa Tenggara Timur",
-      lon: 120.2,
-      lat: -8.7,
-      value: 840,
-      code: "ID-NT",
-    },
-    {
-      name: "Kalimantan Barat",
-      lon: 109.3,
-      lat: -0.0,
-      value: 1120,
-      code: "ID-KB",
-    },
-    {
-      name: "Kalimantan Tengah",
-      lon: 113.9,
-      lat: -1.5,
-      value: 740,
-      code: "ID-KT",
-    },
-    {
-      name: "Kalimantan Selatan",
-      lon: 114.6,
-      lat: -3.3,
-      value: 1050,
-      code: "ID-KS",
-    },
-    {
-      name: "Kalimantan Timur",
-      lon: 117.2,
-      lat: -0.5,
-      value: 1380,
-      code: "ID-KI",
-    },
-    {
-      name: "Kalimantan Utara",
-      lon: 116.7,
-      lat: 3.0,
-      value: 460,
-      code: "ID-KU",
-    },
-    { name: "Sulawesi Utara", lon: 124.8, lat: 1.5, value: 870, code: "ID-SA" },
-    {
-      name: "Sulawesi Tengah",
-      lon: 119.9,
-      lat: -0.9,
-      value: 640,
-      code: "ID-ST",
-    },
-    {
-      name: "Sulawesi Selatan",
-      lon: 119.4,
-      lat: -5.1,
-      value: 1980,
-      code: "ID-SN",
-    },
-    {
-      name: "Sulawesi Tenggara",
-      lon: 122.4,
-      lat: -5.0,
-      value: 580,
-      code: "ID-SG",
-    },
-    { name: "Gorontalo", lon: 123.1, lat: 0.6, value: 320, code: "ID-GO" },
-    {
-      name: "Sulawesi Barat",
-      lon: 119.2,
-      lat: -3.0,
-      value: 280,
-      code: "ID-SR",
-    },
-    { name: "Maluku", lon: 128.2, lat: -3.2, value: 420, code: "ID-MA" },
-    { name: "Maluku Utara", lon: 127.4, lat: 1.6, value: 380, code: "ID-MU" },
-    { name: "Papua Barat", lon: 134.1, lat: -2.6, value: 310, code: "ID-PB" },
-    { name: "Papua", lon: 140.7, lat: -2.6, value: 580, code: "ID-PA" },
-  ];
+  // Data dummy untuk distribusi darah per provinsi
+  const provinceData = {
+    Aceh: 1245,
+    "Sumatera Utara": 2850,
+    "Sumatera Barat": 1560,
+    Riau: 1320,
+    Jambi: 980,
+    "Sumatera Selatan": 1760,
+    Bengkulu: 720,
+    Lampung: 1440,
+    "Kepulauan Bangka Belitung": 540,
+    "Kepulauan Riau": 680,
+    "DKI Jakarta": 5280,
+    "Jawa Barat": 7650,
+    "Jawa Tengah": 4980,
+    "DI Yogyakarta": 1250,
+    "Jawa Timur": 6320,
+    Banten: 2140,
+    Bali: 1540,
+    "Nusa Tenggara Barat": 920,
+    "Nusa Tenggara Timur": 840,
+    "Kalimantan Barat": 1120,
+    "Kalimantan Tengah": 740,
+    "Kalimantan Selatan": 1050,
+    "Kalimantan Timur": 1380,
+    "Kalimantan Utara": 460,
+    "Sulawesi Utara": 870,
+    "Sulawesi Tengah": 640,
+    "Sulawesi Selatan": 1980,
+    "Sulawesi Tenggara": 580,
+    Gorontalo: 320,
+    "Sulawesi Barat": 280,
+    Maluku: 420,
+    "Maluku Utara": 380,
+    "Papua Barat": 310,
+    Papua: 580,
+  };
 
   // Get responsive dimensions
   const dimensions = getPlotDimensions();
 
   // Konfigurasi layout untuk peta
   const layout = {
-    title: "Peta Provinsi Indonesia",
+    title: "Distribusi Stok Darah Seluruh Indonesia",
     geo: {
       scope: "asia",
       resolution: 50,
@@ -181,7 +94,7 @@ const IndonesiaMap = () => {
       landcolor: "rgb(243, 243, 243)",
       countrycolor: "rgb(204, 204, 204)",
       countrywidth: 0.5,
-      subunitcolor: "rgb(150, 150, 150)",
+      subunitcolor: "rgb(230, 230, 230)",
       subunitwidth: 0.5,
       showlakes: true,
       lakecolor: "rgb(255, 255, 255)",
@@ -192,7 +105,6 @@ const IndonesiaMap = () => {
       showcoastlines: true,
       coastlinecolor: "rgb(128, 128, 128)",
       coastlinewidth: 1,
-      projection: { type: "mercator" }, // Menambahkan proyeksi yang jelas
     },
     width: dimensions.width,
     height: dimensions.height,
@@ -211,68 +123,68 @@ const IndonesiaMap = () => {
     autosize: true,
   };
 
-  // Tentukan ukuran marker berdasarkan nilai data
-  const getMarkerSize = (value) => {
-    // Normalisasi ukuran marker berdasarkan nilai
-    const minValue = Math.min(...provinceData.map((p) => p.value));
-    const maxValue = Math.max(...provinceData.map((p) => p.value));
-    const normalizedSize = (value - minValue) / (maxValue - minValue);
-
-    // Rentang ukuran marker dari 8 hingga 25
-    return 8 + normalizedSize * 17;
-  };
-
-  // Buat data untuk markers provinsi (bubbles)
-  const markersData = {
-    type: "scattergeo",
-    mode: "markers",
-    lon: provinceData.map((p) => p.lon),
-    lat: provinceData.map((p) => p.lat),
-    text: provinceData.map((p) => `${p.name}: ${p.value} kantong`),
-    marker: {
-      size: provinceData.map((p) => getMarkerSize(p.value)),
-      color: provinceData.map((p) => p.value),
+  // Data untuk peta choropleth
+  const mapData = [
+    {
+      type: "choropleth",
+      locationmode: "country names",
+      locations: ["Indonesia"],
+      z: [1], // Nilai dummy untuk colorscale
+      text: ["Indonesia"],
       colorscale: [
-        [0, "rgb(255, 200, 200)"],
-        [0.2, "rgb(255, 150, 150)"],
-        [0.4, "rgb(255, 100, 100)"],
-        [0.6, "rgb(255, 50, 50)"],
-        [0.8, "rgb(200, 20, 20)"],
-        [1, "rgb(150, 0, 0)"],
+        [0, "rgb(242, 242, 242)"],
+        [1, "rgb(142, 23, 22)"],
       ],
-      colorbar: {
-        title: "Nilai",
-        thickness: 15,
-        len: 0.5,
-        y: 0.5,
-        yanchor: "middle",
+      showscale: false,
+      marker: {
+        line: {
+          color: "rgb(100, 100, 100)",
+          width: 1,
+        },
       },
-      line: {
-        color: "black",
-        width: 1,
-      },
-      opacity: 0.8,
     },
-    name: "Provinsi Indonesia",
-    hoverinfo: "text",
-  };
+  ];
 
-  // Tambahkan label nama provinsi
-  const labelData = {
-    type: "scattergeo",
-    mode: "text",
-    lon: provinceData.map((p) => p.lon),
-    lat: provinceData.map((p) => p.lat),
-    text: provinceData.map((p) => p.name),
-    textfont: {
-      family: "Arial",
-      size: 8,
-      color: "black",
+  // Data untuk sebaran stok darah per kota
+  const scatterData = [
+    {
+      type: "scattergeo",
+      mode: "markers",
+      lon: [
+        95.3, 98.7, 100.4, 101.4, 103.6, 104.8, 102.3, 105.3, 106.1, 104.0,
+        106.8, 107.6, 110.4, 110.4, 112.7, 106.1, 115.2, 116.3, 120.2, 109.3,
+        113.9, 114.6, 117.2, 116.7, 124.8, 119.9, 119.4, 122.4, 123.1, 119.2,
+        128.2, 127.4, 134.1, 140.7,
+      ],
+      lat: [
+        5.6, 3.6, 0.5, 0.5, -1.6, -2.9, -3.8, -5.4, -2.1, 0.9, -6.2, -6.9, -7.0,
+        -7.8, -7.3, -6.4, -8.7, -8.6, -8.7, -0.0, -1.5, -3.3, -0.5, 3.0, 1.5,
+        -0.9, -5.1, -5.0, 0.6, -3.0, -3.2, 1.6, -2.6, -2.6,
+      ],
+      text: Object.keys(provinceData).map(
+        (province) => `${province}: ${provinceData[province]} kantong`
+      ),
+      marker: {
+        size: Object.values(provinceData).map(
+          (value) => Math.sqrt(value) * 0.4
+        ),
+        color: Object.values(provinceData).map((value) => {
+          // Warna berdasarkan jumlah stok darah
+          if (value > 4000) return "rgb(255, 0, 0)";
+          if (value > 2000) return "rgb(255, 50, 50)";
+          if (value > 1000) return "rgb(255, 100, 100)";
+          return "rgb(255, 150, 150)";
+        }),
+        line: {
+          width: 1,
+          color: "rgb(100, 100, 100)",
+        },
+        opacity: 0.8,
+        sizemode: "area",
+      },
+      name: "Stok Darah per Provinsi",
     },
-    textposition: "middle center",
-    hoverinfo: "none",
-    showlegend: false,
-  };
+  ];
 
   useEffect(() => {
     // Simulasi loading data
@@ -294,23 +206,23 @@ const IndonesiaMap = () => {
     );
   }
 
+  // Menggabungkan data peta dan scatter
+  const data = [...mapData, ...scatterData];
+
   return (
     <div className="w-full bg-white rounded-xl shadow-md p-4">
       <div className="flex justify-center map-container-inner">
         <Plot
-          data={[markersData, labelData]}
+          data={data}
           layout={layout}
           config={{
             responsive: true,
-            displayModeBar: true,
+            displayModeBar: false,
             scrollZoom: true,
           }}
           className="w-full h-full"
           useResizeHandler={true}
         />
-      </div>
-      <div className="mt-4 text-center text-sm text-gray-600">
-        <p>Visualisasi jumlah kantong per provinsi di Indonesia</p>
       </div>
     </div>
   );
