@@ -139,6 +139,31 @@ export default function Home() {
         <Image source={require("../../assets/images/logox.png")} style={styles.headerImage} />
       </View>
 
+      <View style={styles.greetingWrapper}>
+        <Text style={styles.greetingText}>Halo, {username}!</Text>
+        <Image source={require("../../assets/images/iconhappy.png")} style={styles.happyIcon} />
+        
+        <View style={styles.statsContainer}>
+          <View style={styles.statItem}>
+            <Image source={require("../../assets/images/star.png")} style={styles.statIcon} />
+            <Text style={styles.statLabel}>POINTS</Text>
+            <Text style={styles.statValue}>{totalPoints}</Text>
+          </View>
+
+          <View style={styles.statItem}>
+            <Image source={require("../../assets/images/globe.png")} style={styles.statIcon} />
+            <Text style={styles.statLabel}>JUARA NASIONAL</Text>
+            <Text style={styles.statValue}>#1,438</Text>
+          </View>
+
+          <View style={styles.statItem}>
+            <Image source={require("../../assets/images/region.png")} style={styles.statIcon} />
+            <Text style={styles.statLabel}>JUARA KOTA</Text>
+            <Text style={styles.statValue}>#56</Text>
+          </View>
+        </View>
+      </View>
+
       <View style={styles.carouselWrapper}>
         <ScrollView
           horizontal
@@ -158,28 +183,7 @@ export default function Home() {
           ))}
         </View>
       </View>
-
-      <Text style={styles.greeting}>Halo, {username}!</Text>
-
-      <View style={styles.statsCard}>
-        <View style={styles.statItem}>
-          <Image source={require("../../assets/images/star.png")} style={styles.icon} />
-          <Text style={styles.statLabel}>POINTS</Text>
-          <Text style={styles.statValue}>{totalPoints}</Text>
-        </View>
-        <View style={styles.divider} />
-        <View style={styles.statItem}>
-          <Image source={require("../../assets/images/globe.png")} style={styles.icon} />
-          <Text style={styles.statLabel}>JUARA NASIONAL</Text>
-          <Text style={styles.statValue}>#1,438</Text>
-        </View>
-        <View style={styles.divider} />
-        <View style={styles.statItem}>
-          <Image source={require("../../assets/images/region.png")} style={styles.icon} />
-          <Text style={styles.statLabel}>JUARA KOTA</Text>
-          <Text style={styles.statValue}>#6</Text>
-        </View>
-      </View>
+      
 
       <Text style={styles.subtitle}>Kegiatan Donor Darah</Text>
 
@@ -276,18 +280,16 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   statLabel: {
-    color: "#FFF",
+    color: "#fff",
     fontSize: 12,
     fontWeight: "bold",
-    marginVertical: 3,
-    textAlign: "center",
+    marginBottom: 3,
   },
   statValue: {
-    color: "#FFFFFF",
-    fontSize: 18,
+    color: "#fff",
+    fontSize: 16,
     fontWeight: "bold",
-    textAlign: "center",
-  },
+  }, 
   divider: {
     width: 1,
     height: "70%",
@@ -351,4 +353,44 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     resizeMode: "contain",
   },
+  greetingWrapper: {
+    alignItems: "center",
+    paddingTop: 10,
+    marginBottom: 10,
+  },
+  greetingText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#8E1616",
+    marginBottom: 10,
+  },
+  happyIcon: {
+    width: 90,
+    height: 90,
+    resizeMode: "contain",
+    marginBottom: -35,
+    zIndex: 2,
+  },
+  statsContainer: {
+    flexDirection: "row",
+    backgroundColor: "#8E1616",
+    borderRadius: 20,
+    marginHorizontal: 20,
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+    justifyContent: "space-between",
+    alignItems: "center",
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    width: "90%",
+  },
+  statIcon: {
+    width: 24,
+    height: 24,
+    resizeMode: "contain",
+    marginBottom: 5,
+  }, 
 });

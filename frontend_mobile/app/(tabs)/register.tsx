@@ -23,12 +23,14 @@ export default function Register() {
     phoneNumber: "",
     city: "",
     province: "",
-  })
+    password: "",
+  });
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [confirmInfo, setConfirmInfo] = useState(false);
-  
+  const [hasReferral, setHasReferral] = useState(false);
+  const [referralCode, setReferralCode] = useState("");
 
   const handleChange = (field: string, value: string) => {
     setFormData({
@@ -47,90 +49,31 @@ export default function Register() {
       >
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <Text style={styles.title}>Daftar</Text>
-          <Text style={styles.subtitle}>
-            Bergabunglah dengan SetetesHarapan
-          </Text>
+          <Text style={styles.subtitle}>Bergabunglah dengan SetetesHarapan</Text>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Nama Awal</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="John"
-              value={formData.firstName}
-              onChangeText={(text) => handleChange("firstName", text)}
-            />
-          </View>
+          {/* Input Fields */}
+          {[
+            { label: "Nama Awal", placeholder: "John", field: "firstName" },
+            { label: "Nama Akhir", placeholder: "Doe", field: "lastName" },
+            { label: "Email", placeholder: "john.doe@gmail.com", field: "email" },
+            { label: "NIK", placeholder: "3602041211870001", field: "nik" },
+            { label: "Tanggal Lahir", placeholder: "23/08/2003", field: "birthdate" },
+            { label: "Nomor Telepon", placeholder: "081122334455", field: "phoneNumber" },
+            { label: "Kota/Kabupaten", placeholder: "Kota Bandung", field: "city" },
+            { label: "Provinsi", placeholder: "Jawa Barat", field: "province" },
+          ].map(({ label, placeholder, field }) => (
+            <View key={field} style={styles.inputGroup}>
+              <Text style={styles.label}>{label}</Text>
+              <TextInput
+                style={styles.input}
+                placeholder={placeholder}
+                value={(formData as any)[field]}
+                onChangeText={(text) => handleChange(field, text)}
+              />
+            </View>
+          ))}
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Nama Akhir</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Doe"
-              value={formData.lastName}
-              onChangeText={(text) => handleChange("lastName", text)}
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Email</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="john.doe@gmail.com"
-              value={formData.email}
-              onChangeText={(text) => handleChange("email", text)}
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>NIK</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="3602041211870001"
-              value={formData.nik}
-              onChangeText={(text) => handleChange("nik", text)}
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Tanggal Lahir</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="23/08/2003"
-              value={formData.birthdate}
-              onChangeText={(text) => handleChange("birthDate", text)}
-            />
-          </View>   
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Nomor Telepon</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="081122334455"
-              value={formData.phoneNumber}
-              onChangeText={(text) => handleChange("phoneNumber", text)}
-            />
-          </View>   
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Kota/Kabupaten</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Kota Bandung"
-              value={formData.city}
-              onChangeText={(text) => handleChange("city", text)}
-            />
-          </View>  
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Provinsi</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Jawa Barat"
-              value={formData.province}
-              onChangeText={(text) => handleChange("province", text)}
-            />
-          </View>       
-
+          {/* Password */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Password</Text>
             <View style={styles.passwordContainer}>
@@ -145,15 +88,12 @@ export default function Register() {
                 style={styles.eyeIcon}
                 onPress={() => setShowPassword(!showPassword)}
               >
-                <Ionicons
-                  name={showPassword ? "eye" : "eye-off"}
-                  size={24}
-                  color="#888"
-                />
+                <Ionicons name={showPassword ? "eye" : "eye-off"} size={24} color="#888" />
               </TouchableOpacity>
             </View>
           </View>
 
+          {/* Confirm Password */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Confirm Password</Text>
             <View style={styles.passwordContainer}>
@@ -168,38 +108,49 @@ export default function Register() {
                 style={styles.eyeIcon}
                 onPress={() => setShowConfirmPassword(!showConfirmPassword)}
               >
-                <Ionicons
-                  name={showConfirmPassword ? "eye" : "eye-off"}
-                  size={24}
-                  color="#888"
-                />
+                <Ionicons name={showConfirmPassword ? "eye" : "eye-off"} size={24} color="#888" />
               </TouchableOpacity>
             </View>
           </View>
 
-        <View style={styles.confirmContainer}>
-            <TouchableOpacity
-            style={styles.checkbox}
-            onPress={() => setConfirmInfo((prev) => !prev)}
-            >
-            {confirmInfo && <View style={styles.checkboxInner} />}
+          {/* Referral Code */}
+          <View style={styles.inputGroup}>
+            <TouchableOpacity style={styles.checkboxRow} onPress={() => setHasReferral(!hasReferral)}>
+              <View style={styles.checkbox}>{hasReferral && <View style={styles.checkboxInner} />}</View>
+              <Text style={styles.label}>Saya punya kode referral</Text>
+            </TouchableOpacity>
+            {hasReferral && (
+              <TextInput
+                style={[styles.input, { marginTop: 10 }]}
+                placeholder="Masukkan kode referral"
+                value={referralCode}
+                onChangeText={setReferralCode}
+              />
+            )}
+          </View>
+
+          {/* Confirmation Checkbox */}
+          <View style={styles.confirmContainer}>
+            <TouchableOpacity style={styles.checkbox} onPress={() => setConfirmInfo((prev) => !prev)}>
+              {confirmInfo && <View style={styles.checkboxInner} />}
             </TouchableOpacity>
             <Text style={styles.termsText}>
-            Saya menyatakan bahwa semua informasi yang saya berikan adalah benar
+              Saya menyatakan bahwa semua informasi yang saya berikan adalah benar
             </Text>
-        </View>
+          </View>
 
-      <TouchableOpacity style={styles.button} onPress={() => router.push("/riwayat_kesehatan")}>
-        <Text style={styles.buttonText}>Daftar</Text>
-      </TouchableOpacity>
+          {/* Button */}
+          <TouchableOpacity style={styles.button} onPress={() => router.push("/riwayat_kesehatan")}>
+            <Text style={styles.buttonText}>Daftar</Text>
+          </TouchableOpacity>
 
-      <View style={styles.loginLinkContainer}>
-        <Text style={styles.loginText}>Sudah punya akun? </Text>
-        <TouchableOpacity onPress={() => router.push("/login")}> 
-          <Text style={styles.loginLink}>Masuk</Text>
-        </TouchableOpacity>
-      </View>
-
+          {/* Login Redirect */}
+          <View style={styles.loginLinkContainer}>
+            <Text style={styles.loginText}>Sudah punya akun? </Text>
+            <TouchableOpacity onPress={() => router.push("/login")}>
+              <Text style={styles.loginLink}>Masuk</Text>
+            </TouchableOpacity>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -207,17 +158,9 @@ export default function Register() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  keyboardAvoidView: {
-    flex: 1,
-  },
-  scrollContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 40,
-  },
+  container: { flex: 1, backgroundColor: "#fff" },
+  keyboardAvoidView: { flex: 1 },
+  scrollContainer: { paddingHorizontal: 20, paddingVertical: 40 },
   title: {
     fontSize: 28,
     fontWeight: "bold",
@@ -232,16 +175,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 50,
-    marginTop: 20
+    marginTop: 20,
   },
-  inputGroup: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 5,
-  },
+  inputGroup: { marginBottom: 20 },
+  label: { fontSize: 14, color: "#666", marginBottom: 5 },
   input: {
     borderWidth: 1,
     borderColor: "#ccc",
@@ -256,14 +193,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: "center",
   },
-  passwordInput: {
-    flex: 1,
-    padding: 12,
-    fontSize: 16,
-  },
-  eyeIcon: {
-    padding: 10,
-  },
+  passwordInput: { flex: 1, padding: 12, fontSize: 16 },
+  eyeIcon: { padding: 10 },
   button: {
     backgroundColor: "#8E1616",
     padding: 15,
@@ -271,58 +202,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
   },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
+  buttonText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
   loginLinkContainer: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
   },
-  loginText: {
-    fontSize: 14,
-    color: "#333",
-    marginTop: 10,
-  },
-  loginLink: {
-    fontSize: 14,
-    color: "#8E1616",
-    fontWeight: "500",
-    marginTop: 10,
-  },
-  loginButton: {
-    backgroundColor: "#8E1616",
-    width: "100%",
-    paddingVertical: 5,
-    marginBottom: 10,
-    borderRadius: 10,
-  },
-  orText: {
-    marginVertical: 10,
-    fontSize: 14,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginTop: 30,
-  },
-  googleButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#8E1616",
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    width: "100%",
-    justifyContent: "center",
-    marginTop: 30,
-  },
-  googleText: {
-    marginLeft: 10,
-    fontSize: 16,
-    fontWeight: "bold",
-  },
+  
+  loginText: { fontSize: 14, color: "#333", marginTop: 10 },
+  
+  loginLink: { fontSize: 14, color: "#8E1616", fontWeight: "500", marginTop: 10 },
   confirmContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -339,15 +228,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  checkboxInner: {
-    width: 16,
-    height: 16,
-    backgroundColor: "#8E1616",
-  },
-  termsText: {
-    flex: 1,
-    fontSize: 14,
-    color: "#333",
-    textAlign: "justify",
-  },
+  checkboxInner: { width: 24, height: 24, backgroundColor: "#8E1616" },
+  termsText: { flex: 1, fontSize: 14, color: "#333", textAlign: "justify" },
+  checkboxRow: { flexDirection: "row", alignItems: "center" },
 });
