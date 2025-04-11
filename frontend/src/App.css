@@ -1766,7 +1766,7 @@
   background: white;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  margin-top: 264px;
+  margin-top: 280px;
 }
 
 /* Navbar */
@@ -1796,6 +1796,14 @@
   font-weight: bold;
   margin-left: -30px;
   margin-top: 3px;
+}
+
+.blasting-card1 {
+  width: 5000px;
+  background: white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin-top: 123px;
 }
 
 /* Form Container */
@@ -1905,6 +1913,31 @@
   box-shadow: 0 2px 5px rgba(142, 23, 22, 0.3);
 }
 
+.submit-button-message {
+  width: 90vw; /* Pakai full viewport width */
+  margin-left: calc(-50vw + 115%); /* Geser supaya tetap center */
+  padding: 14px;
+  background: linear-gradient(90deg, #8e1716, #b3260e);
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 10px rgba(142, 23, 22, 0.3);
+}
+
+.submit-button-message:hover {
+  background: linear-gradient(90deg, #b3260e, #8e1716);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(142, 23, 22, 0.4);
+}
+
+.submit-button-message:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(142, 23, 22, 0.3);
+}
 /* Media Queries for Responsive Design */
 @media (max-width: 768px) {
   .blasting-content {

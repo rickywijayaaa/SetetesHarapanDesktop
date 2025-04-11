@@ -13,6 +13,7 @@ from app.routes.dashboard import router as dashboard_router
 from app.routes.donor_events import router as donor_events_router  
 from app.routes.eligibility_check import router as eligibility_check_router  
 from app.routes.health import router as health_router  
+from app.routes.message import router as message_router  # Import message router
 from app.routes.news import router as news_router  
 from app.routes.notifications import router as notifications_router
 from app.routes.points import router as points_router  
@@ -176,3 +177,4 @@ app.include_router(profile_router, prefix="/api", tags=["profile"])
 app.include_router(vouchers_router, prefix="/api", tags=["vouchers"])
 app.include_router(stok_darah_router, prefix="/api", tags=["blood_inventory"]) 
 app.include_router(history_router, prefix="/api", tags=["history"])
+app.include_router(message_router, prefix="/api", tags=["messages"])  # Include message router

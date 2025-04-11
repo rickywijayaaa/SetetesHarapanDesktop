@@ -628,7 +628,15 @@ const Homepage: React.FC = () => {
               )}
 
               {/* Indonesia Map section - only visible for PMI and Kemenkes roles */}
-              {userInfo?.role !== "Rumah Sakit" && (
+              {userInfo?.role === "PMI" && (
+                <div className="chart-card-hp full-width">
+                  <h3>Distribusi Darah di Indonesia</h3>
+                  <IndonesiaMap />
+                  <div className="btn-container">
+                  </div>
+                </div>
+              )}
+              {userInfo?.role === "Kemenkes" && (
                 <div className="chart-card-hp full-width">
                   <h3>Distribusi Darah di Indonesia</h3>
                   <IndonesiaMap />
@@ -642,6 +650,7 @@ const Homepage: React.FC = () => {
                   </div>
                 </div>
               )}
+
             </div>
           </div>
         )}
