@@ -240,10 +240,10 @@ const BlastingInfo: React.FC = () => {
             </div>
 
             <div className="form-group-blasting full-width">
-              <label className="blasting-label">Tambahan Pesan</label>
+              <label className="blasting-label">Pesan Tambahan</label>
               <textarea
                 className="blasting-textarea"
-                placeholder="Tambahan pesan jika ada"
+                placeholder="Tambahkan pesan jika ada"
                 name="additional_message"
                 value={formData.additional_message}
                 onChange={handleInputChange}

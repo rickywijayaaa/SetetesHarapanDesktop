@@ -8,6 +8,7 @@ import EditDarah from "./pages/EditDarah.tsx";
 import KurangDarah from "./pages/KurangDarah.tsx"
 import BlastingInfo from "./pages/BlastingInfo.tsx"
 import Distribusi from "./pages/Distribusi.tsx"
+import Message from "./pages/Message.tsx"
 
 function App() {
   return (
@@ -20,7 +21,8 @@ function App() {
       <Route path="/edit" element={<EditDarah />} />
       <Route path="/kurangdarah" element={<KurangDarah />} />
       <Route path="/blastinginfo" element={<BlastingInfo />} /> 
-      <Route path="/distribusi" element={<Distribusi />} /> {/* Updated Route */}
+      <Route path="/distribusi" element={<Distribusi />} />
+      <Route path="/message" element={<Message />} /> {/* Updated Route */}
       
     </Routes>
   );
