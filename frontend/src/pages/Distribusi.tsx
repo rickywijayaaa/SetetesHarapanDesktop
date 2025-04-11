@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import axios from "axios"; // Import axios for HTTP requests
 import logo from "../assets/logo.png";
 
 const Distribusi: React.FC = () => {
@@ -20,12 +20,23 @@ const Distribusi: React.FC = () => {
         const response = await axios.get("https://backend-setetesharapandesktop.up.railway.app/api/combined-blood-distribution");
         const data = response.data.combined_blood_distribution || [];
 
-        // Format the data to match your table structure
-        const formattedData = data.map((item: { name: string; total_donations: number }) => ({
-          utd: item.name, // Mapping name to utd
-          status: item.total_donations > 0 ? "Tersedia" : "Tidak Tersedia", // Use donations count to determine status
-          stokDarah: `${item.total_donations}`, // Format stok darah
-        }));
+        // Format the data to match your table structure with dynamic status
+        const formattedData = data.map((item: { name: string; total_donations: number }) => {
+          let status = "";
+          if (item.total_donations < 100) {
+            status = "Kekurangan Darah"; // Less than 100
+          } else if (item.total_donations >= 100 && item.total_donations <= 300) {
+            status = "Ketersediaan Stok Cukup"; // 100-300
+          } else {
+            status = "Stok Darah Melebihi Kebutuhan"; // More than 300
+          }
+
+          return {
+            utd: item.name, // Mapping name to utd
+            status: status, // Use dynamic status based on stok darah
+            stokDarah: `${item.total_donations}`, // Format stok darah
+          };
+        });
 
         setDistribusiData(formattedData);
       } catch (error) {

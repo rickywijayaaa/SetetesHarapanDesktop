@@ -28,13 +28,76 @@ async def get_dashboard(
         user_role = user_info["role"]
         full_name = user_info["name"]
 
-        # ✅ Role-based table selection
+        # ✅ Role-based table selection and filtering
         if user_role.lower() == "kemenkes":
+            # For Kemenkes, use the donor table directly
             table_name = "donor"
+            query = supabase.table(table_name).select("*")
         elif user_role.lower() == "pmi":
-            table_name = "darah_pmi"
+            # For PMI, use donor table but filter entries where iddarah exists in darah_pmi
+            table_name = "donor"
+            
+            # First get all iddarah values from darah_pmi
+            darah_pmi_response = supabase.table("darah_pmi").select("iddarah").execute()
+            
+            if hasattr(darah_pmi_response, 'error') and darah_pmi_response.error:
+                raise HTTPException(status_code=500, detail=f"Database error: {darah_pmi_response.error.message}")
+            
+            # Extract iddarah values
+            pmi_iddarah_list = [item["iddarah"] for item in darah_pmi_response.data if "iddarah" in item and item["iddarah"]]
+            
+            if not pmi_iddarah_list:
+                # If no matching iddarah found, return empty response
+                return {
+                    "tanggal": tanggal or datetime.now().strftime("%Y-%m-%d"),
+                    "total_kantong": 0,
+                    "total_darah_harian": 0,
+                    "total_pendonor": 0,
+                    "stok_per_golongan": {},
+                    "stok_per_jenis": {},
+                    "stok_per_rhesus": {},
+                    "distribusi_per_kota": {},
+                    "user_info": {
+                        "role": user_role,
+                        "full_name": full_name
+                    }
+                }
+            
+            # Use Supabase's in filter to get records that match the iddarah list
+            query = supabase.table(table_name).select("*").in_("iddarah", pmi_iddarah_list)
+            
         elif user_role.lower() == "rumah sakit":
-            table_name = "darah_rs"
+            # For Rumah Sakit, use donor table but filter entries where iddarah exists in darah_rs
+            table_name = "donor"
+            
+            # First get all iddarah values from darah_rs
+            darah_rs_response = supabase.table("darah_rs").select("iddarah").execute()
+            
+            if hasattr(darah_rs_response, 'error') and darah_rs_response.error:
+                raise HTTPException(status_code=500, detail=f"Database error: {darah_rs_response.error.message}")
+            
+            # Extract iddarah values
+            rs_iddarah_list = [item["iddarah"] for item in darah_rs_response.data if "iddarah" in item and item["iddarah"]]
+            
+            if not rs_iddarah_list:
+                # If no matching iddarah found, return empty response
+                return {
+                    "tanggal": tanggal or datetime.now().strftime("%Y-%m-%d"),
+                    "total_kantong": 0,
+                    "total_darah_harian": 0,
+                    "total_pendonor": 0,
+                    "stok_per_golongan": {},
+                    "stok_per_jenis": {},
+                    "stok_per_rhesus": {},
+                    "distribusi_per_kota": {},
+                    "user_info": {
+                        "role": user_role,
+                        "full_name": full_name
+                    }
+                }
+            
+            # Use Supabase's in filter to get records that match the iddarah list
+            query = supabase.table(table_name).select("*").in_("iddarah", rs_iddarah_list)
         else:
             raise HTTPException(status_code=403, detail=f"Invalid role: {user_role}")
         
@@ -42,9 +105,6 @@ async def get_dashboard(
         if not tanggal:
             tanggal = datetime.now().strftime("%Y-%m-%d")
             
-        # Query dasar ke tabel yang sesuai dengan filter tanggal
-        query = supabase.table(table_name).select("*")
-        
         # Terapkan filter tambahan jika ada
         if golongan:
             query = query.eq("golongan_darah", golongan)
@@ -60,6 +120,8 @@ async def get_dashboard(
         
         # Eksekusi query
         response = query.execute()
+        
+        # For daily data, apply the date filter to the already filtered query
         response_harian = query.eq("tanggal_donor", tanggal).execute()
         
         if hasattr(response, 'error') and response.error:
@@ -113,35 +175,8 @@ async def get_dashboard(
         # dengan asumsi minimal ada 1 pendonor
         total_pendonor = len(pendonor_unik) if pendonor_unik else 0
         
-        # Hitung total kantong berdasarkan iddarah
-        # Pertama, kita perlu query tambahan ke database untuk mendapat total kantong dari semua waktu
-        try:
-            # Query untuk mendapatkan semua record tanpa filter tanggal
-            all_donations_query = supabase.table(table_name).select("iddarah")
-            
-            # Terapkan filter tambahan jika ada (kecuali tanggal)
-            if golongan:
-                all_donations_query = all_donations_query.eq("golongan_darah", golongan)
-            
-            if jenis:
-                all_donations_query = all_donations_query.eq("jenis_darah", jenis)
-            
-            if rhesus:  # Add rhesus filter to the all donations query
-                all_donations_query = all_donations_query.eq("rhesus", rhesus)
-                
-            if city:
-                all_donations_query = all_donations_query.eq("city_donor", city)
-            
-            # Eksekusi query
-            all_donations_response = all_donations_query.execute()
-            all_donations_data = all_donations_response.data
-            
-            # Hitung total kantong (total dari seluruh waktu, bukan hanya hari ini)
-            total_kantong = len(all_donations_data) if all_donations_data else 0
-            
-        except Exception as e:
-            print(f"Error counting total bags: {str(e)}")
-            total_kantong = total_darah_harian  # Fallback ke jumlah harian jika query gagal
+        # Hitung total kantong
+        total_kantong = len(data)
         
         # Hitung stok per golongan darah (berdasarkan jumlah kantong)
         golongan_darah = {}
