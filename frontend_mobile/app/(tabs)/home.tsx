@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+
 import {
   View,
   Text,
@@ -53,6 +54,7 @@ export default function Home() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [username, setUsername] = useState("...");
   const [totalPoints, setTotalPoints] = useState(0);
+  const [iconStatus, setIconStatus] = useState(require("../../assets/images/iconsad.png")); 
   const router = useRouter();
 
   const handleScroll = (event) => {
@@ -62,10 +64,10 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchUserAndDonorStatus = async () => {
       try {
         const token = await AsyncStorage.getItem("token");
-        const response = await fetch("https://backend-setetesharapandesktop.up.railway.app/users/me", {
+        const userRes = await fetch("https://backend-setetesharapandesktop.up.railway.app/users/me", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -73,20 +75,63 @@ export default function Home() {
           },
         });
 
-        const data = await response.json();
-        if (response.ok) {
-          setUsername(data.username || data.name || "User");
-          setTotalPoints(data.total_points || 0);
-        } else {
-          console.warn("Gagal mengambil user:", data);
+        console.log("Data user:", userRes);
+        const userData = await userRes.json();
+        if (!userRes.ok) throw new Error("Gagal mengambil data user");
+  
+        setUsername(userData.username || userData.name || "User");
+        setTotalPoints(userData.total_points || 0);
+  
+        const iduser = userData.iduser;
+        const nik = userData.nik;
+  
+        if (!nik) {
+          console.warn("NIK tidak ditemukan");
+          return;
         }
-      } catch (error) {
-        console.error("Error fetch user:", error);
+        else {
+          console.log(nik);
+        }
+  
+        const donorRes = await fetch(`https://backend-setetesharapandesktop.up.railway.app/api/user/donor-history/${iduser}`);
+        const donorData = await donorRes.json();
+  
+        if (!donorData || !Array.isArray(donorData.donations)) {
+          console.warn("Data donor tidak tersedia atau bukan array");
+          return;
+        }
+
+        console.log("donorData:", donorData);
+
+        
+        const donorDates = donorData.donations
+          .map((d: { tanggal_donor: string }) => new Date(d.tanggal_donor))
+          .sort((a, b) => b.getTime() - a.getTime());
+        
+
+        if (donorDates.length === 0) return;
+  
+        const now = new Date();
+        const lastDonation = donorDates[0];
+        const diffMonth = (now.getFullYear() - lastDonation.getFullYear()) * 12 + now.getMonth() - lastDonation.getMonth();
+  
+        if (diffMonth > 4) {
+          setIconStatus(require("../../assets/images/iconsad.png"));
+        } else if (diffMonth >= 3) {
+          setIconStatus(require("../../assets/images/iconnormal.png"));
+        } else {
+          setIconStatus(require("../../assets/images/iconhappy.png"));
+        }
+        
+      } catch (err) {
+        console.error("Error fetching user/donor data:", err);
       }
     };
-
-    fetchUser();
+  
+    fetchUserAndDonorStatus();
   }, []);
+  
+  
 
   const renderEventItem = ({ item }) => (
     <TouchableOpacity onPress={() => router.push(item.page)}>
@@ -117,7 +162,7 @@ export default function Home() {
         <Text style={styles.greetingText}>Halo, {username}!</Text>
 
         <View style={styles.iconWrapper}>
-          <Image source={require("../../assets/images/iconhappy.png")} style={styles.happyIcon} />
+          <Image source={iconStatus} style={styles.happyIcon} />
         </View>
 
         <View style={styles.statsContainer}>

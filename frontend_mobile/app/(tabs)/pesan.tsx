@@ -136,12 +136,16 @@ export default function PesanScreen() {
                 <Text style={styles.highlight}> Rumah Sakit Borromeus Bandung </Text>
                 secepatnya!
               </Text>
-              <View style={styles.detailsContainer}>
-                <Text style={styles.detailText}><Text style={styles.bold}>Golongan darah:</Text> {selectedNotification.golongan_darah}</Text>
-                <Text style={styles.detailText}><Text style={styles.bold}>Rhesus:</Text> {selectedNotification.rhesus}</Text>
-                <Text style={styles.detailText}><Text style={styles.bold}>Deadline:</Text> {new Date(selectedNotification.deadline).toLocaleString()}</Text>
-                <Text style={styles.detailText}><Text style={styles.bold}>Alamat:</Text> {selectedNotification.address}</Text>
+              <View style={{ paddingHorizontal: 10, marginBottom: 10 }}>
+                <Text style={styles.message}>Dibutuhkan bantuan pendonor dengan</Text>
+                <Text style={styles.highlight}>
+                  {selectedNotification.golongan_darah} rhesus ({selectedNotification.rhesus})
+                </Text>
+                <Text style={styles.message}>untuk pasien di</Text>
+                <Text style={styles.highlight}>Rumah Sakit Borromeus Bandung</Text>
+                <Text style={styles.message}>secepatnya!</Text>
               </View>
+
               <TouchableOpacity style={styles.button} onPress={handleDonatePress}>
                 <Text style={styles.buttonText}>Bantu Donor</Text>
               </TouchableOpacity>
