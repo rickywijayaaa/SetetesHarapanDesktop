@@ -30,7 +30,7 @@ export default function Index() {
         <Text style={styles.description}>
           Satu aksi kecil bisa memberi harapan besar. Yuk, jadi pendonor untuk bantu mereka yang membutuhkan!
         </Text>
-        <TouchableOpacity style={styles.button} onPress={() => router.push("/referral")}>
+        <TouchableOpacity style={styles.button} onPress={() => router.push("/login")}>
           <Text style={styles.buttonText}>Donor Sekarang</Text>
         </TouchableOpacity>
       </View>
