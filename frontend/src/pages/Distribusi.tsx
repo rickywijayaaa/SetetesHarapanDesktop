@@ -10,6 +10,8 @@ const Distribusi: React.FC = () => {
     status: "",
     stokDarah: "",
   });
+  const [currentPage, setCurrentPage] = useState(1); // Track the current page
+  const rowsPerPage = 5; // Maximum number of rows per page
 
   // Fetch combined data (UTD names and stok darah) from the /combined-blood-distribution endpoint
   useEffect(() => {
@@ -17,9 +19,6 @@ const Distribusi: React.FC = () => {
       try {
         const response = await axios.get("http://127.0.0.1:8000/api/combined-blood-distribution");
         const data = response.data.combined_blood_distribution || [];
-
-        // Check if data is correct
-        console.log("Fetched Data:", data);
 
         // Format the data to match your table structure
         const formattedData = data.map((item: { name: string; total_donations: number }) => ({
@@ -41,6 +40,7 @@ const Distribusi: React.FC = () => {
   const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
+    setCurrentPage(1); // Reset to first page when filters change
   };
 
   // Apply filters to the data
@@ -51,6 +51,27 @@ const Distribusi: React.FC = () => {
       (filters.stokDarah ? item.stokDarah.includes(filters.stokDarah) : true)
     );
   });
+
+  // Get current page data
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentData = filteredData.slice(indexOfFirstRow, indexOfLastRow);
+
+  // Calculate total pages
+  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+
+  // Handle next and previous page actions
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   return (
     <div className="distribusi-container">
@@ -127,7 +148,7 @@ const Distribusi: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredData.map((item, index) => (
+            {currentData.map((item, index) => (
               <tr key={index}>
                 <td>{item.utd}</td>
                 <td>{item.status}</td>
@@ -136,6 +157,17 @@ const Distribusi: React.FC = () => {
             ))}
           </tbody>
         </table>
+
+        {/* Pagination Controls */}
+        <div className="pagination-controls">
+          <button onClick={prevPage} disabled={currentPage === 1}>
+            Previous
+          </button>
+          <span>{`Page ${currentPage} of ${totalPages}`}</span>
+          <button onClick={nextPage} disabled={currentPage === totalPages}>
+            Next
+          </button>
+        </div>
       </div>
     </div>
   );

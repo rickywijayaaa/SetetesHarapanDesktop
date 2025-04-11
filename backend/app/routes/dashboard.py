@@ -14,6 +14,7 @@ async def get_dashboard(
     request: Request,
     golongan: Optional[str] = Query(None),
     jenis: Optional[str] = Query(None),
+    rhesus: Optional[str] = Query(None),  # Added rhesus as a query parameter
     city: Optional[str] = Query(None),
     tanggal: Optional[str] = Query(None),
 ):
@@ -51,6 +52,9 @@ async def get_dashboard(
         if jenis:
             query = query.eq("jenis_darah", jenis)
         
+        if rhesus:  # Add filter for rhesus
+            query = query.eq("rhesus", rhesus)
+        
         if city:
             query = query.eq("city_donor", city)
         
@@ -76,6 +80,7 @@ async def get_dashboard(
                 "total_pendonor": 0,
                 "stok_per_golongan": {},
                 "stok_per_jenis": {},
+                "stok_per_rhesus": {},  # Added empty rhesus stats
                 "distribusi_per_kota": {},
                 "user_info": {
                     "role": user_role,
@@ -121,6 +126,9 @@ async def get_dashboard(
             if jenis:
                 all_donations_query = all_donations_query.eq("jenis_darah", jenis)
             
+            if rhesus:  # Add rhesus filter to the all donations query
+                all_donations_query = all_donations_query.eq("rhesus", rhesus)
+                
             if city:
                 all_donations_query = all_donations_query.eq("city_donor", city)
             
@@ -149,6 +157,13 @@ async def get_dashboard(
             if jns:
                 jenis_darah[jns] = jenis_darah.get(jns, 0) + 1  # Increment by 1 for each bag
         
+        # Hitung stok berdasarkan rhesus (berdasarkan jumlah kantong)
+        rhesus_darah = {}
+        for item in data:
+            rh = item.get("rhesus")
+            if rh:
+                rhesus_darah[rh] = rhesus_darah.get(rh, 0) + 1  # Increment by 1 for each bag
+        
         # Distribusi per kota (berdasarkan jumlah kantong)
         distribusi_kota = {}
         for item in data:
@@ -164,6 +179,7 @@ async def get_dashboard(
             "total_pendonor": total_pendonor,  # Total pendonor unik pada hari tersebut
             "stok_per_golongan": golongan_darah,  # Jumlah kantong per golongan
             "stok_per_jenis": jenis_darah,  # Jumlah kantong per jenis
+            "stok_per_rhesus": rhesus_darah,  # Jumlah kantong per rhesus
             "distribusi_per_kota": distribusi_kota,  # Jumlah kantong per kota
             "user_info": {
                 "role": user_role,
@@ -185,25 +201,6 @@ def get_pmi_users():
         raise HTTPException(status_code=404, detail="No PMI users found")
     
     return {"pmi_users": response.data}
-
-@router.get("/blood-distribution")
-def get_blood_distribution():
-    # Fetch data from the darah_pmi table
-    response = supabase.table("darah_pmi").select("idpmi, iddarah").execute()
-
-    if not response.data:
-        raise HTTPException(status_code=404, detail="No blood data found")
-
-    # Aggregate data manually in Python
-    total_donations = {}
-    for item in response.data:
-        idpmi = item["idpmi"]
-        total_donations[idpmi] = total_donations.get(idpmi, 0) + 1
-
-    # Convert dictionary to list of dicts to return the response
-    result = [{"idpmi": idpmi, "total_donations": count} for idpmi, count in total_donations.items()]
-
-    return {"blood_distribution": result}
 
 @router.get("/combined-blood-distribution")
 def get_combined_blood_distribution():
