@@ -13,12 +13,13 @@ from app.routes.dashboard import router as dashboard_router
 from app.routes.donor_events import router as donor_events_router  
 from app.routes.eligibility_check import router as eligibility_check_router  
 from app.routes.health import router as health_router  
+from app.routes.message import router as message_router  # Import message router
 from app.routes.news import router as news_router  
 from app.routes.notifications import router as notifications_router
 from app.routes.points import router as points_router  
 from app.routes.profile import router as profile_router  
 from app.routes.vouchers import router as vouchers_router
-from app.routes.stok_darah import router as stok_darah_router  # Import router stok darah
+from app.routes.stok_darah import router as stok_darah_router
 from fastapi import Request
 from fastapi import HTTPException
 import json
@@ -173,4 +174,5 @@ app.include_router(notifications_router, prefix="/api", tags=["notifications"])
 app.include_router(points_router, prefix="/api", tags=["points"])
 app.include_router(profile_router, prefix="/api", tags=["profile"])
 app.include_router(vouchers_router, prefix="/api", tags=["vouchers"])
-app.include_router(stok_darah_router, prefix="/api", tags=["blood_inventory"])  # Tambahkan router stok darah
+app.include_router(stok_darah_router, prefix="/api", tags=["blood_inventory"])
+app.include_router(message_router, prefix="/api", tags=["messages"])  # Include message router
