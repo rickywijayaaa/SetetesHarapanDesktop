@@ -96,7 +96,8 @@ def get_current_user(session_id: str = Cookie(None)):
         "email": user_data.data.get("email"),
         "role": user_data.data.get("role"),
         "username": user_data.data.get("name"),
-        "total_points": user_data.data.get("total_points")
+        "total_points": user_data.data.get("total_points"),
+        "nik": user_data.data.get("nik")
     }
 
 @router.get("/test-hash")
