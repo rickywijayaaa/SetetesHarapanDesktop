@@ -8,7 +8,6 @@ import {
   Dimensions,
   TouchableOpacity,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -48,24 +47,6 @@ const events = [
     image: require("../../assets/images/donor_poster.png"),
     page: "/informasidonor1",
   },
-  {
-    id: "4",
-    title: "Blood Donation Drive",
-    location: "Hotel Grand Hyatt Jakarta",
-    date: "5 Oktober 2025",
-    time: "11:00 - 15:00",
-    image: require("../../assets/images/donor_poster.png"),
-    page: "/informasidonor1",
-  },
-  {
-    id: "5",
-    title: "Donor Bersama HMIF ITB",
-    location: "CC Timur ITB",
-    date: "15 September 2025",
-    time: "07:30 - 10:30",
-    image: require("../../assets/images/donor_poster.png"),
-    page: "/informasidonor1",
-  },
 ];
 
 export default function Home() {
@@ -84,25 +65,18 @@ export default function Home() {
     const fetchUser = async () => {
       try {
         const token = await AsyncStorage.getItem("token");
-
         const response = await fetch("https://backend-setetesharapandesktop.up.railway.app/users/me", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          credentials: "include",
         });
 
         const data = await response.json();
-
         if (response.ok) {
-          if (data.username || data.name) {
-            setUsername(data.username || data.name);
-          }
-          if (data.total_points !== undefined) {
-            setTotalPoints(data.total_points);
-          }
+          setUsername(data.username || data.name || "User");
+          setTotalPoints(data.total_points || 0);
         } else {
           console.warn("Gagal mengambil user:", data);
         }
@@ -141,8 +115,11 @@ export default function Home() {
 
       <View style={styles.greetingWrapper}>
         <Text style={styles.greetingText}>Halo, {username}!</Text>
-        <Image source={require("../../assets/images/iconhappy.png")} style={styles.happyIcon} />
-        
+
+        <View style={styles.iconWrapper}>
+          <Image source={require("../../assets/images/iconhappy.png")} style={styles.happyIcon} />
+        </View>
+
         <View style={styles.statsContainer}>
           <View style={styles.statItem}>
             <Image source={require("../../assets/images/star.png")} style={styles.statIcon} />
@@ -183,7 +160,6 @@ export default function Home() {
           ))}
         </View>
       </View>
-      
 
       <Text style={styles.subtitle}>Kegiatan Donor Darah</Text>
 
@@ -215,16 +191,85 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     marginTop: 30,
   },
+  greetingWrapper: {
+    alignItems: "center",
+    paddingTop: 10,
+    marginBottom: 60,
+  },
+  greetingText: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#8E1616",
+    marginBottom: 70,
+  },
+  iconWrapper: {
+    position: "absolute",
+    top: 40,
+    zIndex: 3,
+    backgroundColor: "#fff",
+    padding: 8,
+    borderRadius: 100,
+    alignSelf: "center",
+    shadowRadius: 3,
+    elevation: 4,
+  },
+  happyIcon: {
+    width: 110,
+    height: 110,
+    resizeMode: "contain",
+  },
+  statsContainer: {
+    flexDirection: "row",
+    backgroundColor: "#8E1616",
+    borderRadius: 40,
+    marginHorizontal: 10,
+    paddingTop: 80,
+    paddingBottom: 30,
+    paddingHorizontal: 20,
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    width: "90%",
+    overflow: "visible",
+  },
+  statItem: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  statIcon: {
+    width: 24,
+    height: 24,
+    resizeMode: "contain",
+    marginBottom: 5,
+  },
+  statLabel: {
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "600",
+    marginBottom: 5,
+    textAlign: "center",
+  },
+  statValue: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
   carouselWrapper: {
-    alignItems: "center", 
+    alignItems: "center",
   },
   carousel: {
-    marginVertical: 10,
-    marginBottom: 30,
+    marginVertical: -45,
+    marginBottom: 15,
   },
   carouselImage: {
     width: width - 20,
-    height: 200, 
+    height: 200,
     resizeMode: "contain",
     marginHorizontal: 10,
   },
@@ -232,7 +277,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     position: "absolute",
-    bottom: 5, 
+    bottom: 0,
     left: 0,
     right: 0,
   },
@@ -246,66 +291,16 @@ const styles = StyleSheet.create({
   activeIndicator: {
     backgroundColor: "#8E1616",
   },
-  greeting: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginVertical: 10,
-    color: "#8E1616",
-    padding: 20,
-  },
-  statsCard: {
-    backgroundColor: "#8E1616",
-    borderRadius: 20,
-    padding: 20,
-    marginHorizontal: 15,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    elevation: 5,
-    marginTop: -10,
-  },
-  statItem: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  icon: {
-    width: 24,
-    height: 24,
-    resizeMode: "contain",
-    marginBottom: 5,
-  },
-  statLabel: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "bold",
-    marginBottom: 3,
-  },
-  statValue: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  }, 
-  divider: {
-    width: 1,
-    height: "70%",
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
-    marginHorizontal: 5,
-  },
   subtitle: {
     fontSize: 20,
     fontWeight: "bold",
-    marginVertical: 10,
+    marginVertical: 5,
     color: "#000000",
     padding: 20,
   },
   eventsContainer: {
     paddingBottom: 80,
-    marginTop: -20
+    marginTop: -20,
   },
   card: {
     backgroundColor: "#fff",
@@ -353,44 +348,4 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     resizeMode: "contain",
   },
-  greetingWrapper: {
-    alignItems: "center",
-    paddingTop: 10,
-    marginBottom: 10,
-  },
-  greetingText: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#8E1616",
-    marginBottom: 10,
-  },
-  happyIcon: {
-    width: 90,
-    height: 90,
-    resizeMode: "contain",
-    marginBottom: -35,
-    zIndex: 2,
-  },
-  statsContainer: {
-    flexDirection: "row",
-    backgroundColor: "#8E1616",
-    borderRadius: 20,
-    marginHorizontal: 20,
-    paddingVertical: 20,
-    paddingHorizontal: 10,
-    justifyContent: "space-between",
-    alignItems: "center",
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    width: "90%",
-  },
-  statIcon: {
-    width: 24,
-    height: 24,
-    resizeMode: "contain",
-    marginBottom: 5,
-  }, 
 });
