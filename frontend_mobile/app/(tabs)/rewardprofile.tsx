@@ -139,6 +139,18 @@ export default function Reward2() {
             </View>
           </View>
 
+          <TouchableOpacity style={styles.referralCard} onPress={() => router.push("/referral")}>
+            <Image
+              source={require("../../assets/images/friends.png")}
+              style={styles.referralImage}
+            />
+            <View style={{ flex: 1 }}>
+              <Text style={styles.referralText}>
+                Dapatkan point lebih banyak!{"\n"}Undang teman!
+              </Text>
+            </View>
+          </TouchableOpacity>
+
           <View style={{ position: "relative", width: "100%", alignItems: "center", marginBottom: 15 }}>
             <View style={{
               position: "absolute",
@@ -323,7 +335,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingVertical: 15,
     paddingHorizontal: 10,
-    marginBottom: 30,
+    marginBottom: 20,
     width: "100%",
   },
   infoGridBox: {
@@ -460,4 +472,68 @@ const styles = StyleSheet.create({
   activeIndicator: {
     backgroundColor: "#8E1616",
   },
+
+  referralCard: {
+    backgroundColor: "#8E1616",
+    borderRadius: 20,
+    marginTop: 0,
+    marginBottom: 20,
+    marginHorizontal: 0,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
+  },
+  
+  referralContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  
+  referralImage: {
+    width: 45,
+    height: 45,
+    resizeMode: "contain",
+    marginRight: 12,
+  },
+  referralText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "regular",
+    lineHeight: 22,
+  },
+  
+  inviteButton: {
+    // backgroundColor: "linear-gradient(90deg, #ffffff, #ccc)", // won't work in RN, fallback:
+    backgroundColor: "#ffffff",
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    alignSelf: "flex-end",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+    marginRight: 8,
+    marginBottom: 8,
+    marginTop: -10,
+  },
+  
+  inviteButtonText: {
+    color: "#8E1616",
+    fontWeight: "bold",
+    fontSize: 14,
+  },
+  
 });
+
+
+
