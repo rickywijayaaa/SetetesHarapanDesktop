@@ -220,3 +220,10 @@ class VoucherCreate(BaseModel):
 
 class VoucherResponse(VoucherCreate):
     idvoucher: int
+
+class DonorHistoryItem(BaseModel):
+    tanggal_donor: datetime
+
+class DonorHistoryResponse(BaseModel):
+    donations: list[DonorHistoryItem]
+
