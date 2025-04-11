@@ -6,21 +6,30 @@ import "../App.css";
 
 const Message: React.FC = () => {
   const [formData, setFormData] = useState({
-    sender: "",
-    recipient: "",
-    amount: "",
-    date: "",
-    message: ""
+    utd_pengirim: "",
+    utd_penerima: "",
+    jumlah: "",
+    tanggal: "",
+    pesan: "",
   });
 
   const [utds, setUtds] = useState<string[]>([]);
-  const [userInfo, setUserInfo] = useState<{ iduser: string; name: string; role: string } | null>(null);
+  const [userInfo, setUserInfo] = useState<{
+    iduser: string;
+    name: string;
+    role: string;
+  } | null>(null);
 
   useEffect(() => {
     const fetchUtdList = async () => {
       try {
-        const response = await axios.get("https://backend-setetesharapandesktop.up.railway.app/api/users/pmi");
-        const utdList = response.data?.pmi_users?.map((u: { name: string }) => u.name.trim()) || [];
+        const response = await axios.get(
+          "https://backend-setetesharapandesktop.up.railway.app/api/users/pmi"
+        );
+        const utdList =
+          response.data?.pmi_users?.map((u: { name: string }) =>
+            u.name.trim()
+          ) || [];
         setUtds(utdList);
       } catch (error) {
         console.error("Failed to fetch UTD list:", error);
@@ -39,7 +48,11 @@ const Message: React.FC = () => {
     }
   }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -47,15 +60,26 @@ const Message: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post("https://backend-setetesharapandesktop.up.railway.app/api/notification", {
-        sender: formData.sender,
-        recipient: formData.recipient,
-        amount: parseInt(formData.amount),
-        date: new Date(formData.date).toISOString(),
-        message: formData.message
-      });
+      // Change endpoint and payload to match the backend API
+      await axios.post(
+        "https://backend-setetesharapandesktop.up.railway.app/api/messages",
+        {
+          utd_pengirim: formData.utd_pengirim,
+          utd_penerima: formData.utd_penerima,
+          jumlah: parseInt(formData.jumlah),
+          tanggal: new Date(formData.tanggal).toISOString().split("T")[0], // Format as YYYY-MM-DD
+          pesan: formData.pesan,
+        }
+      );
+
       alert("Notifikasi berhasil dikirim!");
-      setFormData({ sender: "", recipient: "", amount: "", date: "", message: "" });
+      setFormData({
+        utd_pengirim: "",
+        utd_penerima: "",
+        jumlah: "",
+        tanggal: "",
+        pesan: "",
+      });
     } catch (error) {
       console.error("Error submitting notification:", error);
       alert("Gagal mengirim notifikasi.");
@@ -75,11 +99,13 @@ const Message: React.FC = () => {
           <div className="navbar-right-blasting">
             <span className="navbar-text-ed">
               {userInfo
-                ? `${userInfo.role === "Kemenkes"
-                    ? "Kementerian Kesehatan Indonesia"
-                    : userInfo.role === "PMI"
-                    ? "Palang Merah Indonesia"
-                    : "Rumah Sakit"} - ${userInfo.name}`
+                ? `${
+                    userInfo.role === "Kemenkes"
+                      ? "Kementerian Kesehatan Indonesia"
+                      : userInfo.role === "PMI"
+                      ? "Palang Merah Indonesia"
+                      : "Rumah Sakit"
+                  } - ${userInfo.name}`
                 : "Memuat user..."}
             </span>
             <button
@@ -99,19 +125,20 @@ const Message: React.FC = () => {
 
           <form onSubmit={handleSubmit}>
             <div className="blasting-content">
-
               <div className="form-group-blasting">
                 <label className="blasting-label">UTD Pengirim</label>
                 <select
                   className="blasting-select"
-                  name="sender"
-                  value={formData.sender}
+                  name="utd_pengirim"
+                  value={formData.utd_pengirim}
                   onChange={handleInputChange}
                   required
                 >
                   <option value="">Pilih UTD Pengirim</option>
                   {utds.map((utd) => (
-                    <option key={utd} value={utd}>{utd}</option>
+                    <option key={utd} value={utd}>
+                      {utd}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -120,14 +147,16 @@ const Message: React.FC = () => {
                 <label className="blasting-label">UTD Penerima</label>
                 <select
                   className="blasting-select"
-                  name="recipient"
-                  value={formData.recipient}
+                  name="utd_penerima"
+                  value={formData.utd_penerima}
                   onChange={handleInputChange}
                   required
                 >
                   <option value="">Pilih UTD Penerima</option>
                   {utds.map((utd) => (
-                    <option key={utd} value={utd}>{utd}</option>
+                    <option key={utd} value={utd}>
+                      {utd}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -137,8 +166,8 @@ const Message: React.FC = () => {
                 <input
                   type="number"
                   className="blasting-input"
-                  name="amount"
-                  value={formData.amount}
+                  name="jumlah"
+                  value={formData.jumlah}
                   onChange={handleInputChange}
                   placeholder="Masukkan jumlah kantong darah"
                   required
@@ -150,8 +179,8 @@ const Message: React.FC = () => {
                 <input
                   type="date"
                   className="blasting-select"
-                  name="date"
-                  value={formData.date}
+                  name="tanggal"
+                  value={formData.tanggal}
                   onChange={handleInputChange}
                   required
                 />
@@ -161,9 +190,9 @@ const Message: React.FC = () => {
                 <label className="blasting-label">Pesan Tambahan</label>
                 <textarea
                   className="blasting-textarea"
-                  name="message"
+                  name="pesan"
                   placeholder="Tambahkan pesan jika ada"
-                  value={formData.message}
+                  value={formData.pesan}
                   onChange={handleInputChange}
                 ></textarea>
               </div>

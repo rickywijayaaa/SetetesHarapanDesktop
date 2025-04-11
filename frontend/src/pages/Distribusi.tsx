@@ -17,26 +17,33 @@ const Distribusi: React.FC = () => {
   useEffect(() => {
     const fetchCombinedData = async () => {
       try {
-        const response = await axios.get("https://backend-setetesharapandesktop.up.railway.app/api/combined-blood-distribution");
+        const response = await axios.get(
+          "https://backend-setetesharapandesktop.up.railway.app/api/combined-blood-distribution"
+        );
         const data = response.data.combined_blood_distribution || [];
 
         // Format the data to match your table structure with dynamic status
-        const formattedData = data.map((item: { name: string; total_donations: number }) => {
-          let status = "";
-          if (item.total_donations < 100) {
-            status = "Kekurangan Darah"; // Less than 100
-          } else if (item.total_donations >= 100 && item.total_donations <= 300) {
-            status = "Ketersediaan Stok Cukup"; // 100-300
-          } else {
-            status = "Stok Darah Melebihi Kebutuhan"; // More than 300
-          }
+        const formattedData = data.map(
+          (item: { name: string; total_donations: number }) => {
+            let status = "";
+            if (item.total_donations < 100) {
+              status = "Kekurangan Darah"; // Less than 100
+            } else if (
+              item.total_donations >= 100 &&
+              item.total_donations <= 300
+            ) {
+              status = "Ketersediaan Stok Cukup"; // 100-300
+            } else {
+              status = "Stok Darah Melebihi Kebutuhan"; // More than 300
+            }
 
-          return {
-            utd: item.name, // Mapping name to utd
-            status: status, // Use dynamic status based on stok darah
-            stokDarah: `${item.total_donations}`, // Format stok darah
-          };
-        });
+            return {
+              utd: item.name, // Mapping name to utd
+              status: status, // Use dynamic status based on stok darah
+              stokDarah: `${item.total_donations}`, // Format stok darah
+            };
+          }
+        );
 
         setDistribusiData(formattedData);
       } catch (error) {
@@ -88,10 +95,19 @@ const Distribusi: React.FC = () => {
     <div className="distribusi-container">
       <div className="navbar-ed">
         <div className="navbar-left-ed">
-          <Link to="/homepage" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <Link
+            to="/homepage"
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
             <img src={logo} alt="Setetes Harapan" className="logo-ed" />
           </Link>
-          <Link to="/homepage" className="app-title-ed" style={{ textDecoration: 'none', color: 'inherit' }}>SetetesHarapan</Link>
+          <Link
+            to="/homepage"
+            className="app-title-ed"
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            SetetesHarapan
+          </Link>
         </div>
         <span className="navbar-text-ed">Kementerian Kesehatan Indonesia</span>
         <button
@@ -131,8 +147,12 @@ const Distribusi: React.FC = () => {
           >
             <option value="">Pilih Status</option>
             <option value="Kekurangan Darah">Kekurangan Darah</option>
-            <option value="Ketersediaan Stok Cukup">Ketersediaan Stok Cukup</option>
-            <option value="Stok Darah Melebihi Kebutuhan">Stok Darah Melebihi Kebutuhan</option>
+            <option value="Ketersediaan Stok Cukup">
+              Ketersediaan Stok Cukup
+            </option>
+            <option value="Stok Darah Melebihi Kebutuhan">
+              Stok Darah Melebihi Kebutuhan
+            </option>
           </select>
 
           <select
@@ -178,6 +198,37 @@ const Distribusi: React.FC = () => {
           <button onClick={nextPage} disabled={currentPage === totalPages}>
             Next
           </button>
+        </div>
+
+        {/* Navigation button to Message component */}
+        <div
+          className="navigation-button-container"
+          style={{ marginTop: "20px", textAlign: "center" }}
+        >
+          <Link to="/message" style={{ textDecoration: "none" }}>
+            <button
+              className="message-nav-button"
+              style={{
+                padding: "10px 20px",
+                backgroundColor: "#d9534f",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+                fontSize: "16px",
+                fontWeight: "bold",
+                transition: "background-color 0.3s",
+              }}
+              onMouseOver={(e) =>
+                (e.currentTarget.style.backgroundColor = "#c9302c")
+              }
+              onMouseOut={(e) =>
+                (e.currentTarget.style.backgroundColor = "#d9534f")
+              }
+            >
+              Buat Permintaan Pengiriman Darah
+            </button>
+          </Link>
         </div>
       </div>
     </div>
