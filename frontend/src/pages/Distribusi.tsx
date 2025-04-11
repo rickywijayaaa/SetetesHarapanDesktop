@@ -17,7 +17,7 @@ const Distribusi: React.FC = () => {
   useEffect(() => {
     const fetchCombinedData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/combined-blood-distribution");
+        const response = await axios.get("https://backend-setetesharapandesktop.up.railway.app/api/combined-blood-distribution");
         const data = response.data.combined_blood_distribution || [];
 
         // Format the data to match your table structure
