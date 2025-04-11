@@ -627,15 +627,23 @@ const Homepage: React.FC = () => {
                 </div>
               )}
 
-              {/* Indonesia Map section - only visible for PMI and Kemenkes roles */}
               {userInfo?.role === "PMI" && (
                 <div className="chart-card-hp full-width">
                   <h3>Distribusi Darah di Indonesia</h3>
                   <IndonesiaMap />
+                  
                   <div className="btn-container">
+                    {/* Add Pesan button to the left of Edit Darah */}
+                    <button
+                      className="btn-pesan"
+                      onClick={() => navigate("/message")}
+                    >
+                      Pesan
+                    </button>
                   </div>
                 </div>
               )}
+
               {userInfo?.role === "Kemenkes" && (
                 <div className="chart-card-hp full-width">
                   <h3>Distribusi Darah di Indonesia</h3>

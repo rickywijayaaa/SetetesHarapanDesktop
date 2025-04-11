@@ -19,7 +19,8 @@ from app.routes.notifications import router as notifications_router
 from app.routes.points import router as points_router  
 from app.routes.profile import router as profile_router  
 from app.routes.vouchers import router as vouchers_router
-from app.routes.stok_darah import router as stok_darah_router
+from app.routes.stok_darah import router as stok_darah_router  
+from app.routes.history import router as history_router
 from fastapi import Request
 from fastapi import HTTPException
 import json
@@ -174,5 +175,6 @@ app.include_router(notifications_router, prefix="/api", tags=["notifications"])
 app.include_router(points_router, prefix="/api", tags=["points"])
 app.include_router(profile_router, prefix="/api", tags=["profile"])
 app.include_router(vouchers_router, prefix="/api", tags=["vouchers"])
-app.include_router(stok_darah_router, prefix="/api", tags=["blood_inventory"])
+app.include_router(stok_darah_router, prefix="/api", tags=["blood_inventory"]) 
+app.include_router(history_router, prefix="/api", tags=["history"])
 app.include_router(message_router, prefix="/api", tags=["messages"])  # Include message router
