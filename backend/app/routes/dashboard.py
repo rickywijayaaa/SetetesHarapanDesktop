@@ -175,3 +175,13 @@ async def get_dashboard(
     except Exception as e:
         print(f"Error accessing dashboard: {str(e)}")
         raise HTTPException(status_code=500, detail="Terjadi kesalahan saat mengakses data dashboard")
+
+
+@router.get("/users/pmi")
+def get_pmi_users():
+    response = supabase.table("users").select("name").eq("role", "PMI").execute()
+    
+    if not response.data:
+        raise HTTPException(status_code=404, detail="No PMI users found")
+    
+    return {"pmi_users": response.data}

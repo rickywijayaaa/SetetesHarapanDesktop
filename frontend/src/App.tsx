@@ -7,6 +7,7 @@ import Verification from "./pages/Verification.tsx";
 import EditDarah from "./pages/EditDarah.tsx";
 import KurangDarah from "./pages/KurangDarah.tsx"
 import BlastingInfo from "./pages/BlastingInfo.tsx"
+import Distribusi from "./pages/Distribusi.tsx"
 
 function App() {
   return (
@@ -18,10 +19,10 @@ function App() {
       <Route path="/verification" element={<Verification />} />
       <Route path="/edit" element={<EditDarah />} />
       <Route path="/kurangdarah" element={<KurangDarah />} />
-      <Route path="/blastinginfo" element={<BlastingInfo />} /> {/* Updated Route */}
+      <Route path="/blastinginfo" element={<BlastingInfo />} /> 
+      <Route path="/distribusi" element={<Distribusi />} /> {/* Updated Route */}
       
     </Routes>
   );
 }
-
 export default App;

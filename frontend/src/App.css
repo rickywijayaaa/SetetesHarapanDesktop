@@ -1140,23 +1140,23 @@
 
 .map-container {
   width: 100%;
-  height: 600px; /* Fixed height */
+  height: 600px; /* Ensure height is sufficient */
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: visible;
-  position: relative; /* Added position relative */
+  overflow: hidden; /* Prevents elements from overflowing */
+  position: relative; /* This ensures positioning context for absolute elements inside */
 }
 
 /* Make the Plotly container responsive */
 .map-container > div {
-  width: 100% !important;
-  height: 100% !important;
-  position: absolute !important; /* Position absolute to prevent overflow issues */
+  width: 100%;
+  height: 100%;
+  position: absolute; /* Positioned absolutely within the map container */
   top: 0;
   left: 0;
+  z-index: 1; /* Ensures the map sits below the button */
 }
-
 /* Make sure SVG elements in the map are fully visible */
 .map-container svg {
   width: 100% !important;
@@ -1174,7 +1174,7 @@
   background-color: rgba(255, 255, 255, 0.8);
   padding: 5px;
   border-radius: 5px;
-  z-index: 1000;
+  z-index: 1000; /* Ensure the legend stays on top */
 }
 
 /* Ensure text elements are readable */
@@ -1336,6 +1336,25 @@
   .map-container {
     min-height: 450px;
   }
+}
+
+/* Button Container */
+.btn-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px; /* Adds some space between the map and the button */
+}
+
+/* Positioning the button */
+.btn-lanjut {
+  background-color: #8e1716;
+  color: white;
+  font-weight: bold;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  z-index: 1000;
 }
 
 /* EDIT DARAHHHHHH*/
@@ -1796,9 +1815,13 @@
 /* Form Content Grid */
 .blasting-content {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr; /* Ensures equal width for both columns */
   gap: 24px;
   margin-bottom: 25px;
+}
+
+.blasting-content .form-group-blasting {
+  width: 100%; /* Ensures each input field takes full width of the parent */
 }
 
 /* Form Groups */
@@ -1896,4 +1919,135 @@
   .form-container-blasting {
     padding: 20px;
   }
+}
+
+
+/* DISTRIBUSIIIII */
+
+/* General Layout */
+.distribusi-container {
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(90deg, #8e1716 0%, #280706 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+  overflow-y: auto;
+}
+
+/* Navbar */
+.navbar-ed {
+  width: 90%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background: transparent;
+  color: white;
+}
+
+.navbar-left-ed {
+  display: flex;
+  align-items: center;
+}
+
+.logo-ed {
+  width: 40px;
+  margin-right: 10px;
+}
+
+.app-title-ed {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.navbar-right-ed {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-grow: 1;
+}
+
+.navbar-text-ed {
+  font-size: 16px;
+  white-space: nowrap;
+  margin-right: 15px;
+}
+
+.logout-button-ed {
+  background: linear-gradient(180deg, #8e1616 0%, #b3260e 40%, #ea3d03 100%);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Card Container */
+.distribusi-card-ed {
+  width: 80%;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  margin-top: 20px;
+}
+
+/* Filters */
+.filters-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.filter-select {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  width: 30%;
+}
+
+/* Table */
+.distribusi-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.distribusi-table th,
+.distribusi-table td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.distribusi-table th {
+  background-color: #f8f8f8;
+  font-weight: bold;
+}
+
+.distribusi-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* Button Styles */
+.submit-button-ed {
+  width: 100%;
+  padding: 12px;
+  background-color: #8e1616;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.submit-button-ed:hover {
+  background-color: #b3260e;
 }
