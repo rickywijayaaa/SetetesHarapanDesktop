@@ -4,38 +4,46 @@ import axios from "axios";
 import logo from "../assets/logo.png";
 
 const Distribusi: React.FC = () => {
-  const [distribusiData, setDistribusiData] = useState<any[]>([]);
+  const [distribusiData, setDistribusiData] = useState<any[]>([]); // Data fetched from the combined endpoint
   const [filters, setFilters] = useState({
     utd: "",
     status: "",
     stokDarah: "",
   });
 
-  // Fetch data from backend for PMI users
+  // Fetch combined data (UTD names and stok darah) from the /combined-blood-distribution endpoint
   useEffect(() => {
-    const fetchPMIUsers = async () => {
+    const fetchCombinedData = async () => {
       try {
-        const response = await axios.get("https://backend-setetesharapandesktop.up.railway.app/api/users/pmi");
-        const data = response.data.pmi_users || [];
-        const formattedData = data.map((user: { name: string }) => ({
-          utd: user.name, // Assuming user names are treated as UTD names
-          status: "Tersedia", // Default status
-          stokDarah: "500", // Default stock of blood
+        const response = await axios.get("http://127.0.0.1:8000/api/combined-blood-distribution");
+        const data = response.data.combined_blood_distribution || [];
+
+        // Check if data is correct
+        console.log("Fetched Data:", data);
+
+        // Format the data to match your table structure
+        const formattedData = data.map((item: { name: string; total_donations: number }) => ({
+          utd: item.name, // Mapping name to utd
+          status: item.total_donations > 0 ? "Tersedia" : "Tidak Tersedia", // Use donations count to determine status
+          stokDarah: `${item.total_donations}`, // Format stok darah
         }));
+
         setDistribusiData(formattedData);
       } catch (error) {
-        console.error("Error fetching UTD data:", error);
+        console.error("Error fetching combined data:", error);
       }
     };
 
-    fetchPMIUsers();
+    fetchCombinedData();
   }, []);
 
+  // Filter data based on user input
   const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Apply filters to the data
   const filteredData = distribusiData.filter((item) => {
     return (
       (filters.utd ? item.utd.includes(filters.utd) : true) &&
@@ -102,10 +110,11 @@ const Distribusi: React.FC = () => {
             className="filter-select"
           >
             <option value="">Pilih Stok Darah</option>
-            <option value="500">500 mL</option>
-            <option value="250">250 mL</option>
-            <option value="750">750 mL</option>
-            <option value="1000">1000 mL</option>
+            {distribusiData.map((item, index) => (
+              <option key={index} value={item.stokDarah}>
+                {item.stokDarah}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -122,7 +131,7 @@ const Distribusi: React.FC = () => {
               <tr key={index}>
                 <td>{item.utd}</td>
                 <td>{item.status}</td>
-                <td>{item.stokDarah} mL</td>
+                <td>{item.stokDarah}</td>
               </tr>
             ))}
           </tbody>
