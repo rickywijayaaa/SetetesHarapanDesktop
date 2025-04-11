@@ -496,7 +496,6 @@ const Homepage: React.FC = () => {
               )}
 
               {/* Indonesia Map section - only visible for PMI and Kemenkes roles */}
-{/* Indonesia Map section - only visible for PMI and Kemenkes roles */}
               {userInfo?.role !== "Rumah Sakit" && (
                 <div className="chart-card-hp full-width">
                   <h3>Distribusi Darah di Indonesia</h3>
