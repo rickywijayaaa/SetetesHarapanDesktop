@@ -15,7 +15,7 @@ const Distribusi: React.FC = () => {
   useEffect(() => {
     const fetchPMIUsers = async () => {
       try {
-        const response = await axios.get("https://backend-setetesharapandesktop.up.railway.app/donor/api/users/pmi");
+        const response = await axios.get("https://backend-setetesharapandesktop.up.railway.app/api/users/pmi");
         const data = response.data.pmi_users || [];
         const formattedData = data.map((user: { name: string }) => ({
           utd: user.name, // Assuming user names are treated as UTD names
