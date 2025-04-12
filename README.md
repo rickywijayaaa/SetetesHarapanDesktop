@@ -125,6 +125,8 @@ npx start
 | GET    | `/users/me`                                               | Get current logged-in user          |
 | GET    | `/users/test-hash`                                        | Test password hashing               |
 | GET    | `/api/dashboard`                                          | Get dashboard data                  |
+| GET    | `/api/users/pmi`                                          | Get All PMI Users                   |
+| GET    | `/api/combined-blood-distribution`                        | Get count of blood per UTD          |
 | GET    | `/api/donor/events`                                       | Get all donor events                |
 | GET    | `/api/donor/events/{idkegiatan}`                          | Get donor event by ID               |
 | POST   | `/api/donor/register`                                     | Create new donor event              |
@@ -278,6 +280,76 @@ npx start
     "iduser": 1,
     "name": "John Doe",
     "total_points": 200
+  }
+]
+```
+
+#### `GET /api/users/pmi`
+- **Response**:
+```json
+[
+  {
+    "name": "UTD Bandung"
+  },
+  {
+    "name": "UTD Depok "
+  },
+  {
+    "name": "UTD Bojong"
+  },
+  {
+    "name": "UTD Cisitu"
+  },
+  {
+    "name": "UTD Aceh"
+  },
+  {
+    "name": "UTD Papua"
+  },
+  {
+    "name": "UTD Denpasar"
+  }
+]
+```
+
+#### `GET /api/combined-blood-distribution`
+- **Response**:
+```json
+[
+  {
+    "name": "UTD Bandung",
+    "idpmi": 10,
+    "total_donations": 458
+  },
+  {
+    "name": "UTD Depok ",
+    "idpmi": 11,
+    "total_donations": 0
+  },
+  {
+    "name": "UTD Bojong",
+    "idpmi": 12,
+    "total_donations": 0
+  },
+  {
+    "name": "UTD Cisitu",
+    "idpmi": 15,
+    "total_donations": 0
+  },
+  {
+    "name": "UTD Aceh",
+    "idpmi": 31,
+    "total_donations": 0
+  },
+  {
+    "name": "UTD Papua",
+    "idpmi": 30,
+    "total_donations": 0
+  },
+  {
+    "name": "UTD Denpasar",
+    "idpmi": 35,
+    "total_donations": 55
   }
 ]
 ```
