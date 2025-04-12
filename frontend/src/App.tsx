@@ -9,6 +9,7 @@ import KurangDarah from "./pages/KurangDarah.tsx"
 import BlastingInfo from "./pages/BlastingInfo.tsx"
 import Distribusi from "./pages/Distribusi.tsx"
 import Message from "./pages/Message.tsx"
+import Terimapesan from "./pages/Terimapesan.tsx"
 
 function App() {
   return (
@@ -22,7 +23,8 @@ function App() {
       <Route path="/kurangdarah" element={<KurangDarah />} />
       <Route path="/blastinginfo" element={<BlastingInfo />} /> 
       <Route path="/distribusi" element={<Distribusi />} />
-      <Route path="/message" element={<Message />} /> {/* Updated Route */}
+      <Route path="/message" element={<Message />} />
+      <Route path="/terima" element={<Terimapesan />} /> {/* Updated Route */}
       
     </Routes>
   );

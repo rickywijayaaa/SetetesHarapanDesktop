@@ -636,7 +636,7 @@ const Homepage: React.FC = () => {
                     {/* Add Pesan button to the left of Edit Darah */}
                     <button
                       className="btn-pesan"
-                      onClick={() => navigate("/message")}
+                      onClick={() => navigate("/terima")}
                     >
                       Pesan
                     </button>
