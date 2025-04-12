@@ -15,7 +15,7 @@ const TerimaPesan: React.FC = () => {
       date: "2025-04-13",
     },
     {
-      sender: "PMI",
+      sender: "Kemenkes",
       content: "Kirimkan 150 kantong darah ke UTD Medan",
       date: "2025-04-14",
     },
