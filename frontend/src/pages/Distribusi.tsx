@@ -66,7 +66,9 @@ const Distribusi: React.FC = () => {
     return (
       (filters.utd ? item.utd.includes(filters.utd) : true) &&
       (filters.status ? item.status.includes(filters.status) : true) &&
-      (filters.stokDarah ? item.stokDarah.includes(filters.stokDarah) : true)
+      (filters.stokDarah
+        ? item.stokDarah.includes(filters.stokDarah)
+        : true)
     );
   });
 
@@ -162,11 +164,9 @@ const Distribusi: React.FC = () => {
             className="filter-select"
           >
             <option value="">Pilih Stok Darah</option>
-            {distribusiData.map((item, index) => (
-              <option key={index} value={item.stokDarah}>
-                {item.stokDarah}
-              </option>
-            ))}
+            <option value="Kekurangan Darah">0 - 100</option>
+            <option value="Ketersediaan Stok Cukup">100 - 300</option>
+            <option value="Stok Darah Melebihi Kebutuhan">diatas 300</option>
           </select>
         </div>
 
