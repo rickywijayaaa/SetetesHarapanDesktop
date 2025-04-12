@@ -80,8 +80,33 @@ const Homepage: React.FC = () => {
   const [cityFilter, setCityFilter] = useState("");
   const [golonganFilter, setGolonganFilter] = useState("");
   const [jenisFilter, setJenisFilter] = useState("");
-  const [rhesusFilter, setRhesusFilter] = useState(""); // Add rhesus filter
+  const [rhesusFilter, setRhesusFilter] = useState("");
   const [autoRefresh, setAutoRefresh] = useState(true);
+
+  // Define dropdown options - matching database values
+  const golonganOptions = ["", "A", "B", "AB", "O"];
+
+  // Updated jenis options to match database values exactly
+  const jenisOptions = [
+    "",
+    "Whole Blood",
+    "Packed Red Cell",
+    "Platelet Concentrate",
+    "Fresh Frozen Plasma",
+    "Cryoprecipitate",
+  ];
+
+  // Updated rhesus options to match database values
+  const rhesusOptions = ["", "Positif", "Negatif"];
+
+  // Filter dropdowns visibility state
+  const [showGolonganDropdown, setShowGolonganDropdown] = useState(false);
+  const [showJenisDropdown, setShowJenisDropdown] = useState(false);
+  const [showRhesusDropdown, setShowRhesusDropdown] = useState(false);
+
+  // Available jenis options from API data
+  const [availableJenisOptions, setAvailableJenisOptions] =
+    useState<string[]>(jenisOptions);
 
   // Function for blood group stock chart (A, B, AB, O)
   const prepareBloodStockByGroupChart = () => {
@@ -203,6 +228,23 @@ const Homepage: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Update available jenis options when dashboardData changes
+  useEffect(() => {
+    if (dashboardData?.stok_per_jenis) {
+      // Extract jenis options from API data
+      const apiJenisOptions = [
+        "",
+        ...Object.keys(dashboardData.stok_per_jenis),
+      ];
+      setAvailableJenisOptions(apiJenisOptions);
+
+      // If current jenisFilter is not in the new options, reset it
+      if (jenisFilter && !apiJenisOptions.includes(jenisFilter)) {
+        setJenisFilter("");
+      }
+    }
+  }, [dashboardData]);
+
   // Fallback to use dummy data if API fails
   const useDummyData = () => {
     console.log("Using fallback dummy data");
@@ -219,14 +261,14 @@ const Homepage: React.FC = () => {
       },
       stok_per_jenis: {
         "Whole Blood": 85,
-        "Packed Red Cells": 60,
-        Plasma: 40,
-        Platelet: 30,
+        "Packed Red Cell": 60,
+        "Fresh Frozen Plasma": 40,
+        "Platelet Concentrate": 30,
         Cryoprecipitate: 15,
       },
       stok_per_rhesus: {
-        "Rhesus Positif": 85,
-        "Rhesus Negatif": 15,
+        Positif: 85,
+        Negatif: 15,
       },
       distribusi_per_kota: {
         Jakarta: 12500,
@@ -272,6 +314,9 @@ const Homepage: React.FC = () => {
 
       console.log(`Calling API at: ${API_BASE_URL}/api/dashboard`);
       console.log(`With headers: x-user-info = ${userInfoHeader}`);
+      console.log(
+        `With filters: city=${cityFilter}, golongan=${golonganFilter}, jenis=${jenisFilter}, rhesus=${rhesusFilter}`
+      );
 
       // Make actual API call to the backend with timeout
       const response = await axios.get(`${API_BASE_URL}/api/dashboard`, {
@@ -354,6 +399,27 @@ const Homepage: React.FC = () => {
     autoRefresh,
   ]);
 
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const closeDropdowns = (e: MouseEvent) => {
+      // Cast event target to Element type for TypeScript
+      const target = e.target as Element;
+
+      // Only close if clicking outside dropdown elements
+      if (!target.closest(".dropdown-container")) {
+        setShowGolonganDropdown(false);
+        setShowJenisDropdown(false);
+        setShowRhesusDropdown(false);
+      }
+    };
+
+    window.addEventListener("click", closeDropdowns);
+
+    return () => {
+      window.removeEventListener("click", closeDropdowns);
+    };
+  }, []);
+
   // Manual refresh function
   const handleManualRefresh = () => {
     if (!apiConnecting) {
@@ -378,6 +444,38 @@ const Homepage: React.FC = () => {
     setGolonganFilter("");
     setJenisFilter("");
     setRhesusFilter("");
+  };
+
+  // Function to toggle dropdowns with stopPropagation to prevent the global click handler from closing it immediately
+  const toggleDropdown = (e: React.MouseEvent, dropdown: string) => {
+    e.stopPropagation();
+
+    if (dropdown === "golongan") {
+      setShowGolonganDropdown(!showGolonganDropdown);
+      setShowJenisDropdown(false);
+      setShowRhesusDropdown(false);
+    } else if (dropdown === "jenis") {
+      setShowJenisDropdown(!showJenisDropdown);
+      setShowGolonganDropdown(false);
+      setShowRhesusDropdown(false);
+    } else if (dropdown === "rhesus") {
+      setShowRhesusDropdown(!showRhesusDropdown);
+      setShowGolonganDropdown(false);
+      setShowJenisDropdown(false);
+    }
+  };
+
+  // Function to handle selection
+  const handleOptionSelect = (
+    e: React.MouseEvent,
+    value: string,
+    setter: React.Dispatch<React.SetStateAction<string>>
+  ) => {
+    e.stopPropagation();
+    setter(value);
+    setShowGolonganDropdown(false);
+    setShowJenisDropdown(false);
+    setShowRhesusDropdown(false);
   };
 
   return (
@@ -417,29 +515,86 @@ const Homepage: React.FC = () => {
               onChange={(e) => setCityFilter(e.target.value)}
               className="search-input-hp"
             />
-            <button
-              onClick={() =>
-                setGolonganFilter(prompt("Golongan darah (A, B, AB, O):") || "")
-              }
-            >
-              {golonganFilter || "Golongan"}
-            </button>
-            <button
-              onClick={() =>
-                setJenisFilter(
-                  prompt("Jenis darah (Whole, Plasma, etc):") || ""
-                )
-              }
-            >
-              {jenisFilter || "Jenis"}
-            </button>
-            <button
-              onClick={() => setRhesusFilter(prompt("Rhesus (+/-):") || "")}
-            >
-              {rhesusFilter || "Rhesus"}
-            </button>
+
+            {/* Golongan filter dropdown */}
+            <div className="dropdown-container">
+              <button
+                onClick={(e) => toggleDropdown(e, "golongan")}
+                className="dropdown-button"
+              >
+                {golonganFilter || "Golongan"}
+              </button>
+              {showGolonganDropdown && (
+                <div className="dropdown-menu">
+                  {golonganOptions.map((option, index) => (
+                    <div
+                      key={index}
+                      className="dropdown-item"
+                      onClick={(e) =>
+                        handleOptionSelect(e, option, setGolonganFilter)
+                      }
+                    >
+                      {option || "Semua"}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Jenis filter dropdown - using dynamic options from API */}
+            <div className="dropdown-container">
+              <button
+                onClick={(e) => toggleDropdown(e, "jenis")}
+                className="dropdown-button"
+              >
+                {jenisFilter || "Jenis"}
+              </button>
+              {showJenisDropdown && (
+                <div className="dropdown-menu">
+                  {availableJenisOptions.map((option, index) => (
+                    <div
+                      key={index}
+                      className="dropdown-item"
+                      onClick={(e) =>
+                        handleOptionSelect(e, option, setJenisFilter)
+                      }
+                    >
+                      {option || "Semua"}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Rhesus filter dropdown */}
+            <div className="dropdown-container">
+              <button
+                onClick={(e) => toggleDropdown(e, "rhesus")}
+                className="dropdown-button"
+              >
+                {rhesusFilter || "Rhesus"}
+              </button>
+              {showRhesusDropdown && (
+                <div className="dropdown-menu">
+                  {rhesusOptions.map((option, index) => (
+                    <div
+                      key={index}
+                      className="dropdown-item"
+                      onClick={(e) =>
+                        handleOptionSelect(e, option, setRhesusFilter)
+                      }
+                    >
+                      {option || "Semua"}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
             {(cityFilter || golonganFilter || jenisFilter || rhesusFilter) && (
-              <button onClick={clearFilters}>Hapus Filter</button>
+              <button onClick={clearFilters} className="clear-filter-button">
+                Hapus Filter
+              </button>
             )}
           </div>
           <div className="realtime-controls">
@@ -631,7 +786,7 @@ const Homepage: React.FC = () => {
                 <div className="chart-card-hp full-width">
                   <h3>Distribusi Darah di Indonesia</h3>
                   <IndonesiaMap />
-                  
+
                   <div className="btn-container">
                     {/* Add Pesan button to the left of Edit Darah */}
                     <button
@@ -658,11 +813,59 @@ const Homepage: React.FC = () => {
                   </div>
                 </div>
               )}
-
             </div>
           </div>
         )}
       </div>
+
+      {/* CSS for the dropdown components */}
+      <style jsx>{`
+        .dropdown-container {
+          position: relative;
+          display: inline-block;
+        }
+
+        .dropdown-button {
+          background-color: #f8f9fa;
+          border: 1px solid #ced4da;
+          padding: 8px 16px;
+          border-radius: 4px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          min-width: 120px;
+        }
+
+        .dropdown-menu {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          background-color: white;
+          border: 1px solid #ced4da;
+          border-radius: 4px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          z-index: 1000;
+          width: 100%;
+          max-height: 200px;
+          overflow-y: auto;
+        }
+
+        .dropdown-item {
+          padding: 8px 16px;
+          cursor: pointer;
+        }
+
+        .dropdown-item:hover {
+          background-color: #f8f9fa;
+        }
+
+        .clear-filter-button {
+          background-color: #f8d7da;
+          color: #721c24;
+          border: 1px solid #f5c6cb;
+        }
+      `}</style>
     </div>
   );
 };
